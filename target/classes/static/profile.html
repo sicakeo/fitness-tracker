@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+</head>
+<body>
+    <div class = "nav-container">
+        <nav class ="nav-menu">
+            <ul id="nav-list" class="nav-menu">
+                <li><a href="/home">Home</a></li>
+                <li><a href="/profile">User Profile</a></li>
+                <li><a href="/bmi-calculator">BMI Calculator</a></li>
+                <li><a href="/bmr-calculator">BMR Calculator</a></li>
+                <li id="logoutBtn"><a href="#" id="signOutLink">Sign out</a></li>
+            </ul>
+        </nav>
+    </div>
+    
+    <main id = "profileContainer" class = "profile-container">
+        <section id = "profileCard" class = "profile-card">
+            <form id = "profileForm" class = "profile-form">
+                <div class = "form-group">
+                    <label for = "name"> Name: </label>
+                    <input id = "name" type = "text">
+                </div>
+
+                <div class = "form-group">
+                    <label for = "age"> Age:</label>
+                    <input id = "age" type = "number">
+                </div>
+
+                <div class = "form-group">
+                    <label for = "gender"> Gender: </label>
+                    <select name = "gender" id = "gender">
+                        <option value = "M">Male</option>
+                        <option value = "F">Female</option>
+                    </select>
+                </div>
+
+                <div id="bodyInformation" class="body-information">
+                    <label>Body Information</label>
+                    <select id="unitSelect">
+                        <option value="standard">Standard</option>
+                        <option value="metric">Metric</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="height">Height:</label>
+                    <input id="height" type="number">
+                    <span id="heightUnit">lbs</span> 
+                </div>
+
+                <div class="form-group">
+                    <label for="weight">Weight:</label>
+                    <input id="weight" type="number">
+                    <span id="weightUnit">lbs</span>
+                </div>
+            </form>
+        </section>
+    </main>
+    <script src = "/js/profile.js"></script>
+    <script type="module" src="/js/login.js"></script>
+</body>
+</html>

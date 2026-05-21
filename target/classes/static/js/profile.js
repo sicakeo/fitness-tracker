@@ -1,0 +1,56 @@
+import { checkAuth } from "./login.js";
+document.addEventListener("DOMContentLoaded", () => {
+    if(!checkAuth()) return;
+
+    const signOutLink = document.getElementById("signOutLink");
+    if (signOutLink) {
+        signOutLink.addEventListener("click", (event) => {
+            // 1. Prevent the default empty link jump behavior
+            event.preventDefault();
+
+            // 2. Clear out the session memory completely
+            sessionStorage.removeItem("user");
+
+            // 3. Optional: Give them a friendly confirmation message
+            alert("You have been signed out successfully.");
+
+            // 4. Safely redirect them back to the clean Home/Dashboard path!
+            window.location.href = "/";
+        });
+    }
+
+    const unitSelect = document.getElementById("unitSelect");
+    const heightUnit = document.getElementById("heightUnit");
+    const weightUnit = document.getElementById("weightUnit");
+
+    const userSession = sessionStorage.getItem("user");
+    if (userSession) {
+    const user = JSON.parse(userSession);
+
+    // If your user object has a saved unit system preference (e.g., "metric")
+    if (user & user.unitSystem) {
+        unitSelect.value = user.unitSystem;
+    }
+}
+    // Function to update the text labels
+    function updateUnits() {
+        const selectedUnit = unitSelect.value;
+
+        if (selectedUnit === "metric") {
+            heightUnit.textContent = " cm";
+            weightUnit.textContent = " kg";
+        } else {
+            // Standard / Imperial system
+            heightUnit.textContent = " inches";
+            weightUnit.textContent = " lbs";
+        }
+    }
+
+    // 1. Listen for whenever the user changes the dropdown option
+    if (unitSelect) {
+        unitSelect.addEventListener("change", updateUnits);
+    }
+
+    // 2. Run it immediately on page load to match the initial default dropdown state
+    updateUnits();
+});

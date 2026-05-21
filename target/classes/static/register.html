@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body>
+    <div class = "nav-container">
+        <nav class ="nav-menu">
+            <ul id = "nav-list" class ='nav-menu'>
+                <ul><a href = "/">Home</a></ul>
+                <ul><a href = "/about">About Us</a></ul>
+                <ul><a href = "/profile" >User Profile</a></ul>
+                <ul><a href = "/bmi-calculator">BMI Calculator</a></ul>
+                <ul><a href = "/bmr-calculator">BMR Calculator</a></ul>
+            </ul>
+
+        </nav>
+    </div>
+
+    <main id = "registerContainer" class = "register-container">
+        <h2>Register</h2>
+        <section class = "register-card">
+            <form id = "registerForm" class = "register-form">
+                <div class = "form-group">
+                    <label for = "username">Username</label>
+                    <input id = "username" type = "text" name = "username" placeholder = "Username" required>
+                </div>
+
+                <div class = "form-group">
+                    <label for = "password">Password</label>
+                    <input id = "password" type = "password" name = "password" placeholder = "Password" required>
+                </div>
+
+                <div class = "form-group">
+                    <label for = "confirmPassword">Confirm Password</label>
+                    <input id = "confirmPassword" type = "password" name = "confirmPassword" placeholder = "Confirm Password" required>
+                </div>
+
+                <div class = "form-group">
+                    <label for = "email">Email</label>
+                    <input id = "email" type = "text" name="email" placeholder= "Email" required>
+                </div>
+
+                <div class = "form-group">
+                    <label for = "confirmEmail">Confirm email</label>
+                    <input id = "confirmEmail" type = "text" name="confirmEmail" placeholder= "Confirm Email" required>
+                </div>
+
+                <div class = "form-group">
+                    <button type = "submit" id = "submitButton" name = "submitButton" value = "submitButton">Register</button>
+                </div>
+                
+                
+                <p>Existing user? Login <a href = "/login">here</a></p>
+            </form>
+        </section>
+    </main>
+    <script src = "/js/register.js"></script>
+    <script type="module" src="/js/login.js"></script>
+</body>
+</html>

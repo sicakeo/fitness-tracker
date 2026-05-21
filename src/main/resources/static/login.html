@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+    <div class = "nav-container">
+            <nav class ="nav-menu">
+                <ul id = "nav-list" class ='nav-menu'>
+                    <ul><a href = "/">Home</a></ul>
+                    <ul><a href = "/about">About Us</a></ul>
+                    <ul><a href = "/profile" >User Profile</a></ul>
+                    <ul><a href = "/bmi-calculator">BMI Calculator</a></ul>
+                    <ul><a href = "/bmr-calculator">BMR Calculator</a></ul>
+                </ul>
+            </nav>
+        </div>
+    <body>
+
+    <div id = "loginContainer" class = "login-container">
+        <section class = "login-card">
+            <h2>Login</h2>
+            <form id = "loginForm" novalidate>
+                <div class = "form-group">
+                    <label for = "username">Username</label>
+                    <input type = "text" name = "username" id = "username" placeholder = "username" required>
+                </div>
+
+                <div class = "form-group">
+                    <label for = "password">Password</label>
+                    <input type = "password" name = "password" id = "password" placeholder = "password" required>
+                </div>
+
+                <div class = "form-group">
+                    <button type = "submit" id = "loginButton">Login</button>
+                </div>
+                <p>New User? Register <a href="/register">here</a></p>
+            </form>
+        </section>
+    </div>
+    <script src="js/login.js"></script>
+    <script type="module" src="/js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BMI Calculator</title>
+</head>
+<body>
+  <div class = "nav-container">
+            <nav class ="nav-menu">
+                <ul id = "nav-list" class ='nav-menu'>
+                    <ul><a href = "/">Home</a></ul>
+                    <ul><a href = "/about">About Us</a></ul>
+                    <ul><a href = "/profile" >User Profile</a></ul>
+                    <ul><a href = "/bmi-calculator">BMI Calculator</a></ul>
+                    <ul><a href = "/bmr-calculator">BMR Calculator</a></ul>
+                </ul>
+
+                <div id = "nav-right" class="nav-menu">
+                    <div id = "loginBtn">
+                        <a href = "/login">Login</a>
+                    </div>
+
+                    <div id = "registerBtn">
+                        <a href = "/register">Signup</a>
+                    </div>
+                </div>
+            </nav>
+      </div>
+
+  <main class = "bmi-container">
+    <div class = "bmi-card">
+      <div class = "bmi-header">
+        <h2>BMI Calculator</h2>
+      </div>
+
+      <div class = "bmi-content">
+        <div class = "toggle">
+          <button type = "submit" id = "standard-btn" class = "active">Standard</button>
+          <button type = "submit" id = "metric-btn">Metric</button>
+        </div>
+
+        <form id="bmi-form" novalidate>
+          <div class="form-row">
+            <label class="row-label">Height</label>
+
+            <div id="standard-height-group" class="input-group-row">
+              <input type="number" id="feet" inputmode="numeric" placeholder="0" required>
+              <span class="unit-label">Feet</span>
+
+              <input type="number" id="inches" inputmode="numeric" placeholder="0" required>
+              <span class="unit-label">Inches</span>
+            </div>
+
+            <div id="metric-height-group" class="input-group-row hidden">
+              <input type="number" id="cm" inputmode="numeric" placeholder="0" required>
+              <span class="unit-label">Cm</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="row-label">Weight</label>
+
+            <div class="input-group-row">
+              <div id = "standard-weight-group" class="input-group-row">
+                <input type="number" id="lbs" inputmode="decimal" placeholder="0" required>
+                <span id="standard-weight-unit" class="unit-label">Pounds</span>
+              </div>
+
+              <div id = "metric-weight-group" class="input-group-row hidden">
+                <input type="number" id="kg" inputmode="decimal" placeholder="0" required>
+                <span id="metric-weight-unit" class="unit-label">Kilogram</span>
+              </div>
+            </div>
+
+          </div>
+          <button type = "submit" id = "submit">submit</button>
+
+        </form>
+      </div>
+    </div>
+  </main>
+  <script src = "/js/bmi-calculator.js"></script>
+</body>
+</html>
