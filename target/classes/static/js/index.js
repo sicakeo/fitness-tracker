@@ -1,8 +1,8 @@
 const USER_API_URL = "http://localhost:8080/";
-import { checkAuth } from "./login.js";
+import { isLoggedIn } from "./login.js";
 document.addEventListener("DOMContentLoaded", () =>{
-    if(!checkAuth())
+    if(!isLoggedIn())
         return;
     event.preventDefault();
-    window.location.href = "/home";
+    window.location.href = "/";
 })

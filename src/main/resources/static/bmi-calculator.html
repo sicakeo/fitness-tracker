@@ -35,8 +35,8 @@
 
       <div class = "bmi-content">
         <div class = "toggle">
-          <button type = "submit" id = "standard-btn" class = "active">Standard</button>
-          <button type = "submit" id = "metric-btn">Metric</button>
+          <button type = "submit" id = "standard-btn" style ="background-color: green">Standard</button>
+          <button type = "submit" id = "metric-btn" style = "background-color: gray">Metric</button>
         </div>
 
         <form id="bmi-form" novalidate>
@@ -51,7 +51,7 @@
               <span class="unit-label">Inches</span>
             </div>
 
-            <div id="metric-height-group" class="input-group-row hidden">
+            <div id="metric-height-group" class="input-group-row hidden" style = "display: none">
               <input type="number" id="cm" inputmode="numeric" placeholder="0" required>
               <span class="unit-label">Cm</span>
             </div>
@@ -66,19 +66,23 @@
                 <span id="standard-weight-unit" class="unit-label">Pounds</span>
               </div>
 
-              <div id = "metric-weight-group" class="input-group-row hidden">
+              <div id = "metric-weight-group" class="input-group-row hidden"  style = "display: none; color: gray">
                 <input type="number" id="kg" inputmode="decimal" placeholder="0" required>
                 <span id="metric-weight-unit" class="unit-label">Kilogram</span>
               </div>
             </div>
-
           </div>
-          <button type = "submit" id = "submit">submit</button>
+          <button type = "submit" id = "submit">Calculate</button>
 
         </form>
+
+        <div class = "bmi-result" >
+          <h2>Your BMI Result:</h2>
+          <lable id = "resultMessage">BMI = 0.0 kg/m<sup>2</sup></lable>
+        </div>
       </div>
     </div>
   </main>
-  <script src = "js/bmi-calculator.js"></script>
+  <script type="module" src = "js/bmi-calculator.js"></script>
 </body>
 </html>

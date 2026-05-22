@@ -25,7 +25,7 @@ async function login(event) {
 }
 
 
-function isLoggedIn(){
+export function isLoggedIn(){
     return Boolean(sessionStorage.getItem("user"));
 }
 
@@ -45,6 +45,7 @@ function isAdminLoggedIn(){
 
 export function logout(){
     sessionStorage.removeItem("user");
+    alert("Log out successfully")
     window.location.href = "/";
 }
 
