@@ -19,3 +19,8 @@ body {
     color: #333;
 }
 
+.logout-text {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer; 
+}

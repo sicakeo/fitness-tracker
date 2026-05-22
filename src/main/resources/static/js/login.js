@@ -43,7 +43,7 @@ function isAdminLoggedIn(){
     return isLoggedIn() && user.role === "ADMIN";
 }
 
-function logout(){
+export function logout(){
     sessionStorage.removeItem("user");
     window.location.href = "/";
 }
