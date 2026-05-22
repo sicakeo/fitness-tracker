@@ -35,7 +35,7 @@ public class User {
     private String gender;
 
     @Column(name = "bmr")
-    private String bmr;
+    private Double bmr;
 
 
     @NotNull(message = "Email is required")
@@ -44,7 +44,4 @@ public class User {
 
     @Column(name = "activity_level")
     private Double activityLevel;
-
-    @Column(name = "unit_system")
-    private String unitSystem;
 }

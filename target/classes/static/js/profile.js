@@ -19,38 +19,60 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    const unitSelect = document.getElementById("unitSelect");
-    const heightUnit = document.getElementById("heightUnit");
-    const weightUnit = document.getElementById("weightUnit");
+    const profileCardDisplay = document.getElementById("profileCardDisplay");
+    const profileCardEdit = document.getElementById("profileCardEdit");
+    const editProfileBtn = document.getElementById("editProfileBtn");
+    if (editProfileBtn) {
+        editProfileBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            profileCardDisplay.style.display = "none";
+            profileCardEdit.style.display = "block";
 
-    const userSession = sessionStorage.getItem("user");
-    if (userSession) {
-    const user = JSON.parse(userSession);
+            const unitSelect = document.getElementById("unitSelect");
+            const heightUnit = document.getElementById("heightUnit");
+            const weightUnit = document.getElementById("weightUnit");
 
-    // If your user object has a saved unit system preference (e.g., "metric")
-    if (user & user.unitSystem) {
-        unitSelect.value = user.unitSystem;
+            const userSession = sessionStorage.getItem("user");
+            if (userSession) {
+            const user = JSON.parse(userSession);
+
+            // If your user object has a saved unit system preference (e.g., "metric")
+            if (user & user.unitSystem) {
+            unitSelect.value = user.unitSystem;
+            }
+            }
+
+            // 1. Listen for whenever the user changes the dropdown option
+            if (unitSelect) {
+            unitSelect.addEventListener("change", updateUnits);
+            }
+
+            // 2. Run it immediately on page load to match the initial default dropdown state
+            updateUnits();
+            });
+    }
+
+    const saveProfileBtn = document.getElementById("saveProfileBtn");
+    if (saveProfileBtn) {
+        saveProfileBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            console.log("Profile saved! (This is where you'd implement the actual save logic.)");
+            profileCardDisplay.style.display = "block";
+            profileCardEdit.style.display = "none";
+        });
+    }
+});
+
+// Function to update the text labels
+function updateUnits() {
+    const selectedUnit = unitSelect.value;
+
+    if (selectedUnit === "metric") {
+        heightUnit.textContent = " cm";
+        weightUnit.textContent = " kg";
+    } else {
+        // Standard / Imperial system
+        heightUnit.textContent = " inches";
+        weightUnit.textContent = " lbs";
     }
 }
-    // Function to update the text labels
-    function updateUnits() {
-        const selectedUnit = unitSelect.value;
-
-        if (selectedUnit === "metric") {
-            heightUnit.textContent = " cm";
-            weightUnit.textContent = " kg";
-        } else {
-            // Standard / Imperial system
-            heightUnit.textContent = " inches";
-            weightUnit.textContent = " lbs";
-        }
-    }
-
-    // 1. Listen for whenever the user changes the dropdown option
-    if (unitSelect) {
-        unitSelect.addEventListener("change", updateUnits);
-    }
-
-    // 2. Run it immediately on page load to match the initial default dropdown state
-    updateUnits();
-});

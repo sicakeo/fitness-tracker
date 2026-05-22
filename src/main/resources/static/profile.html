@@ -12,13 +12,13 @@
                 <li><a href="/profile">User Profile</a></li>
                 <li><a href="/bmi-calculator">BMI Calculator</a></li>
                 <li><a href="/bmr-calculator">BMR Calculator</a></li>
-                <li id="logoutBtn"><a href="#" id="signOutLink">Sign out</a></li>
+                <li><span id="signOutLink" class="logout-text">Sign out</span></li>
             </ul>
         </nav>
     </div>
     
     <main id = "profileContainer" class = "profile-container">
-        <section id = "profileCard" class = "profile-card">
+        <section id = "profileCardEdit" class = "profile-card" style = "display: none;">
             <form id = "profileForm" class = "profile-form">
                 <div class = "form-group">
                     <label for = "name"> Name: </label>
@@ -57,10 +57,36 @@
                     <input id="weight" type="number">
                     <span id="weightUnit">lbs</span>
                 </div>
+
+                <div class="form-group">
+                    <label for="bmr">BMR:</label>
+                    <input id="bmr" type="number" readonly>
+                    <span id="bmrUnit">kcal/day</span>
+                    <h3 id="bmrMessage" class="bmr-message">
+                        Don't know your BMR?  <div id="bmrStartBtn">
+                            <button type="button">Start Now</button>
+                        </div>
+                    </h3>
+                </div>
+
+                <div class = "form-group">
+                    <button id = "saveProfileBtn" type = "button"> Save Profile </button>   
+                </div>
             </form>
         </section>
+
+        <section id = "profileCardDisplay" class = "profile-card">
+            <h2 id = "displayName"> Name: </h2>
+            <p id = "displayAge"> Age: </p>
+            <p id = "displayGender"> Gender: </p>
+            <p id = "displayHeight"> Height: </p>
+            <p id = "displayWeight"> Weight: </p>
+            <p id = "displayBMR"> BMR: </p>
+            <div class = "form-group">
+                <button id = "editProfileBtn" type = "button"> Edit Profile </button>   
+            </div>
+        </section>
     </main>
-    <script src = "js/profile.js"></script>
-    <script type="module" src="js/login.js"></script>
+    <script type="module" src="js/profile.js"></script>
 </body>
 </html>
