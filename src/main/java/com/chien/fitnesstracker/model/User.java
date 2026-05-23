@@ -30,6 +30,8 @@ public class User {
     @Column(name = "weight")
     private Double weight;
 
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "gender")
     private String gender;

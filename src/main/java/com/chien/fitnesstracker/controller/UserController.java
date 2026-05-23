@@ -53,10 +53,39 @@ public class UserController{
     }
     
 
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id,@Valid @RequestBody User user){
-        return  ResponseEntity.ok(userService.updateUser(id, user));
+   public ResponseEntity<User> updateUser(Long id, User incomingData) {
+    User existingUser = userService.getUserById(id);
+
+    if (incomingData.getHeight() != null) {
+        existingUser.setHeight(incomingData.getHeight());
     }
+    if (incomingData.getWeight() != null) {
+        existingUser.setWeight(incomingData.getWeight());
+    }
+    if (incomingData.getBmr() != null) {
+        existingUser.setBmr(incomingData.getBmr());
+    }
+    if (incomingData.getActivityLevel() != null) {
+        existingUser.setActivityLevel(incomingData.getActivityLevel());
+    }
+
+    if (incomingData.getName() != null) {
+        existingUser.setName(incomingData.getName());
+    }
+    if (incomingData.getGender() != null) {
+        existingUser.setGender(incomingData.getGender());
+    }
+
+    if (incomingData.getUsername() != null && !incomingData.getUsername().isBlank()) {
+        existingUser.setUsername(incomingData.getUsername());
+    }
+    if (incomingData.getEmail() != null && !incomingData.getEmail().isBlank()) {
+        existingUser.setEmail(incomingData.getEmail());
+    }
+
+    userService.saveUser(existingUser);
+    return ResponseEntity.ok(existingUser);
+}
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id){
