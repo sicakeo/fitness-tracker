@@ -36,9 +36,14 @@ public class User {
     @Column(name = "gender")
     private String gender;
 
-    @Column(name = "bmr")
-    private Double bmr;
+    @Column(name = "fitness_goal")
+    private String fitnessGoal; 
 
+    @Column(name = "tdee")
+    private Double tdee;
+
+    @Column(name = "age")
+    private Integer age;
 
     @NotNull(message = "Email is required")
     @Column(name = "email")

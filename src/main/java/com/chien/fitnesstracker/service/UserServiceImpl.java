@@ -48,8 +48,16 @@ public class UserServiceImpl implements UserService {
         User userToUpdate = this.getUserById(id);
         userToUpdate.setUsername(userDetails.getUsername());
         userToUpdate.setPassword(userDetails.getPassword());
+        userToUpdate.setEmail(userDetails.getEmail());
+        userToUpdate.setName(userDetails.getName());
+        userToUpdate.setActivityLevel(userDetails.getActivityLevel());
         userToUpdate.setHeight(userDetails.getHeight());
         userToUpdate.setWeight(userDetails.getWeight());
+        userToUpdate.setAge(userDetails.getAge());
+        userToUpdate.setGender(userDetails.getGender());
+        userToUpdate.setFitnessGoal(userDetails.getFitnessGoal());
+        userToUpdate.setTdee(userDetails.getTdee());
+
         return this.userRepository.save(userToUpdate);
     }
 }

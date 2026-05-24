@@ -22,6 +22,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const profileCardDisplay = document.getElementById("profileCardDisplay");
     const profileCardEdit = document.getElementById("profileCardEdit");
     const editProfileBtn = document.getElementById("editProfileBtn");
+    const userSession = sessionStorage.getItem("user");
+            if (userSession) {
+                const user = JSON.parse(userSession);
+                console.log("User session data on profile page load:", user); // Debugging log
+                
+                // Pre-fill the display card with user info
+                document.getElementById("name").value = user.name;
+                document.getElementById("age").value = user.age;
+                document.getElementById("gender").value = user.gender;
+                document.getElementById("height").value = user.height;
+                document.getElementById("weight").value = user.weight;
+                document.getElementById("bmr").value = user.bmr;
+                document.getElementById("activityLevel").value = user.activityLevel;
+
+                // Display the user info on the profile card
+                // Display the user info on the profile card safely
+                document.getElementById("displayName").textContent = `Name: ${user.name || "Not set"}`;
+                document.getElementById("displayAge").textContent = `Age: ${user.age ? user.age + " years" : "0"}`;
+                document.getElementById("displayHeight").textContent = `Height: ${user.height ? user.height + " cm" : "0"}`;
+                document.getElementById("displayWeight").textContent = `Weight: ${user.weight ? user.weight + " kg" : "0"}`;
+                document.getElementById("displayBMR").textContent = `BMR: ${user.bmr ? user.bmr + " kcal/day" : "0"}`;
+                document.getElementById("displayActivityLevel").textContent = `Activity Level: ${user.activityLevel || "Not set"}`;
+                document.getElementById("displayTDEE").textContent = `TDEE: ${user.tdee ? user.tdee + " kcal/day" : "0"}`;
+            }
+
     if (editProfileBtn) { //edit profile
         editProfileBtn.addEventListener("click", (event) => {
             event.preventDefault();
@@ -35,19 +60,27 @@ document.addEventListener("DOMContentLoaded", () => {
             const userSession = sessionStorage.getItem("user");
             if (userSession) {
             const user = JSON.parse(userSession);
-
-            // If your user object has a saved unit system preference (e.g., "metric")
-            if (user & user.unitSystem) {
-            unitSelect.value = user.unitSystem;
+            document.getElementById("name").value = user.name || "";
+            document.getElementById("age").value = user.age || "";
+            if (user.height && user.weight) {
+                if (unitSelect.value === "metric") {
+                    document.getElementById("cm").value = user.height || 0;
+                    document.getElementById("kg").value = user.weight || 0;
+                } else {
+                    const totalInches = user.height / 2.54;
+                    const feet = Math.floor(totalInches / 12);
+                    const inches = Math.round(totalInches % 12);
+                    document.getElementById("feet").value = feet;
+                    document.getElementById("inches").value = inches;
+                    document.getElementById("lbs").value = Math.round(user.weight * 2.20462);
+                }
             }
-            }
+        }
 
-            // 1. Listen for whenever the user changes the dropdown option
             if (unitSelect) {
             unitSelect.addEventListener("change", updateUnits);
             }
 
-            // 2. Run it immediately on page load to match the initial default dropdown state
             updateUnits();
             });
 
@@ -88,7 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (saveProfileBtn) {
             saveProfileBtn.addEventListener("click", (event) => {
                 event.preventDefault();
-                console.log("Profile saved! (This is where you'd implement the actual save logic.)");
                 profileCardDisplay.style.display = "block";
                 profileCardEdit.style.display = "none";
             });

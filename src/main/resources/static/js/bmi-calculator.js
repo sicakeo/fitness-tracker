@@ -1,4 +1,4 @@
-const USER_API_URL = "http://localhost:8080/users/api"
+const USER_API_URL = "http://localhost:8080/api/users"
 import { isLoggedIn, logout } from "./login.js";
 import { calculateBMI } from "./fitnessMath.js";
 document.addEventListener("DOMContentLoaded", () => {
@@ -88,8 +88,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (userSession) {
                     const user = JSON.parse(userSession);
 
-                    //Update the properties on your local session object instance
-                    user.bmi = bmi; 
                     // If they are using metric inputs, you can sync their raw height/weight too!
                     if (unitSelect === "metric") {
                         user.height = parseFloat(document.getElementById("cm").value) || user.height;
@@ -106,8 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     sessionStorage.setItem("user", JSON.stringify(user));
 
                     //Send the entire user object payload to your new unified sync endpoint
-                    fetch(`${USER_API_URL}/sync-profile`, {
-                        method: "POST",
+                    fetch(`${USER_API_URL}/${user.id}`, {
+                        method: "PUT",
                         headers: {
                             "Content-Type": "application/json"
                         },

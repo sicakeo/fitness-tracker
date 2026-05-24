@@ -36,56 +36,63 @@ public class UserController{
 
     @PostMapping("/login")
     public ResponseEntity<Object> loginUser(@RequestBody User loginRequest){
-    User user = userService.findByUsername(loginRequest.getUsername());
+        User user = userService.findByUsername(loginRequest.getUsername());
 
-    // TEMPORARY DEBUG LOGS
-    System.out.println("From Frontend DB Request -> User: '" + loginRequest.getUsername() + "' Pass: '" + loginRequest.getPassword() + "'");
-    if (user != null) {
-        System.out.println("From MySQL Database Row -> User: '" + user.getUsername() + "' Pass: '" + user.getPassword() + "'");
-    } else {
-        System.out.println("User was NOT found in the database at all!");
-    }
+        // TEMPORARY DEBUG LOGS
+        System.out.println("From Frontend DB Request -> User: '" + loginRequest.getUsername() + "' Pass: '" + loginRequest.getPassword() + "'");
+        if (user != null) {
+            System.out.println("From MySQL Database Row -> User: '" + user.getUsername() + "' Pass: '" + user.getPassword() + "'");
+        } else {
+            System.out.println("User was NOT found in the database at all!");
+        }
 
-    if (user != null && user.getPassword().equals(loginRequest.getPassword())) {
-        return ResponseEntity.ok(user);
-    }
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your username or password is incorrect");
+        if (user != null && user.getPassword().equals(loginRequest.getPassword())) {
+            return ResponseEntity.ok(user);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your username or password is incorrect");
     }
     
 
-   public ResponseEntity<User> updateUser(Long id, User incomingData) {
-    User existingUser = userService.getUserById(id);
+   @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User incomingData) {
+        User existingUser = userService.getUserById(id);
 
-    if (incomingData.getHeight() != null) {
-        existingUser.setHeight(incomingData.getHeight());
-    }
-    if (incomingData.getWeight() != null) {
-        existingUser.setWeight(incomingData.getWeight());
-    }
-    if (incomingData.getBmr() != null) {
-        existingUser.setBmr(incomingData.getBmr());
-    }
-    if (incomingData.getActivityLevel() != null) {
-        existingUser.setActivityLevel(incomingData.getActivityLevel());
-    }
+        if (incomingData.getHeight() != null) {
+            existingUser.setHeight(incomingData.getHeight());
+        }
+        if (incomingData.getWeight() != null) {
+            existingUser.setWeight(incomingData.getWeight());
+        }
+        if (incomingData.getTdee() != null) {
+            existingUser.setTdee(incomingData.getTdee());
+        }
+        if (incomingData.getAge() != null) {
+            existingUser.setAge(incomingData.getAge());
+        }
+        if (incomingData.getFitnessGoal() != null) {
+            existingUser.setFitnessGoal(incomingData.getFitnessGoal());
+        }
+        if (incomingData.getActivityLevel() != null) {
+            existingUser.setActivityLevel(incomingData.getActivityLevel());
+        }
 
-    if (incomingData.getName() != null) {
-        existingUser.setName(incomingData.getName());
-    }
-    if (incomingData.getGender() != null) {
-        existingUser.setGender(incomingData.getGender());
-    }
+        if (incomingData.getName() != null) {
+            existingUser.setName(incomingData.getName());
+        }
+        if (incomingData.getGender() != null) {
+            existingUser.setGender(incomingData.getGender());
+        }
 
-    if (incomingData.getUsername() != null && !incomingData.getUsername().isBlank()) {
-        existingUser.setUsername(incomingData.getUsername());
-    }
-    if (incomingData.getEmail() != null && !incomingData.getEmail().isBlank()) {
-        existingUser.setEmail(incomingData.getEmail());
-    }
+        if (incomingData.getUsername() != null && !incomingData.getUsername().isBlank()) {
+            existingUser.setUsername(incomingData.getUsername());
+        }
+        if (incomingData.getEmail() != null && !incomingData.getEmail().isBlank()) {
+            existingUser.setEmail(incomingData.getEmail());
+        }
 
-    userService.saveUser(existingUser);
-    return ResponseEntity.ok(existingUser);
-}
+        userService.saveUser(existingUser);
+        return ResponseEntity.ok(existingUser);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id){
