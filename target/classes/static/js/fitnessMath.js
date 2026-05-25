@@ -20,5 +20,12 @@ export function calculateBMR(unitSelect, weight, height, age, gender){
         // Convert weight from lbs to kg and height from inches to cm for BMR calculation
         weight = weight / 2.20462; // Convert lbs to kg
         height = height * 2.54; // Convert inches to cm
-    }
+    } 
+    return 10 * weight + 6.25 * height - 5 * age + (gender === "M" ? 5 : -161);  
 }
+
+export function calculateTDEE(bmr, activityLevel){
+    if (activityLevel) return bmr * activityLevel;
+    return bmr;
+}
+

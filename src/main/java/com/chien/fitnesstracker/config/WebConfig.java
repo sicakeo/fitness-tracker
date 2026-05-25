@@ -29,6 +29,8 @@ public class WebConfig implements WebMvcConfigurer {
         
         registry.addViewController("/bmi-calculator").setViewName("forward:/bmi-calculator.html");
 
+        registry.addViewController("/bmr-calculator").setViewName("forward:/bmr-calculator.html");
+
         registry.addViewController("/profile").setViewName("forward:/profile.html");
 
         registry.addViewController("/home").setViewName("forward:/home.html");

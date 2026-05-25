@@ -1,6 +1,7 @@
 package com.chien.fitnesstracker.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -43,6 +44,7 @@ public class User {
     private Double tdee;
 
     @Column(name = "age")
+    @Min(value = 0, message = "Age must be a positive number.")
     private Integer age;
 
     @NotNull(message = "Email is required")
@@ -50,5 +52,6 @@ public class User {
     private String email;
 
     @Column(name = "activity_level")
+    @Min(value = 0, message = "Activity level must be a positive number.")
     private Double activityLevel;
 }

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BMI Calculator</title>
+</head>
+<body>
+  <div class = "nav-container">
+            <nav class ="nav-menu">
+                <ul id = "nav-list" class ='nav-menu'>
+                    <ul><a href = "/">Home</a></ul>
+                    <ul><a href = "/about">About Us</a></ul>
+                    <ul><a href = "/profile" >User Profile</a></ul>
+                    <ul><a href = "/bmi-calculator">BMI Calculator</a></ul>
+                    <ul><a href = "/bmr-calculator">BMR Calculator</a></ul>
+                </ul>
+
+                <div id = "nav-right" class="nav-menu">
+                    <div id = "loginBtn">
+                        <a href = "/login">Login</a>
+                    </div>
+
+                    <div id = "registerBtn">
+                        <a href = "/register">Signup</a>
+                    </div>
+                </div>
+            </nav>
+      </div>
+
+  <main class = "bmr-container">
+    <div class = "bmr-card">
+      <div class = "bmr-header">
+        <h2>BMR Calculator</h2>
+      </div>
+
+      <div class = "bmr-content">
+        <div class = "toggle">
+          <button type = "submit" id = "standard-btn" style ="background-color: green">Standard</button>
+          <button type = "submit" id = "metric-btn" style = "background-color: gray">Metric</button>
+        </div>
+
+        <form id="bmr-form" novalidate>
+            <div class="input-group-row" id = "gender-group">
+              <label for="gender">Gender:</label>
+              <select id="gender" required>
+                <option value="" disabled selected>Select your gender</option>
+                <option value="M">Male</option>              
+                <option value="F">Female</option>
+              </select>
+            </div>
+
+            <div class="input-group-row" id = "age-group">
+              <input type="number" id="age" inputmode="numeric" placeholder="Age" required>
+              <span class="unit-label">Years</span>
+            </div>
+
+            <div class="form-row">
+            <label class="row-label">Height</label>
+            <div id="standard-height-group" class="input-group-row">
+              <input type="number" id="feet" inputmode="numeric"  required>
+              <span class="unit-label">Feet</span>
+
+              <input type="number" id="inches" inputmode="numeric" required>
+              <span class="unit-label">Inches</span>
+            </div>
+
+            <div id="metric-height-group" class="input-group-row hidden" style = "display: none">
+              <input type="number" id="cm" inputmode="numeric"  required>
+              <span class="unit-label">Cm</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="row-label">Weight</label>
+
+            <div class="input-group-row">
+              <div id = "standard-weight-group" class="input-group-row">
+                <input type="number" id="lbs" inputmode="decimal" required>
+                <span id="standard-weight-unit" class="unit-label">Pounds</span>
+              </div>
+
+              <div id = "metric-weight-group" class="input-group-row hidden"  style = "display: none">
+                <input type="number" id="kg" inputmode="decimal"  required>
+                <span id="metric-weight-unit" class="unit-label">Kilogram</span>
+              </div>
+            </div>
+          </div>
+          <button type = "submit" id = "submit">Calculate</button>
+        </form>
+
+        <div class = "bmr-result" >
+          <h2>Your BMR Result:</h2>
+          <lable id = "resultMessage">BMR = 0.0 kcal/day</lable>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script type="module" src = "js/bmr-calculator.js"></script>
+</body>
+</html>
