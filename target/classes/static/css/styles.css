@@ -1,26 +1,300 @@
+/* ==========================================
+   1. GLOBAL RESET & NAVIGATION CONTAINERS
+   ========================================== */
 body {
     font-family: Arial, sans-serif;
     background-color: #ededf3;
     color: #333;
     margin: 0;
-    text-align: 20px;
-    padding: 20px;
+    padding: 0;
+    & h1, h2, h3, h4, h5, h6 {
+        text-align: center;
+        margin-top: 50px;
+    }
 }
 
+a {
+    text-decoration: none;
+    color: #333;
+}
+
+.nav-container {
+    width: 100%;
+    border-bottom: 2px solid #ccc;         
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px; 
+    box-sizing: border-box;
+    background-color: #fff; /* Ensure it has a background color */
+
+    position: relative; /* Establishes a new stacking context for the dropdown */
+}
+
+/* Fixed Bracket here to close properly */
 #nav-list {
     display: flex;
-    gap: 20px;           
-    list-style: none;    
-    padding: 0;
-    text-align: center;
-    margin: 5;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: rgb(195, 204, 209);
+    list-style: none;
+    padding: 0 5%;
+    margin: 0;
+    font-size: 15px;
+    gap: 40px;
     color: #333;
+    height: 80px;
+    align-items: center;
+}
+
+#navMenu {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1; /* Allows the center menu wrapper to take up available space */
+   .dropdown-parent {
+        position: relative; /* 👈 This is the missing link! */
+    }
+
+    #toolDropdownMenu {
+        display: none; 
+        list-style: none;
+        position: absolute;
+        top: 100%; /* Pushes it right below the parent text line height */
+        left: 0;   /* Aligns exactly with the 'T' in Tools */
+        background-color: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        padding: 10px 10px;
+        z-index: 1000;
+    }
+
+    /* 3. Your hover trigger rule (Make sure it matches the parent name) */
+    .dropdown-parent:hover #toolDropdownMenu {
+        display: block; 
+    }
+
+    & a:hover {
+        color: #1083EA;
+    }
+}
+/* ==========================================
+   2. BUTTONS & RIGHT ALIGNMENT (Pulled OUT of #nav-list)
+   ========================================== */
+#nav-right {
+    margin-right: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    & a {
+        text-decoration: none;
+        font-size: 20px;
+        padding: 8px 16px;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+    & a:hover {
+        background-color: #ddd;
+    }
+}
+
+/* Target the specific links inside the button containers directly */
+#loginBtn a {
+    color: #1083EA;
+}
+
+#registerBtn a {
+    color: white;
+    background-color: #1083EA;
 }
 
 .logout-text {
     color: blue;
     text-decoration: underline;
     cursor: pointer; 
+}
+
+/* ==========================================
+   3. HERO CONTENT SECTION
+   ========================================== */
+#welcomeSection {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    align-items: center; 
+    gap: 50px; 
+    padding: 60px 10%; 
+    margin-left: 10%;
+    background-color: #ededf3;
+}
+
+.heading-title h1 {
+    font-family: 'Arial Black', Arial, Helvetica, sans-serif;
+    font-size: 64px; 
+    line-height: 1.1;
+    margin: 0 0 10px 0;
+    color: #111;
+}
+
+.heading-title h1.blue-text {
+    color: #1083EA;
+}
+
+.welcome-text-container p {
+    font-family: Arial, sans-serif;
+    font-size: 25px;
+    color: #555;
+    margin-top: 20px;
+}
+
+/* ==========================================
+   4. RESPONSIVE MOBILE HAMBURGER MENU
+   ========================================== */
+.hamburger {
+    display: none; /* Hidden on desktop */
+    flex-direction: column;
+    justify-content: center; /* Vertically centers lines */
+    align-items: center;     /* Horizontally centers lines */
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 35px;  
+    height: 35px; 
+    padding: 0;
+}
+
+.hamburger span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+}
+
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex; /* Triggers button flex rendering */
+    }
+
+    #navMenu {
+        display: none; /* Kept default hidden */
+        flex-direction: column;
+        gap: 20px; /* Gives nice vertical spacing between each nav option */
+        background-color: #ffffff; /* Cleaner solid white box look */
+        
+        position: absolute;
+        top: 100%; /* Automatically pushes down perfectly right below the border line */
+        right: 0;
+        width: 100%; /* Stretches menu box fully across the screen width */
+        
+        padding: 30px 0; /* Vertical breathing room padding inside the open drawer */
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05); /* Soft premium shadow boundary */
+        z-index: 999; /* Forces dropdown box directly over the headline text layer */
+    }
+
+    #nav-list {
+        flex-direction: column;
+        align-items: center;
+        font-size: 15px;
+        gap: 10px;
+        height: auto; /* Allow menu list to shrink wrap items */
+        padding: 0;
+    }
+
+    #nav-right {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        margin-right: 0;
+        & a {
+            font-size: 15px;
+        }
+    }
+
+    .nav-menu.active {
+        display: flex; 
+    }
+
+    #welcomeSection {
+        grid-template-columns: 1fr; /* Stack layout vertically on mobile */
+        text-align: center;
+        padding: 40px 5%;
+    }
+    
+    .heading-title h1 {
+        font-size: 40px; /* Resize text so it fits small displays */
+    }
+}
+
+/* ==========================================
+   5. CARD COMPONENTS (BMI & BMR Calculators)
+   ========================================== */
+
+[class*="-card"]{
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 30px 30px;
+    max-width: 500px;
+    margin: 50px auto;
+    font-family: Arial, sans-serif;
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+   
+    .toggle{
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        button {
+            padding: 10px 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: green;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+    }
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        label {
+            font-size: 14px;
+            color: #555;
+        }
+        input {
+            padding: 3px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #f3efefb1;
+        }
+        button {
+            padding: 10px;
+            width: 40%;
+            align-self: center;
+            border: none;
+            border-radius: 4px;
+            background-color: #1083EA;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #f3efefb1;
+        }
+    }
+
+    [class*="-result"] {
+        margin-top: 10px;
+        padding: 15px;
+        background-color: #f0f0f0;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 16px;
+    }
 }

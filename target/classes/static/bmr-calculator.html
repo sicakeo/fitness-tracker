@@ -2,30 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>BMI Calculator</title>
+    <title>BMR Calculator</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class = "nav-container">
-            <nav class ="nav-menu">
-                <ul id = "nav-list" class ='nav-menu'>
-                    <ul><a href = "/">Home</a></ul>
-                    <ul><a href = "/about">About Us</a></ul>
-                    <ul><a href = "/profile" >User Profile</a></ul>
-                    <ul><a href = "/bmi-calculator">BMI Calculator</a></ul>
-                    <ul><a href = "/bmr-calculator">BMR Calculator</a></ul>
-                </ul>
+    <div class="nav-container">
+        <button class="hamburger" id="hamburgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
 
-                <div id = "nav-right" class="nav-menu">
-                    <div id = "loginBtn">
-                        <a href = "/login">Login</a>
-                    </div>
+        <nav class="nav-menu" id="navMenu">
+            <ul id="nav-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About Us</a></li>
+            
+                <li id="toolDropdown" class="dropdown-parent">
+                    <a href="#">Tools</a>
+                    <ul id="toolDropdownMenu">
+                        <li><a href="/bmi-calculator">BMI Calculator</a></li>
+                        <li><a href="/bmr-calculator">BMR Calculator</a></li>
+                        <li><a href="/tdee-calculator">TDEE Calculator</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
 
-                    <div id = "registerBtn">
-                        <a href = "/register">Signup</a>
-                    </div>
-                </div>
-            </nav>
-      </div>
+        <div id="nav-right">
+            <div id="loginBtn">
+                <a href="/login">Login</a>
+            </div>
+            <div id="registerBtn">
+                <a href="/register">Signup</a>
+            </div>
+        </div>
+    </div>
 
   <main class = "bmr-container">
     <div class = "bmr-card">
@@ -50,7 +62,7 @@
             </div>
 
             <div class="input-group-row" id = "age-group">
-              <input type="number" id="age" inputmode="numeric" placeholder="Age" required>
+              <input type="number" id="age" inputmode="numeric" required>
               <span class="unit-label">Years</span>
             </div>
 
@@ -95,6 +107,7 @@
       </div>
     </div>
   </main>
+  <script type="module" src = "js/navbar.js"></script>
   <script type="module" src = "js/bmr-calculator.js"></script>
 </body>
 </html>

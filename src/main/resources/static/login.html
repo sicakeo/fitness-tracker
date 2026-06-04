@@ -2,19 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Login</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
-    <div class = "nav-container">
-            <nav class ="nav-menu">
-                <ul id = "nav-list" class ='nav-menu'>
-                    <ul><a href = "/">Home</a></ul>
-                    <ul><a href = "/about">About Us</a></ul>
-                    <ul><a href = "/profile" >User Profile</a></ul>
-                    <ul><a href = "/bmi-calculator">BMI Calculator</a></ul>
-                    <ul><a href = "/bmr-calculator">BMR Calculator</a></ul>
-                </ul>
-            </nav>
-        </div>
+    <div class="nav-container">
+        <button class="hamburger" id="hamburgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <nav class="nav-menu" id="navMenu">
+            <ul id="nav-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li id="toolDropdown" class="dropdown-parent">
+                    <a href="#">Tools</a>
+                    <ul id="toolDropdownMenu">
+                        <li><a href="/bmi-calculator">BMI Calculator</a></li>
+                        <li><a href="/bmr-calculator">BMR Calculator</a></li>
+                        <li><a href="/tdee-calculator">TDEE Calculator</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
     <body>
 
     <div id = "loginContainer" class = "login-container">
@@ -34,10 +46,11 @@
                 <div class = "form-group">
                     <button type = "submit" id = "loginButton">Login</button>
                 </div>
-                <p>New User? Register <a href="/register">here</a></p>
+                <p>New User? Register <a href="/register" style = "color: #007bff">here</a></p>
             </form>
         </section>
     </div>
+    <script type="module" src = "js/navbar.js"></script>
     <script type ="module" src="js/login.js"></script>
 </body>
 </html>

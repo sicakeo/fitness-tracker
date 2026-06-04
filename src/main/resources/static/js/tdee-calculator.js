@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("cm").value = height.toFixed(2);
             document.getElementById("kg").value = weight.toFixed(2);
             document.getElementById("age").value = user.age || "";
-            document.getElementById("gender").value = user.gender || "";
+            document.getElementById("gender").value = user.gender === 'M' ? "Male" : "Female" || "";
         }
     }
     
@@ -56,12 +56,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     
 
-    const bmrForm = document.getElementById("bmr-form");
-    if (bmrForm) {
-        bmrForm.addEventListener("submit", (event) => {
+    const tdeeForm = document.getElementById("tdee-form");
+    if (tdeeForm) {
+        tdeeForm.addEventListener("submit", (event) => {
             event.preventDefault(); 
 
-            //calculate BMR
+            //calculate TDEE
             let height = 0;
             let weight = 0;
             if (unitSelect === "standard") {
@@ -77,9 +77,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const age = parseInt(document.getElementById("age").value) || 0;
             const gender = document.getElementById("gender").value.trim().toLowerCase();
+            const activityLevel = parseFloat(document.getElementById("activityLevel").value) || 0;
             const bmr = calculateBMR(unitSelect, weight, height, age, gender);
-            if (bmr>0) {
-                document.getElementById("resultMessage").innerHTML = `BMR = ${bmr.toFixed(2)} kcal/day`;
+            const tdee = activityLevel ? bmr * activityLevel : bmr;
+             if (tdee>0) {
+                document.getElementById("resultMessage").innerHTML = `TDEE = ${tdee.toFixed(2)} kcal/day`;
             } else {
                 document.getElementById("resultMessage").innerHTML = "Please enter valid values.";
             }
@@ -92,7 +94,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     weight: unitSelect === "standard" ? weight * 0.453592 : weight, 
                     height: unitSelect === "standard" ? height * 2.54 : height, 
                     age: age,
-                    gender: gender
+                    gender: gender,
+                    activityLevel: activityLevel,
+                    tdee: tdee
                 };
                 sessionStorage.setItem("user", JSON.stringify(updatedUser));
 

@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const age = parseInt(document.getElementById("age").value) || 0;
             const gender = document.getElementById("gender").value.trim().toLowerCase();
             const bmr = calculateBMR(unitSelect, weight, height, age, gender);
-            if (bmr) {
+            if (bmr>0) {
                 document.getElementById("resultMessage").innerHTML = `BMR = ${bmr.toFixed(2)} kcal/day`;
             } else {
                 document.getElementById("resultMessage").innerHTML = "Please enter valid values.";

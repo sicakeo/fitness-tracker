@@ -6,11 +6,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const standard = document.getElementById("standard-btn");
     const metric = document.getElementById("metric-btn");
     if(!isLoggedIn()){
-        if(document.getElementById("feet")) document.getElementById("feet").value = "0";
-        if(document.getElementById("inches")) document.getElementById("inches").value = "0";
-        if(document.getElementById("lbs")) document.getElementById("lbs").value = "0";
-        if(document.getElementById("kg")) document.getElementById("kg").value = "0";
-        if(document.getElementById("cm")) document.getElementById("cm").value = "0";
+        if(document.getElementById("feet")) document.getElementById("feet").value = "";
+        if(document.getElementById("inches")) document.getElementById("inches").value = "";
+        if(document.getElementById("lbs")) document.getElementById("lbs").value = "";
+        if(document.getElementById("kg")) document.getElementById("kg").value = "";
+        if(document.getElementById("cm")) document.getElementById("cm").value = "";
     } else{
         const navRight = document.getElementById("nav-right");
         navRight.innerHTML = `<li><span id="signOutLink" class="logout-text">Sign out</span></li>`;
@@ -62,14 +62,14 @@ document.addEventListener("DOMContentLoaded", () => {
             let height = 0;
             let weight = 0;
             if (unitSelect === "standard") {
-                const feet = parseFloat(document.getElementById("feet").value) || 0;
+                const feet = parseFloat(document.getElementById("feet").value) || "";
                 const inches = parseFloat(document.getElementById("inches").value) || 0;
                
                 height = (feet * 12) + inches; 
-                weight = parseFloat(document.getElementById("lbs").value) || 0;
+                weight = parseFloat(document.getElementById("lbs").value) || "";
             } else {
-                height = parseFloat(document.getElementById("cm").value) || 0;
-                weight = parseFloat(document.getElementById("kg").value) || 0;
+                height = parseFloat(document.getElementById("cm").value) || "";
+                weight = parseFloat(document.getElementById("kg").value) || "";
             }
             const userSession = sessionStorage.getItem("user");
             if (userSession) {
@@ -102,15 +102,33 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const bmi = calculateBMI(unitSelect, weight, height);
-            if (bmi) {
+            if (bmi>0) {
                 document.getElementById("resultMessage").innerHTML = `BMI = ${bmi.toFixed(2)} kg/m<sup>2</sup>`;
+                displayBmi(bmi);
             } else {
                 document.getElementById("resultMessage").innerHTML = "Please enter valid values.";
             }
             
-            
-
         });
     }
 });
 
+
+function displayBmi(bmiValue) {
+    const minBmi = 18.5;
+    const maxBmi = 40;
+    // Clamp the value so low or high scores don't break our container bounds
+    let clampedBmi = Math.max(minBmi, Math.min(bmiValue, maxBmi));
+    
+    // Calculate your decimal ratio scale index (0.0 to 1.0)
+    let percentage = (clampedBmi - minBmi) / (maxBmi - minBmi);
+    
+    // Convert to percentage form string
+    let widthPercent = (percentage * 100) + "%";
+    
+    // Select the fill track and update its CSS width property directly
+    const scaleFill = document.getElementById("bmiScaleFill");
+    if (scaleFill) {
+        scaleFill.style.width = widthPercent;
+    }
+}

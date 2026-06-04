@@ -2,32 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>BMR Calculator</title>
+    <title>BMI Calculator</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/bmi.css">
 </head>
 <body>
-  <div class = "nav-container">
-            <nav class ="nav-menu">
-                <ul id = "nav-list" class ='nav-menu'>
-                    <ul><a href = "/">Home</a></ul>
-                    <ul><a href = "/about">About Us</a></ul>
-                    <ul><a href = "/profile" >User Profile</a></ul>
-                    <ul><a href = "/bmi-calculator">BMI Calculator</a></ul>
-                    <ul><a href = "/bmr-calculator">BMR Calculator</a></ul>
-                </ul>
+      <div class="nav-container">
+        <button class="hamburger" id="hamburgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
 
-                <div id = "nav-right" class="nav-menu">
-                    <div id = "loginBtn">
-                        <a href = "/login">Login</a>
-                    </div>
+        <nav class="nav-menu" id="navMenu">
+            <ul id="nav-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About Us</a></li>
+            
+                <li id="toolDropdown" class="dropdown-parent">
+                    <a href="#">Tools</a>
+                    <ul id="toolDropdownMenu">
+                        <li><a href="/bmi-calculator">BMI Calculator</a></li>
+                        <li><a href="/bmr-calculator">BMR Calculator</a></li>
+                        <li><a href="/tdee-calculator">TDEE Calculator</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
 
-                    <div id = "registerBtn">
-                        <a href = "/register">Signup</a>
-                    </div>
-                </div>
-            </nav>
+        <div id="nav-right">
+            <div id="loginBtn">
+                <a href="/login">Login</a>
+            </div>
+            <div id="registerBtn">
+                <a href="/register">Signup</a>
+            </div>
+        </div>
       </div>
 
-  <main class = "bmi-container">
     <div class = "bmi-card">
       <div class = "bmi-header">
         <h2>BMI Calculator</h2>
@@ -44,15 +56,15 @@
             <label class="row-label">Height</label>
 
             <div id="standard-height-group" class="input-group-row">
-              <input type="number" id="feet" inputmode="numeric" placeholder="0" required>
+              <input type="number" id="feet" inputmode="numeric" required>
               <span class="unit-label">Feet</span>
 
-              <input type="number" id="inches" inputmode="numeric" placeholder="0" required>
+              <input type="number" id="inches" inputmode="numeric" required>
               <span class="unit-label">Inches</span>
             </div>
 
             <div id="metric-height-group" class="input-group-row hidden" style = "display: none">
-              <input type="number" id="cm" inputmode="numeric" placeholder="0" required>
+              <input type="number" id="cm" inputmode="numeric" required>
               <span class="unit-label">Cm</span>
             </div>
           </div>
@@ -62,12 +74,12 @@
 
             <div class="input-group-row">
               <div id = "standard-weight-group" class="input-group-row">
-                <input type="number" id="lbs" inputmode="decimal" placeholder="0" required>
+                <input type="number" id="lbs" inputmode="decimal" required>
                 <span id="standard-weight-unit" class="unit-label">Pounds</span>
               </div>
 
               <div id = "metric-weight-group" class="input-group-row hidden"  style = "display: none">
-                <input type="number" id="kg" inputmode="decimal" placeholder="0" required>
+                <input type="number" id="kg" inputmode="decimal" required>
                 <span id="metric-weight-unit" class="unit-label">Kilogram</span>
               </div>
             </div>
@@ -80,9 +92,15 @@
           <h2>Your BMI Result:</h2>
           <lable id = "resultMessage">BMI = 0.0 kg/m<sup>2</sup></lable>
         </div>
-      </div>
+
+        <div class="bmi-scale-container">
+            <div class="bmi-scale-track">
+                <div class="bmi-scale-fill" id="bmiScaleFill">
+                <div class="bmi-scale-pointer">➔</div>
+            </div>
+        </div>
     </div>
-  </main>
+  <script type="module" src = "js/navbar.js"></script>
   <script type="module" src = "js/bmi-calculator.js"></script>
 </body>
 </html>

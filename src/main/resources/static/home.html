@@ -7,16 +7,31 @@
      <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class = "nav-container">
-        <nav class ="nav-menu">
-            <li><a href="/home">Home</a></li>
-            <li><a href="/profile">User Profile</a></li>
-            <li><a href="/bmi-calculator">BMI Calculator</a></li>
-            <li><a href="/bmr-calculator">BMR Calculator</a></li>
-            <li><span id="signOutLink" class="logout-text">Sign out</span></li>
+    <div class="nav-container">
+        <button class="hamburger" id="hamburgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
 
+        <nav class="nav-menu" id="navMenu">     
+            <ul id="nav-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/profile">User Profile</a></li>
+                <li id="toolDropdown" class="dropdown-parent">
+                    <a href="#">Tools</a>
+                    <ul id="toolDropdownMenu">
+                        <li><a href="/bmi-calculator">BMI Calculator</a></li>
+                        <li><a href="/bmr-calculator">BMR Calculator</a></li>
+                        <li><a href="/tdee-calculator">TDEE Calculator</a></li>
+                    </ul>
+                </li>
+                <li><span id="signOutLink" class="logout-text">Sign out</span></li>
+            </ul>
         </nav>
     </div>
-    <script type="module" src="js/home.js"></script>
+    <script type="module" src ="js/navbar.js"></script>
+    <script type="module" src ="js/home.js"></script>
 </body>
 </html>
