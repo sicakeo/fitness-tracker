@@ -56,13 +56,30 @@ a {
         display: none; 
         list-style: none;
         position: absolute;
-        top: 100%; /* Pushes it right below the parent text line height */
-        left: 0;   /* Aligns exactly with the 'T' in Tools */
         background-color: #fff;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        border-radius: 4px;
-        padding: 10px 10px;
+        border-radius: 5px;
+        padding: 10px 30px;
+        border-bottom: 2px solid #ccc; /* Matches the main nav border for visual consistency */
         z-index: 1000;
+
+        & li {
+        list-style: none;
+        padding: 12px 20px; /* Gives nice breathing room around links */
+        white-space: nowrap; /* 👈 CRITICAL: Stops "Calculator" from wrapping to a new line */
+        
+        /* Adds a subtle gray line beneath the items */
+        border-bottom: 1px solid #eee; 
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        }
+
+        & li:hover {
+            background-color: #f8f9fa; /* Optional: adds a soft gray background on hover */
+        }
     }
 
     /* 3. Your hover trigger rule (Make sure it matches the parent name) */
@@ -108,7 +125,6 @@ a {
 
 .logout-text {
     color: blue;
-    text-decoration: underline;
     cursor: pointer; 
 }
 
