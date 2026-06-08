@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TDEE Calculator</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="nav-container">
+    <button class="hamburger" id="hamburgerBtn">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <nav class="nav-menu" id="navMenu">
+        <ul id="nav-list">
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li id="toolDropdown" class="dropdown-parent">
+                <a href="#">Tools</a>
+                <ul id="toolDropdownMenu">
+                    <li><a href="/bmi-calculator">BMI Calculator</a></li>
+                    <li><a href="/bmr-calculator">BMR Calculator</a></li>
+                    <li><a href="/tdee-calculator">TDEE Calculator</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <div id="nav-right">
+        <div id="loginBtn">
+            <a href="/login">Login</a>
+        </div>
+        <div id="registerBtn">
+            <a href="/register">Signup</a>
+        </div>
+    </div>
+</div>
+
+  <main class = "tdee-container">
+    <div class = "tdee-card">
+      <div class = "tdee-header">
+        <h2>TDEE Calculator</h2>
+      </div>
+
+      <div class = "tdee-content">
+        <div class = "toggle">
+          <button type = "submit" id = "standard-btn" style ="background-color: green">Standard</button>
+          <button type = "submit" id = "metric-btn" style = "background-color: gray">Metric</button>
+        </div>
+
+        <form id="tdee-form" novalidate>
+            <div class="input-group-row" id = "gender-group">
+              <label for="gender">Gender:</label>
+              <select id="gender" required>
+                <option value="" disabled selected>Select your gender</option>
+                <option value="M">Male</option>              
+                <option value="F">Female</option>
+              </select>
+            </div>
+
+            <div class="input-group-row" id = "age-group">
+              <input type="number" id="age" inputmode="numeric" required>
+              <span class="unit-label">Years</span>
+            </div>
+
+            <div class="form-row">
+            <label class="row-label">Height</label>
+            <div id="standard-height-group" class="input-group-row">
+              <input type="number" id="feet" inputmode="numeric"  required>
+              <span class="unit-label">Feet</span>
+
+              <input type="number" id="inches" inputmode="numeric" required>
+              <span class="unit-label">Inches</span>
+            </div>
+
+            <div id="metric-height-group" class="input-group-row hidden" style = "display: none">
+              <input type="number" id="cm" inputmode="numeric"  required>
+              <span class="unit-label">Cm</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="row-label">Weight</label>
+
+            <div class="input-group-row">
+              <div id = "standard-weight-group" class="input-group-row">
+                <input type="number" id="lbs" inputmode="decimal" required>
+                <span id="standard-weight-unit" class="unit-label">Pounds</span>
+              </div>
+
+              <div id = "metric-weight-group" class="input-group-row hidden"  style = "display: none">
+                <input type="number" id="kg" inputmode="decimal"  required>
+                <span id="metric-weight-unit" class="unit-label">Kilogram</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+                <label for="activityLevel">Activity Level:</label>
+                <select id="activityLevel">
+                    <option value="" disabled selected>Select your activity level</option>
+                    <option value="1.2">Sedentary (little or no exercise)</option>
+                    <option value="1.375">Lightly active (light exercise/sports 1-3 days/week)</option>
+                    <option value="1.55">Moderately active (moderate exercise/sports 3-5 days/week)</option>
+                    <option value="1.725">Active (hard exercise/sports 6-7 days a week)</option>
+                    <option value="1.9">Very active (very hard exercise/sports & physical job or 2x training)</option>
+                </select>
+            </div>
+          </div>
+          <button type = "submit" id = "submit">Calculate</button>
+        </form>
+
+        <div class = "tdee-result" >
+          <h2>Your TDEE Result:</h2>
+          <lable id = "resultMessage">TDEE = 0.0 kcal/day</lable>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script type="module" src = "js/navbar.js"></script>
+  <script type="module" src = "js/tdee-calculator.js"></script>
+</body>
+</html>
