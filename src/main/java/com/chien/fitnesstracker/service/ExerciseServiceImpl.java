@@ -42,12 +42,9 @@ public class ExerciseServiceImpl implements ExerciseService {
     @Override
     public Exercise updateExercise(Long id, Exercise exerciseDetails) {
         Exercise exercise = getExercise(id);
-
         exercise.setName(exerciseDetails.getName());
-        exercise.setReps(exerciseDetails.getReps());
-        exercise.setSets(exerciseDetails.getSets());
-        exercise.setWorkout(exerciseDetails.getWorkout());
-        exercise.setWeight(exerciseDetails.getWeight());
+        exercise.setWorkoutType(exerciseDetails.getWorkoutType());
+        exercise.setMet(exerciseDetails.getMet());
         return exerciseRepository.save(exercise);
     }
 }

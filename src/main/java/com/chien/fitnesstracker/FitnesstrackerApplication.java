@@ -8,6 +8,6 @@ public class FitnesstrackerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(FitnesstrackerApplication.class, args);
-	}
+	}	
 
 }

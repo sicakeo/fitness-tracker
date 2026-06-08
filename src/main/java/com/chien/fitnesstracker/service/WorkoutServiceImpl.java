@@ -44,7 +44,13 @@ public class WorkoutServiceImpl implements WorkoutService {
     @Override
     public Workout updateWorkout(Long id, Workout workoutDetails) {
         Workout workout = getWorkoutById(workoutDetails.getId());
-        workout.setWorkoutType(workoutDetails.getWorkoutType());
+        workout.setExercise(workoutDetails.getExercise());
+        workout.setDuration(workoutDetails.getDuration());
+        workout.setDistance(workoutDetails.getDistance());
+        workout.setCalories(workoutDetails.getCalories());
+        workout.setReps(workoutDetails.getReps());
+        workout.setSets(workoutDetails.getSets());
+        workout.setWeight(workoutDetails.getWeight());
         workout.setDate(workoutDetails.getDate());
         workout.setUser(workoutDetails.getUser());
         return workoutRepository.save(workout);

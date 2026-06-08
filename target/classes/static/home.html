@@ -55,11 +55,11 @@
     <div id="workoutModal" class="modal-overlay hidden">
         <div class="modal-card">
             <h2>Log a New Workout</h2>
-            <form id="workoutForm">
+            <form id="workoutForm" novalidate>
                 <div class="form-group">
                     <label for="workoutType">Exercise Type:</label>
                     <select id="workoutType" required>
-                        <option value="">Select an exercise</option>
+                        <option value="" disabled selected>Select an exercise</option>
                         <option value="Running">Running</option>
                         <option value="Cycling">Cycling</option>
                         <option value="Swimming">Swimming</option>
@@ -88,13 +88,18 @@
                     <label for="weight">Weight (kg):</label>
                     <input type="number" id="weight" min="0" step="0.1">
                 </div>
+                <div class="form-group" hidden>
+                    <label for="intensity">Intensity:</label>
+                    <select id="intensity" required>
+                        <option value= "" disabled selected>Select intensity</option>
+                        <option value = "Light">Light</option>
+                        <option value = "Moderate">Moderate</option>
+                        <option value = "Heavy">Heavy</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="workoutDuration">Duration (minutes):</label>
                     <input type="number" id="workoutDuration" required min="1">
-                </div>
-                <div class="form-group">
-                    <label for="workoutCalories">Calories Burned:</label>
-                    <input type="number" id="workoutCalories" required min="0">
                 </div>
                 <div class="form-group">
                     <label for="workoutDate">Date:</label>
