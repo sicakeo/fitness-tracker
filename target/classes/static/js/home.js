@@ -91,17 +91,22 @@ async function submitWorkout(selectedType) {
 
     // Extract input string values safely
     const exerciseNameInput = document.getElementById("name") ? document.getElementById("name").value.trim() : "";
-    const intensityInput = document.getElementById("intensity") ? document.getElementById("intensity").value : "Moderate";
+    let intensityInput = document.getElementById("intensity") ? document.getElementById("intensity").value : "Moderate";
+    const distanceInput = document.getElementById("distance") ? document.getElementById("distance").value : "";
     const weightInput = document.getElementById("weight") ? document.getElementById("weight").value.trim() : "";
     const durationValue = parseInt(document.getElementById("workoutDuration").value) || 0;
     const dateValue = document.getElementById("workoutDate") ? document.getElementById("workoutDate").value : new Date().toISOString().split('T')[0];
 
+    if (selectedType === "Running" && distanceInput && durationValue){
+        const pace = distanceInput/(durationValue/60);
+        pace >= 8 ? intensityInput = "Light" : pace >= 9.6 ? intensityInput = "Moderate" : intensityInput = "Heavy";
+    }
     // 1. Get the accurate MET value using strings
-    const met = getMetValue(selectedType, intensityInput    );
+    const met = getMetValue(selectedType, intensityInput);
 
     // 2. Calculate calories burned using your formula right here before saving
     const calculatedCalories = Math.round(met * userWeight * (durationValue / 60));
-
+    console.log("Calories burned: ", calculatedCalories);
     // --- PHASE 1: BUILD & SAVE THE EXERCISE BLUEPRINT ---
     const exercisePayload = {
         user: {id: userId},
