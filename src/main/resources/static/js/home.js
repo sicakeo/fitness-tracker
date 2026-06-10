@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setupNavigation();
     setupFormToggling();
+    displayRing();
 });
 
 /**
@@ -159,6 +160,7 @@ async function submitWorkout(selectedType, fieldGroups) {
 
     const met = getMetValue(selectedType, intensityValue);
     const calculatedCalories = Math.round(met * userWeight * (durationValue / 60));
+    document.getElementById("netDisplay").setAttribute("data-target", calculatedCalories);
 
     // Phase 1 Payload Mapping
     const exercisePayload = {
@@ -203,6 +205,8 @@ async function submitWorkout(selectedType, fieldGroups) {
         if (!workoutResponse.ok) throw new Error("Failed to record active workout history profile.");
 
         alert("Workout logged successfully!");
+        if(calculatedCalories)
+            displayRing();
         location.reload();
 
     } catch (error) {
@@ -220,4 +224,47 @@ function getMetValue(workoutType, intensity) {
         return 3.5;
     }
     return MET_MATRIX[workoutType][intensity];
+}
+
+
+
+function displayRing(){
+    const netDisplay = document.getElementById("netCaloriesDisplay");
+    const targetDisplay = document.getElementById("targetCaloriesDisplay");
+    const circle = document.getElementById("calorieFillCircle");
+
+    // Parse target calorie numbers
+    const targetCalories = parseInt(targetDisplay.innerText);
+    const finalCalories = parseInt(netDisplay.getAttribute("data-target"));
+    
+    // Calculate the maximum stroke circumference based on radius (r=80)
+    const radius = circle.r.baseVal.value;
+    const circumference = 2 * Math.PI * radius; // Approx 502.65
+
+    let currentCalories = 0;
+    
+    // Determine animation speed based on how large the number is
+    const duration = 1000; // total animation time in ms
+    const steps = finalCalories; 
+    const stepTime = Math.max(duration / steps, 10); // Don't let interval go below 10ms
+
+    const interval = setInterval(() => {
+        if (currentCalories >= finalCalories) {
+            clearInterval(interval); // Stops the timer correctly
+            return;
+        }
+        
+        currentCalories += Math.ceil(finalCalories / 100); // Increments smoothly
+        if (currentCalories > finalCalories) currentCalories = finalCalories;
+
+        // 1. Update text display
+        netDisplay.innerText = currentCalories;
+
+        // 2. Calculate percentage and map to circle offset
+        const percentage = currentCalories / targetCalories;
+        // Ensure offset doesn't go negative if calories exceed target
+        const offset = circumference - (Math.min(percentage, 1) * circumference); 
+        
+        circle.style.strokeDashoffset = offset;
+    }, stepTime);
 }

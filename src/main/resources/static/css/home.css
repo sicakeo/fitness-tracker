@@ -1,41 +1,60 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #1a1a1a;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
 .calorie-ring-container {
     position: relative;
     width: 200px;
     height: 200px;
-    margin: 20px auto;
 }
 
 .progress-ring {
-    transform: rotate(-90deg); /* Rotates the SVG so the ring fills starting from the absolute top (12 o'clock) */
+    /* Rotates the ring -90 degrees so the animation starts at 12 o'clock */
+    transform: rotate(-90deg);
 }
 
-.progress-ring__track {
+.progress-ring circle {
     fill: transparent;
-    stroke: var(--border-color, #2d3748); /* Adapts perfectly to your new dark theme! */
 }
 
-.progress-ring__fill {
-    fill: transparent;
-    stroke: #2ecc71; /* Accent green color for matching progress */
-    stroke-linecap: round; /* Gives the ring edge a smooth, premium rounded look */
+/* The background track */
+.progress-ring .inner {
+    stroke: #333;
+}
+
+/* The moving progress bar */
+.progress-ring .outer {
+    stroke: #ff4757;
+    stroke-linecap: round;
+    /* 2 * PI * r (2 * 3.14159 * 80) = ~502.6 */
     stroke-dasharray: 502.6;
-    stroke-dashoffset: 502.6; /* Started at 502.6 means 0% filled */
-    transition: stroke-dashoffset 0.35s ease-in-out; /* Smooth animated fill transition */
+    stroke-dashoffset: 502.6; /* Starts empty */
+    transition: stroke-dashoffset 0.05s linear;
 }
 
+/* Centers the calorie text right in the middle of the ring */
 .ring-text-center {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    font-family: sans-serif;
 }
 
 #netCaloriesDisplay {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: bold;
     display: block;
+}
+
+small {
+    color: #aaa;
 }
 
 .startWorkout {

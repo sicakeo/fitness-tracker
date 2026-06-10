@@ -33,18 +33,16 @@
         </nav>
     </div>
 
-    <div class ="tdee-container">
-        <div class = "calorie-ring-container">
-            <div class = "calorie-ring">
-                <svg class="progress-ring" width="200" height="200">
-                    <circle class="progress-ring__track" cx="100" cy="100" r="80" stroke-width="16"></circle>
-                    <circle id="calorieFillCircle" class="progress-ring__fill" cx="100" cy="100" r="80" stroke-width="16"></circle>
-                </svg>
+    <div class = "calorie-ring-container">
+        <div class = "calorie-ring">
+            <svg class="progress-ring" width="200" height="200">
+                <circle class="inner" cx="100" cy="100" r="80" stroke-width="16"></circle>
+                <circle id="calorieFillCircle" class="outer" cx="100" cy="100" r="80" stroke-width="16"></circle>
+            </svg>
 
-                <div class="ring-text-center">
-                    <span id="netCaloriesDisplay">0</span>
-                    <small> / <span id="targetCaloriesDisplay">2200</span> kcal</small>
-                </div>
+            <div class="ring-text-center">
+                <span id="netCaloriesDisplay" data-target="0"></span>
+                <small> / <span id="targetCaloriesDisplay">2200</span> kcal</small>
             </div>
         </div>
     </div>
@@ -91,7 +89,7 @@
                 </div>
                 <div class="form-group" hidden>
                     <label for="intensity">Intensity:</label>
-                    <select id="intensity">
+                    <select id="intensity"  xml:base="">
                         <option value= "" disabled selected>Select intensity</option>
                         <option value = "Light">Light</option>
                         <option value = "Moderate">Moderate</option>
