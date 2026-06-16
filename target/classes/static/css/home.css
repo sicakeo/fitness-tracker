@@ -1,11 +1,24 @@
-body {
+#logoutBtn{
+    text-decoration: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    transition: background-color 0.3s ease;
+}
+
+#logoutBtn:hover {
+    background-color: #ddd;
+}
+
+#signOutLink{
+    text-decoration: none;
+    color: #1083EA;
+}
+.wrapper{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #1a1a1a;
     font-family: Arial, sans-serif;
-    color: white;
+    color: #1083EA;
 }
 
 .calorie-ring-container {
@@ -35,7 +48,7 @@ body {
     /* 2 * PI * r (2 * 3.14159 * 80) = ~502.6 */
     stroke-dasharray: 502.6;
     stroke-dashoffset: 502.6; /* Starts empty */
-    transition: stroke-dashoffset 0.05s linear;
+    transition: stroke-dashoffset 1s linear;
 }
 
 /* Centers the calorie text right in the middle of the ring */
@@ -54,7 +67,7 @@ body {
 }
 
 small {
-    color: #aaa;
+    color: #7b7a7a;
 }
 
 .startWorkout {
@@ -94,4 +107,27 @@ small {
     max-width: 400px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     margin-top: -100px; /* Slightly lifts the modal up for a more dynamic entrance */
+}
+
+#historyModal{
+    display: flex;
+    flex-direction: column;
+    margin-left: 5%;
+    box-sizing: border-box;
+    position: relative; /* Establishes a new stacking context for the dropdown */
+    max-width: 30%;
+    border-radius: 12px;
+    border: 2px solid #ddd;
+}
+
+.history-container{
+    min-height: 100px;
+    text-align: center;
+    display: flex;     
+    flex-direction: column; 
+    width: 100%;
+    h2{
+        margin-top: 0;
+        border-bottom: 2px solid #ddd;
+    }   
 }

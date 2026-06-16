@@ -13,11 +13,10 @@ const MET_MATRIX = {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-    if (!checkAuth()) return;
-
+    //if (!checkAuth()) return;
     setupNavigation();
     setupFormToggling();
-    displayRing();
+    loadTodayCaloriesRing()
 });
 
 /**
@@ -160,7 +159,10 @@ async function submitWorkout(selectedType, fieldGroups) {
 
     const met = getMetValue(selectedType, intensityValue);
     const calculatedCalories = Math.round(met * userWeight * (durationValue / 60));
-    document.getElementById("netDisplay").setAttribute("data-target", calculatedCalories);
+    const element = document.getElementById("netCaloriesDisplay");
+    if(element) element.setAttribute("data-target", calculatedCalories);
+    console.log("element", element.getAttribute("data-target"));
+``
 
     // Phase 1 Payload Mapping
     const exercisePayload = {
@@ -203,11 +205,18 @@ async function submitWorkout(selectedType, fieldGroups) {
         });
 
         if (!workoutResponse.ok) throw new Error("Failed to record active workout history profile.");
+        const netDisplay = document.getElementById("netCaloriesDisplay");
+        if (netDisplay) {
+            // Grab the current visible calories on screen (e.g., if they already had 200 kcal logged today)
+            const existingCalories = parseInt(netDisplay.innerText) || 0;
+            const updatedTotalTarget = existingCalories + calculatedCalories;
 
-        alert("Workout logged successfully!");
-        if(calculatedCalories)
-            displayRing();
-        location.reload();
+            // Update the data-target data boundary attribute link directly
+            netDisplay.setAttribute("data-target", updatedTotalTarget);
+        }
+
+        // --- TRIGGER ANIMATION LAYER WITHOUT RESETTING PAGE ---
+        displayRing();
 
     } catch (error) {
         console.error("Pipeline failure:", error);
@@ -244,19 +253,21 @@ function displayRing(){
     let currentCalories = 0;
     
     // Determine animation speed based on how large the number is
-    const duration = 1000; // total animation time in ms
+    const duration = 30000; // total animation time in ms
     const steps = finalCalories; 
     const stepTime = Math.max(duration / steps, 10); // Don't let interval go below 10ms
 
     const interval = setInterval(() => {
-        if (currentCalories >= finalCalories) {
-            clearInterval(interval); // Stops the timer correctly
+        if (finalCalories <= 0 || currentCalories >= finalCalories) {
+            netDisplay.innerText = finalCalories || 0;
+            clearInterval(interval);
             return;
         }
-        
-        currentCalories += Math.ceil(finalCalories / 100); // Increments smoothly
-        if (currentCalories > finalCalories) currentCalories = finalCalories;
 
+        const incrementStep = Math.max(Math.ceil(finalCalories / 50), 1);
+        currentCalories += incrementStep;
+
+        if (currentCalories > finalCalories) currentCalories = finalCalories;
         // 1. Update text display
         netDisplay.innerText = currentCalories;
 
@@ -267,4 +278,46 @@ function displayRing(){
         
         circle.style.strokeDashoffset = offset;
     }, stepTime);
+}
+
+
+/**
+ * Fetches total daily logged calories from backend and animates the progress ring
+ */
+async function loadTodayCaloriesRing() {
+    const userSession = sessionStorage.getItem("user");
+    if (!userSession) return;
+
+    const userObj = JSON.parse(userSession);
+    const userId = userObj.id;
+
+    // Generate current local system date in exact YYYY-MM-DD format
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    try {
+        // Fetch only the compiled integer sum directly from the endpoint
+        const response = await fetch(`${WORKOUT_API_URL}/today-calories?userId=${userId}&date=${todayStr}`);
+
+        if (!response.ok) throw new Error("Failed to sync calorie historical records.");
+
+        const totalCaloriesToday = await response.json();
+        console.log(`Total calories: ${totalCaloriesToday}`);
+        const netDisplay = document.getElementById("netCaloriesDisplay");
+        if (netDisplay) {
+            // Set the target attribute link that displayRing reads from
+            netDisplay.setAttribute("data-target", totalCaloriesToday);
+
+            // Run your animation engine cleanly!
+            displayRing();
+        }
+    } catch (error) {
+        console.error("Dashboard hydration error:", error);
+
+        // Quiet fallback fallback so the UI doesn't visually hang on network lag
+        const netDisplay = document.getElementById("netCaloriesDisplay");
+        if (netDisplay) {
+            netDisplay.setAttribute("data-target", "0");
+            displayRing();
+        }
+    }
 }

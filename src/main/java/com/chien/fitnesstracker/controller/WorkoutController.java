@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -43,4 +44,16 @@ public class WorkoutController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/today-calories")
+    public ResponseEntity<Double> getWorkoutsByDate(@RequestParam Long userId,@RequestParam String date){
+        java.time.LocalDate localDate = java.time.LocalDate.parse(date);
+        Double totalCalories = workoutService.getCaloriesToday(userId, localDate);
+        return ResponseEntity.ok(totalCalories);
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<Workout>> getWorkoutHistory(@RequestParam Long userId){
+        List<Workout> workouts= workoutService.getWorkoutsByUserId(userId);
+        return ResponseEntity.ok(workouts);
+    }
 }

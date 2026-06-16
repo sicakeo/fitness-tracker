@@ -55,4 +55,14 @@ public class WorkoutServiceImpl implements WorkoutService {
         workout.setUser(workoutDetails.getUser());
         return workoutRepository.save(workout);
     }
+
+    @Override
+    public Double getCaloriesToday(Long userId, LocalDate date) {
+        return workoutRepository.sumByCaloriesByUserIdAndDate(userId, date);
+    }
+
+    @Override
+    public List<Workout> getWorkoutsByUserId(Long userId) {
+        return workoutRepository.findByUserIdOrderByDateDesc(userId);
+    }
 }
