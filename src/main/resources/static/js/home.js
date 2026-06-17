@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupNavigation();
     setupFormToggling();
     loadTodayCaloriesRing()
+    loadTodayHistory()
 });
 
 /**
@@ -322,7 +323,7 @@ async function loadTodayCaloriesRing() {
     }
 }
 
-async function loadTodayWorkout() {
+async function loadTodayHistory() {
     const userSession = sessionStorage.getItem("user");
     if (!userSession) return;
     const userObj = JSON.parse(userSession);
@@ -332,22 +333,33 @@ async function loadTodayWorkout() {
         if (!response.ok) throw new Error("Failed to load history workout data.");
 
         const workoutHistory = await response.json();
-        const historyContainer = document.getElementById("dailyHistoryList");
-        if (historyContainer) {
-            historyContainer.innerHTML = ""; // Clear placeholders
+        const dailyHistoryList = document.getElementById("dailyHistoryList");
+        const previewHistoryContainer = document.getElementById("previewHistoryList");
+        const seeMoreBtn = document.getElementById("seeMoreBtn");
+        const historyModal = document.getElementById("historyModal");
+        if (dailyHistoryList) {
+            dailyHistoryList.innerHTML = ""; // Clear placeholders
 
             if (workoutHistory.length === 0) {
-                historyContainer.innerHTML = "<li>No workouts logged yet today.</li>";
+                dailyHistoryList.innerHTML = "<li>No workouts logged yet today.</li>";
             } else {
+                let counter = 0;
                 workoutHistory.forEach(workout => {
                     const li = document.createElement("li");
                     li.innerText = `${workout.exercise.name} - ${workout.duration} mins (${workout.calories} kcal)`;
-                    historyContainer.appendChild(li);
+                    dailyHistoryList.appendChild(li);
+                    if(counter<=1) previewHistoryContainer.appendChild(li);
+                    counter++;
                 });
+                if(seeMoreBtn) {
+                    seeMoreBtn.addEventListener("click", () =>{
+                        historyModal.classList.remove("hidden");
+                    })
+                }
             }
         }
-
     } catch (error) {
         console.error("Dashboard hydration error:", error);
     }
 }
+

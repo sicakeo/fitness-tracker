@@ -109,7 +109,7 @@ small {
     margin-top: -100px; /* Slightly lifts the modal up for a more dynamic entrance */
 }
 
-#historyModal{
+#historyDisplay {
     display: flex;
     flex-direction: column;
     margin-left: 5%;
@@ -129,5 +129,14 @@ small {
     h2{
         margin-top: 0;
         border-bottom: 2px solid #ddd;
-    }   
+    }
+
+    ul{
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
 }

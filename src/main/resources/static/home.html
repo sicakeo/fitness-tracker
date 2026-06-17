@@ -118,21 +118,23 @@
         </div>
     </div>
 
-    <div id="historyModal">
+    <div id="historyDisplay">
         <div class="history-container">
             <h2>History</h2>
-            <div id="workout">
-                <p>N/A</p>
-            </div>
+            <ul id="previewHistoryList" style="list-style-type: none;">
+                <li></li>
+            </ul>
             <div id="seeMoreBtn">
                 <span id="seeMoreLink" style = "text-decoration: underline">See More</span>
             </div>
         </div>
     </div>
 
-    <div id="workoutDisplay" class="modal-overlay hidden">
-        <ul id="dailyHistoryList">
-        </ul>
+    <div id="historyModal" class="modal-overlay hidden">
+        <div class="history-card">
+            <ul id="dailyHistoryList">
+            </ul>
+        </div>
     </div>
     <script type="module" src ="js/navbar.js"></script>
     <script type="module" src ="js/home.js"></script>
