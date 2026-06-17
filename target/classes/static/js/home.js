@@ -345,11 +345,18 @@ async function loadTodayHistory() {
             } else {
                 let counter = 0;
                 workoutHistory.forEach(workout => {
-                    const li = document.createElement("li");
-                    li.innerText = `${workout.exercise.name} - ${workout.duration} mins (${workout.calories} kcal)`;
-                    dailyHistoryList.appendChild(li);
-                    if(counter<=1) previewHistoryContainer.appendChild(li);
-                    counter++;
+                    const list = document.createElement("li");
+                    if(workout.exercise.name) {
+                        list.innerText = `${workout.exercise.name} - ${workout.duration} mins (${workout.calories} kcal)`;
+                        dailyHistoryList.appendChild(list);
+                        if(counter<=1) {
+                            const previewList = document.createElement("li");
+                            previewList.innerText = `${workout.exercise.name} - ${workout.duration} mins (${workout.calories} kcal)`;
+                            previewHistoryContainer.appendChild(previewList);
+                            counter++;
+                        }
+                    }
+                    console.log(workout);
                 });
                 if(seeMoreBtn) {
                     seeMoreBtn.addEventListener("click", () =>{

@@ -41,6 +41,9 @@
     stroke: #333;
 }
 
+:root {
+    --card-bg: #ffffff; /* Or whatever your preferred default color is */
+}
 /* The moving progress bar */
 .progress-ring .outer {
     stroke: #ff4757;
@@ -129,14 +132,5 @@ small {
     h2{
         margin-top: 0;
         border-bottom: 2px solid #ddd;
-    }
-
-    ul{
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
     }
 }

@@ -131,7 +131,11 @@
     </div>
 
     <div id="historyModal" class="modal-overlay hidden">
-        <div class="history-card">
+        <div class="modal-actions">
+            <button type="button" id="closeHistoryBtn"
+                    class="btn-secondary" onclick="hideModal()">Close</button>
+        </div>
+        <div class="modal-card">
             <ul id="dailyHistoryList">
             </ul>
         </div>
