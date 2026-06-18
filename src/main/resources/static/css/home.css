@@ -104,12 +104,19 @@ small {
 /* Modal Box Container */
 .modal-card {
     background-color: var(--card-bg, #ffffff);
-    padding: 70px;
     border-radius: 12px;
     width: 90%;
     max-width: 400px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    margin-top: -100px; /* Slightly lifts the modal up for a more dynamic entrance */
+    margin: 0; /* Slightly lifts the modal up for a more dynamic entrance */
+}
+
+.modal-actions {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-shrink: 0; /* Keeps the footer locked at the bottom without warping */
 }
 
 #historyDisplay {
@@ -120,17 +127,35 @@ small {
     position: relative; /* Establishes a new stacking context for the dropdown */
     max-width: 30%;
     border-radius: 12px;
+
     border: 2px solid #ddd;
 }
 
 .history-container{
-    min-height: 100px;
+    max-height: 400px;
     text-align: center;
     display: flex;     
     flex-direction: column; 
     width: 100%;
+    overflow-y: auto;
     h2{
         margin-top: 0;
         border-bottom: 2px solid #ddd;
+    }
+}
+
+.workout-list{
+    margin: 0;
+    padding: 0 10px; /* Extra right padding so content doesn't hug the scrollbar */
+    list-style: none;
+    font-size: 1.5rem;
+    /* 🌟 THE MAGIC LINES: Captures vertical growth and handles overflow */
+    flex-grow: 1;
+    li{
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        font-size: 1rem;
+        flex-direction: column;
     }
 }

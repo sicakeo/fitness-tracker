@@ -60,7 +60,7 @@
     <div id="workoutModal" class="modal-overlay hidden">
         <div class="modal-card">
             <h2>Log a New Workout</h2>
-            <form id="workoutForm" novalidate>
+            <form id="workoutForm">
                 <div class="form-group">
                     <label for="workoutType">Exercise Type:</label>
                     <select id="workoutType" required>
@@ -121,8 +121,7 @@
     <div id="historyDisplay">
         <div class="history-container">
             <h2>History</h2>
-            <ul id="previewHistoryList" style="list-style-type: none;">
-                <li></li>
+            <ul id="previewHistoryList" class="workout-list" style="list-style-type: none;">
             </ul>
             <div id="seeMoreBtn">
                 <span id="seeMoreLink" style = "text-decoration: underline">See More</span>
@@ -131,13 +130,15 @@
     </div>
 
     <div id="historyModal" class="modal-overlay hidden">
-        <div class="modal-actions">
-            <button type="button" id="closeHistoryBtn"
-                    class="btn-secondary" onclick="hideModal()">Close</button>
-        </div>
         <div class="modal-card">
-            <ul id="dailyHistoryList">
-            </ul>
+            <h2>History</h2>
+            <div class="history-container">
+                <ul id="dailyHistoryList" class="workout-list" style="list-style-type: none;">
+                </ul>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="closeHistoryBtn" class="btn-secondary">Close</button>
+            </div>
         </div>
     </div>
     <script type="module" src ="js/navbar.js"></script>

@@ -30,9 +30,12 @@ function setupNavigation() {
     const startWorkoutBtn = document.getElementById("startWorkoutBtn");
     const closeModalBtn = document.getElementById("closeModalBtn");
     const workoutModal = document.getElementById("workoutModal");
+    const closeHistoryBtn = document.getElementById("closeHistoryBtn");
+    const historyModal = document.getElementById("historyModal");
 
     if (startWorkoutBtn) startWorkoutBtn.addEventListener("click", () => workoutModal.classList.remove("hidden"));
     if (closeModalBtn) closeModalBtn.addEventListener("click", () => workoutModal.classList.add("hidden"));
+    if (closeHistoryBtn) closeHistoryBtn.addEventListener("click", () => historyModal.classList.add("hidden"));
 }
 
 /**
@@ -254,7 +257,7 @@ function displayRing(){
     let currentCalories = 0;
     
     // Determine animation speed based on how large the number is
-    const duration = 30000; // total animation time in ms
+    const duration = 10000; // total animation time in ms
     const steps = finalCalories; 
     const stepTime = Math.max(duration / steps, 10); // Don't let interval go below 10ms
 
@@ -314,7 +317,7 @@ async function loadTodayCaloriesRing() {
     } catch (error) {
         console.error("Dashboard hydration error:", error);
 
-        // Quiet fallback fallback so the UI doesn't visually hang on network lag
+        // Quiet fallback so the UI doesn't visually hang on network lag
         const netDisplay = document.getElementById("netCaloriesDisplay");
         if (netDisplay) {
             netDisplay.setAttribute("data-target", "0");
@@ -328,45 +331,81 @@ async function loadTodayHistory() {
     if (!userSession) return;
     const userObj = JSON.parse(userSession);
     const userId = userObj.id;
-    try{
+    try {
         const response = await fetch(`${WORKOUT_API_URL}/history?userId=${userId}`);
         if (!response.ok) throw new Error("Failed to load history workout data.");
 
         const workoutHistory = await response.json();
-        const dailyHistoryList = document.getElementById("dailyHistoryList");
-        const previewHistoryContainer = document.getElementById("previewHistoryList");
-        const seeMoreBtn = document.getElementById("seeMoreBtn");
-        const historyModal = document.getElementById("historyModal");
-        if (dailyHistoryList) {
-            dailyHistoryList.innerHTML = ""; // Clear placeholders
 
-            if (workoutHistory.length === 0) {
-                dailyHistoryList.innerHTML = "<li>No workouts logged yet today.</li>";
-            } else {
-                let counter = 0;
-                workoutHistory.forEach(workout => {
-                    const list = document.createElement("li");
-                    if(workout.exercise.name) {
-                        list.innerText = `${workout.exercise.name} - ${workout.duration} mins (${workout.calories} kcal)`;
-                        dailyHistoryList.appendChild(list);
-                        if(counter<=1) {
-                            const previewList = document.createElement("li");
-                            previewList.innerText = `${workout.exercise.name} - ${workout.duration} mins (${workout.calories} kcal)`;
-                            previewHistoryContainer.appendChild(previewList);
-                            counter++;
-                        }
-                    }
-                    console.log(workout);
-                });
-                if(seeMoreBtn) {
-                    seeMoreBtn.addEventListener("click", () =>{
-                        historyModal.classList.remove("hidden");
-                    })
-                }
-            }
-        }
+        // --- CLEAN SEPARATION OF CONCERNS ---
+        renderHistory(workoutHistory);
+        setupHistoryModalToggle(workoutHistory);
     } catch (error) {
         console.error("Dashboard hydration error:", error);
     }
 }
 
+function renderHistory(workoutHistory) {
+    const dailyHistoryList = document.getElementById("dailyHistoryList");
+    const previewHistoryContainer = document.getElementById("previewHistoryList");
+
+    if (!dailyHistoryList) return;
+
+    dailyHistoryList.innerHTML = "";
+    if (previewHistoryContainer) previewHistoryContainer.innerHTML = "";
+
+    if (workoutHistory.length === 0) {
+        dailyHistoryList.innerHTML = "<li>No workouts logged yet.</li>";
+        return;
+    }
+
+    workoutHistory.forEach((workout, index) => {
+        const displayString = formatWorkoutMetrics(workout);
+
+        // 1. Append to the master scrollable layout list
+        const mainLi = document.createElement("li");
+        mainLi.innerText = displayString;
+        dailyHistoryList.appendChild(mainLi);
+
+        // 2. Append only the 2 most recent rows to the dashboard summary preview container cards
+        if (previewHistoryContainer && index < 2) {
+            const previewLi = document.createElement("li");
+            previewLi.innerText = displayString;
+            previewHistoryContainer.appendChild(previewLi);
+        }
+    });
+}
+
+function formatWorkoutMetrics(workout){
+    const type = workout.exercise.workoutType;
+    const name = workout.exercise.name;
+    const coreStats = `${workout.duration} mins (${workout.calories} kcal) (${workout.date})`;
+
+    switch (type) {
+        case "Weightlifting":
+            const weightStr = workout.weight ? ` @ ${workout.weight}kg` : "";
+            return `${name}: ${workout.sets} sets x ${workout.reps} reps${weightStr} (${workout.calories} kcal)`;
+        case "Running":
+        case "Cycling":
+        case "Swimming":
+            const distanceStr = workout.distance ? `${workout.distance} km in ` : "";
+            return `${name}: ${distanceStr}${coreStats}`;
+        case "HIIT":
+        case "Yoga":
+        default:
+            return `${name}: ${coreStats} [${workout.intensity}]`;
+    }
+}
+
+function setupHistoryModalToggle(history) {
+    const seeMoreBtn = document.getElementById("seeMoreBtn");
+    const historyModal = document.getElementById("historyModal");
+
+    if (!seeMoreBtn || !historyModal || history.length === 0) return;
+
+    // Remove any previous duplicate listeners before registering a new one
+    seeMoreBtn.replaceWith(seeMoreBtn.cloneNode(true));
+    document.getElementById("seeMoreBtn").addEventListener("click", () => {
+        historyModal.classList.remove("hidden");
+    });
+}
