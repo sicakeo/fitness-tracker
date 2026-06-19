@@ -114,10 +114,10 @@ async function submitWorkout(selectedType, fieldGroups) {
     const durationValue = elDuration ? parseInt(elDuration.value) || 0 : 0;
     const dateValue = elDate && elDate.value ? elDate.value : new Date().toISOString().split('T')[0];
     const distanceValue = elDistance ? parseFloat(elDistance.value) || 0 : 0;
-
+    const inputName = (elName && !fieldGroups.name.hidden ? elName.value.trim() : "");
     let intensityValue = elIntensity ? elIntensity.value : "Moderate";
 
-    // 🌟 FIXED: Safe pace parsing order of operation constraints (highest benchmark evaluated first)
+    // FIXED: Safe pace parsing order of operation constraints (highest benchmark evaluated first)
     // --- AUTOMATIC INTENSITY CALCULATOR BASED ON VELOCITY ---
     if (distanceValue > 0 && durationValue > 0) {
         // Calculate velocity in kilometers per hour (km/h)
@@ -166,12 +166,11 @@ async function submitWorkout(selectedType, fieldGroups) {
     const element = document.getElementById("netCaloriesDisplay");
     if(element) element.setAttribute("data-target", calculatedCalories);
     console.log("element", element.getAttribute("data-target"));
-``
-
+   
     // Phase 1 Payload Mapping
     const exercisePayload = {
         user: { id: userId },
-        name: elName && !fieldGroups.name.hidden ? elName.value.trim() : selectedType,
+        name:   inputName || selectedType,
         workoutType: selectedType,
         met: met
     };
@@ -258,7 +257,7 @@ function displayRing(){
     
     // Determine animation speed based on how large the number is
     const duration = 10000; // total animation time in ms
-    const steps = finalCalories; 
+    const steps = 60; 
     const stepTime = Math.max(duration / steps, 10); // Don't let interval go below 10ms
 
     const interval = setInterval(() => {
@@ -364,36 +363,76 @@ function renderHistory(workoutHistory) {
 
         // 1. Append to the master scrollable layout list
         const mainLi = document.createElement("li");
-        mainLi.innerText = displayString;
+        mainLi.innerHTML= displayString;
         dailyHistoryList.appendChild(mainLi);
 
         // 2. Append only the 2 most recent rows to the dashboard summary preview container cards
-        if (previewHistoryContainer && index < 2) {
+        if (previewHistoryContainer && index < 1) {
             const previewLi = document.createElement("li");
-            previewLi.innerText = displayString;
+            previewLi.innerHTML = displayString;
             previewHistoryContainer.appendChild(previewLi);
         }
     });
 }
 
 function formatWorkoutMetrics(workout){
-    const type = workout.exercise.workoutType;
-    const name = workout.exercise.name;
-    const coreStats = `${workout.duration} mins (${workout.calories} kcal) (${workout.date})`;
+    const type = workout.exercise.workoutType ? workout.exercise.workoutType : "";
+    const name = workout.exercise.name ? workout.exercise.name : "";
+    const date = new Date(workout.date +"T00:00:00");
+    const calories = workout.calories ? workout.calories : "";
+    const reps = workout.reps ? workout.reps : "";
+    const sets = workout.sets ? workout.sets : "";
+    const intensity = workout.intensity ? workout.intensity : "";
+    const weight = workout.weight ? workout.weight : "";
+    const formattedDate = date.toLocaleDateString("en-US", {
+        weekday: "long",  // "Monday", "Tuesday"
+        month: "short",   // "Jan", "Feb"
+        day: "numeric",   // "1", "2"
+        year: "numeric"   // "2026"
+    });
+    
+    const headerRow = `
+        <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 4px;">
+            <span>${formattedDate}</span>
+            <span>${type}</span>
+        </div>`;
+        
+    const statsRow = `
+        <div style="display: flex; justify-content: space-between; color: #555; font-size: 0.95rem;">
+            <span>🔥 Calories Burned: ${calories ? `${calories}` : "N/A"} kcal</span>
+            <span>⏱️ ${workout.duration} mins ${intensity ? `(${intensity})` : ""}</span>
+        </div>`;
 
     switch (type) {
         case "Weightlifting":
-            const weightStr = workout.weight ? ` @ ${workout.weight}kg` : "";
-            return `${name}: ${workout.sets} sets x ${workout.reps} reps${weightStr} (${workout.calories} kcal)`;
+            return `
+                <div style="padding: 12px 0; border-bottom: 1px solid #eee; width: 100%;">
+                    ${headerRow}
+                    ${statsRow}
+                    <div style="margin-top: 6px; font-size: 0.9rem; color: #222; background: #f9f9f9; padding: 6px 10px; border-radius: 4px;">
+                        <strong>Exercise:</strong> ${sets ? `${sets} x` : ""} ${name} ${weight ? `${weight}kg` : ""} ${reps ? `x ${reps}` : ""}
+                    </div>
+                </div>`;
+            
         case "Running":
         case "Cycling":
         case "Swimming":
-            const distanceStr = workout.distance ? `${workout.distance} km in ` : "";
-            return `${name}: ${distanceStr}${coreStats}`;
-        case "HIIT":
-        case "Yoga":
+            const distanceStr = workout.distance ? ` 🏃 ${workout.distance} km` : "";
+            return `
+                <div style="padding: 12px 0; border-bottom: 1px solid #eee; width: 100%;">
+                    ${headerRow}
+                    <div style="display: flex; justify-content: space-between; color: #555; font-size: 0.95rem;">
+                        <span>🔥 Calories Burned: ${calories} kcal</span>
+                        <span>⏱️ ${workout.duration} mins |${distanceStr}</span>
+                    </div>
+                </div>`;
+            
         default:
-            return `${name}: ${coreStats} [${workout.intensity}]`;
+            return `
+                <div style="padding: 12px 0; border-bottom: 1px solid #eee; width: 100%;">
+                    ${headerRow}
+                    ${statsRow}
+                </div>`;
     }
 }
 
