@@ -2,6 +2,7 @@ import { checkAuth, logout } from "./login.js";
 
 const WORKOUT_API_URL = "http://localhost:8080/api/workouts";
 const EXERCISE_API_URL = "http://localhost:8080/api/exercises";
+const FOOD_API_URL = "http://localhost:8080/api/food-entries";
 
 // Constant Metric Lookups declared outside loops to optimize heap memory reuse
 const MET_MATRIX = {
@@ -11,12 +12,13 @@ const MET_MATRIX = {
     "HIIT":          { "Light": 5.0, "Moderate": 8.0, "Heavy": 11.0 },
     "Yoga":          { "Light": 2.5, "Moderate": 2.5, "Heavy": 2.5 }
 };
+
 const TARGET_BURN_MATRIX = {
-    "MILD_LOSS" : ,
-    "WEIGHT_LOSS": ,
-    "MAINTIAN":   ,
-    "WEIGHT_GAIN":
-    "HEAVY_GAIN": 
+    "MILD_LOSS": 300,  // Burn 300 kcal from exercise
+    "WEIGHT_LOSS": 500,  // Burn 500 kcal from exercise (Standard deficit)
+    "MAINTAIN": 400,  // Burn 400 kcal from exercise just for heart health
+    "WEIGHT_GAIN": 200,  // Burn less exercise calories to help gain weight
+    "HEAVY_GAIN": 150   // Minimize cardio burn to maximize muscle mass
 };
 document.addEventListener("DOMContentLoaded", () => {
     //if (!checkAuth()) return;
@@ -225,7 +227,6 @@ async function submitWorkout(selectedType, fieldGroups) {
         }
 
         // --- TRIGGER ANIMATION LAYER WITHOUT RESETTING PAGE ---
-        const targetCalories = user.
         displayRing();
 
     } catch (error) {
@@ -245,12 +246,16 @@ function getMetValue(workoutType, intensity) {
     return MET_MATRIX[workoutType][intensity];
 }
 
-function getTargetCaloriesBurned(){
-
+function getTargetCaloriesBurned(goal){
+    if(!TARGET_BURN_MATRIX[goal.trim()]){
+        console.warn(`Target Burned Calories not found for Goal: ${goal}`);
+        return 0;
+    }
+    return TARGET_BURN_MATRIX[goal];
 }
 
 
-function displayRing(targetCalories){
+function displayRing(){
     const netDisplay = document.getElementById("netCaloriesDisplay");
     const targetDisplay = document.getElementById("targetCaloriesDisplay");
     const circle = document.getElementById("calorieFillCircle");
@@ -303,15 +308,18 @@ async function loadTodayCaloriesRing() {
 
     const userObj = JSON.parse(userSession);
     const userId = userObj.id;
-
     // Generate current local system date in exact YYYY-MM-DD format
     const todayStr = new Date().toISOString().split('T')[0];
 
     try {
-        // Fetch only the compiled integer sum directly from the endpoint
-        const response = await fetch(`${WORKOUT_API_URL}/today-calories?userId=${userId}&date=${todayStr}`);
 
-        if (!response.ok) throw new Error("Failed to sync calorie historical records.");
+        const userCaloriesInput = userObj.tdee - getTargetCaloriesBurned(userObj.fitnessGoal)
+        document.getElementById("targetCaloriesDisplay").textContent = userCaloriesInput;
+        document.getElementById("targetCaloriesDisplay").setAttribute("data-target", userCaloriesInput);
+        // Fetch only the compiled integer sum directly from the endpoint
+        const workoutCalories = await fetch(`${WORKOUT_API_URL}/today-calories?userId=${userId}&date=${todayStr}`);
+        const foodCalories = await fetch(`${FOOD_API_URL}/today-calories?userId=${userId}&date=${todayStr}`);
+        if (!workoutCalories.ok) throw new Error("Failed to sync calorie historical records.");
 
         const totalCaloriesToday = await response.json();
         console.log(`Total calories: ${totalCaloriesToday}`);

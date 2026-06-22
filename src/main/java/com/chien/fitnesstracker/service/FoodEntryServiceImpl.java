@@ -43,7 +43,7 @@ public class FoodEntryServiceImpl implements FoodEntryService {
         foodEntry.setFat(foodDetails.getFat());
         foodEntry.setProtein(foodDetails.getProtein());
         foodEntry.setCarb(foodDetails.getCarb());
-        foodEntry.setTimestamp(foodDetails.getTimestamp());
+        foodEntry.setDate(foodDetails.getDate());
         return foodEntryRepository.save(foodEntry);
     }
 

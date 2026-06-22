@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -40,7 +41,7 @@ public class FoodEntry {
     @Min(value = 0, message = "Carbs cannot be negative")
     private Double carb;
 
-    @NotNull(message = "Timestamp is required")
-    @PastOrPresent(message = "You cannot enter a timestamp for the future")
-    private LocalDateTime timestamp;
+    @NotNull(message = "Date is required")
+    @PastOrPresent(message = "Date cannot be in the future")
+    private LocalDate date;
 }
