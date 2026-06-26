@@ -6,9 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Data

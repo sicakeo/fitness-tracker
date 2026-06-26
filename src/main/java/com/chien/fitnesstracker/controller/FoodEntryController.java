@@ -43,4 +43,11 @@ public class FoodEntryController {
         foodEntryService.deleteFoodEntryById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/today-calories")
+    public ResponseEntity<Double> getFoodEntriesByDate(@RequestParam Long userId,@RequestParam String date){
+        java.time.LocalDate localDate = java.time.LocalDate.parse(date);
+        Double totalCalories = foodEntryService.getCaloriesToday(userId, localDate);
+        return ResponseEntity.ok(totalCalories);
+    }
 }

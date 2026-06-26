@@ -4,6 +4,7 @@ import com.chien.fitnesstracker.model.FoodEntry;
 import com.chien.fitnesstracker.repository.FoodEntryRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,5 +51,10 @@ public class FoodEntryServiceImpl implements FoodEntryService {
     @Override
     public void deleteFoodEntryById(Long id) {
         foodEntryRepository.deleteById(id);
+    }
+
+    @Override
+    public Double getCaloriesToday(Long userId, LocalDate Date){
+        return foodEntryRepository.sumByCaloriesByUserIdAndDate(userId, Date);
     }
 }
