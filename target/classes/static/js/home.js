@@ -40,10 +40,12 @@
         const workoutModal = document.getElementById("workoutModal");
         const closeHistoryBtn = document.getElementById("closeHistoryBtn");
         const historyModal = document.getElementById("historyModal");
+        const foodForm = document.getElementById("foodForm");
 
         if (startWorkoutBtn) startWorkoutBtn.addEventListener("click", () => workoutModal.classList.remove("hidden"));
         if (closeModalBtn) closeModalBtn.addEventListener("click", () => workoutModal.classList.add("hidden"));
         if (closeHistoryBtn) closeHistoryBtn.addEventListener("click", () => historyModal.classList.add("hidden"));
+        if (foodForm) foodForm.addEventListener("submit", submitFoodEntry);
     }
 
     /**
@@ -405,6 +407,58 @@
         });
     }
 
+
+    async function submitFoodEntry(event){
+        event.preventDefault();
+        const userSession = sessionStorage.getItem("user");
+        if (!userSession) {
+            alert("User session not found. Please log in again.");
+            return;
+        }
+
+        const userObj = JSON.parse(userSession);
+        const userId = userObj.id;
+        const todayStr = new Date().toISOString().split('T')[0];
+
+        try {
+            const elMealType = document.getElementById("mealType");
+            const elFoodName = document.getElementById("foodName");
+            const elFoodCalories = document.getElementById("foodCalories");
+            const elProtein = document.getElementById("protein");
+            const elCarb = document.getElementById("carb");
+            const elFat = document.getElementById("fat");   
+
+            // Parse numerical strings safely to match your backend data types
+            const caloriesValue = elFoodCalories ? parseInt(elFoodCalories.value) || 0 : 0;
+            const proteinValue = elProtein ? parseFloat(elProtein.value) || 0 : 0;
+            const carbValue = elCarb ? parseFloat(elCarb.value) || 0 : 0;
+            const fatValue = elFat ? parseFloat(elFat.value) || 0 : 0;
+
+            // Construct payload matching your singular Java Entity fields
+            const foodEntryPayLoad = {
+                user: { id: userId },
+                mealType: elMealType ? elMealType.value.toUpperCase() : "BREAKFAST",
+                name: elFoodName ? elFoodName.value.trim() : "Unknown Meal",
+                calories: caloriesValue,
+                protein: proteinValue,
+                carb: carbValue,  
+                fat: fatValue,   
+                date: todayStr
+            };
+
+            const respone = await fetch(FOOD_API_URL,{
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(foodEntryPayLoad)
+            });
+            console.log(foodEntryPayLoad);
+            if(!respone.ok) throw new Error ("Failed to record active food entry");
+            alert("Meal logged successfully");
+        } catch (error) {
+            console.error("Pipeline failure:", error);
+            alert(error.message);
+        }
+    }
     /**
  * Formats a single food entry into a clean, structured HTML row block
  */

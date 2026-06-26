@@ -238,8 +238,8 @@ small {
 
 /* Macro Left Border Subtle Accents */
 .macro-box.protein-accent { border-left-color: #3498db; } /* Blue */
-.macro-box.carbs-accent   { border-left-color: #f39c12; } /* Orange */
-.macro-box.fats-accent    { border-left-color: #2ecc71; } /* Green */
+.macro-box.carb-accent   { border-left-color: #f39c12; } /* Orange */
+.macro-box.fat-accent    { border-left-color: #2ecc71; } /* Green */
 
 .macro-box input {
     width: 100%;

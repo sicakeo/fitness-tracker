@@ -39,12 +39,14 @@ public class FoodEntryServiceImpl implements FoodEntryService {
     @Override
     public FoodEntry updateFoodEntry(Long id, FoodEntry foodDetails) {
         FoodEntry foodEntry = getFoodEntryById(id);
+        foodEntry.setUser(foodDetails.getUser());
         foodEntry.setName(foodDetails.getName());
         foodEntry.setCalories(foodDetails.getCalories());
         foodEntry.setFat(foodDetails.getFat());
         foodEntry.setProtein(foodDetails.getProtein());
         foodEntry.setCarb(foodDetails.getCarb());
         foodEntry.setDate(foodDetails.getDate());
+        foodEntry.setMealType(foodDetails.getMealType());
         return foodEntryRepository.save(foodEntry);
     }
 
