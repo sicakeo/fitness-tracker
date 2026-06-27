@@ -43,12 +43,28 @@
         const closeFoodHistoryBtn = document.getElementById("closeFoodHistoryBtn");
         const foodHistoryModal = document.getElementById("foodHistoryModal");
         const foodForm = document.getElementById("foodForm");
+        
+        const seeMoreBtn = document.getElementById("seeMoreBtn");
+        const seeMoreFoodBtn = document.getElementById("seeMoreFoodBtn");
 
         if (startWorkoutBtn) startWorkoutBtn.addEventListener("click", () => workoutModal.classList.remove("hidden"));
         if (closeModalBtn) closeModalBtn.addEventListener("click", () => workoutModal.classList.add("hidden"));
         if (closeHistoryBtn) closeHistoryBtn.addEventListener("click", () => historyModal.classList.add("hidden"));
         if (closeFoodHistoryBtn) closeFoodHistoryBtn.addEventListener("click", () => foodHistoryModal.classList.add("hidden"));
         if (foodForm) foodForm.addEventListener("submit", submitFoodEntry);
+        
+        // 🌟 THE SAFE WIREFRAME: Simple open modifiers without dataset dependency traps
+        if (seeMoreBtn) {
+            seeMoreBtn.addEventListener("click", () => {
+                if (historyModal) historyModal.classList.remove("hidden");
+            });
+        }
+        
+        if (seeMoreFoodBtn) {
+            seeMoreFoodBtn.addEventListener("click", () => {
+                if (foodHistoryModal) foodHistoryModal.classList.remove("hidden");
+            });
+        }
     }
 
     /**
@@ -155,7 +171,7 @@
             if (netDisplay) {
                 // Grab the current visible calories on screen (e.g., if they already had 200 kcal logged today)
                 const existingCalories = parseInt(netDisplay.innerText) || 0;
-                const updatedTotalTarget = existingCalories - foodEntryPayLoad.calories;
+                const updatedTotalTarget = existingCalories + foodEntryPayLoad.calories;
 
                 // Update the data-target data boundary attribute link directly
                 netDisplay.setAttribute("data-target", updatedTotalTarget);
@@ -243,9 +259,6 @@
 
         const met = getMetValue(selectedType, intensityValue);
         const calculatedCalories = Math.round(met * userWeight * (durationValue / 60));
-        const element = document.getElementById("netCaloriesDisplay");
-        if(element) element.setAttribute("data-target", calculatedCalories);
-        console.log("element", element.getAttribute("data-target"));
     
         // Phase 1 Payload Mapping
         const exercisePayload = {
@@ -447,9 +460,7 @@
 
             // --- CLEAN SEPARATION OF CONCERNS ---
             renderHistory(workoutHistory);
-            setupHistoryModalToggle(workoutHistory);
             renderFoodHistory(foodHistory);
-            setupFoodModalToggle(foodHistory);
         } catch (error) {
             console.error("Dashboard hydration error:", error);
         }
@@ -478,14 +489,12 @@
             dailyHistoryList.appendChild(mainLi);
 
             // 2. Append only the 2 most recent rows to the dashboard summary preview container cards
-            if (previewHistoryContainer && index < 1) {
+            if (previewHistoryContainer && index < 2) {
                 const previewLi = document.createElement("li");
                 previewLi.innerHTML = displayString;
                 previewHistoryContainer.appendChild(previewLi);
             }
         });
-
-        setupHistoryModalToggle(workoutHistory);
     }
 
     /**
@@ -523,9 +532,6 @@
                 previewFoodHistoryContainer.appendChild(previewLi);
             }
         });
-
-        // Wire up the popover toggles right after data rendering finishes
-        setupFoodModalToggle(foodHistory);
     }
 
      /**
@@ -630,28 +636,3 @@
         }
     }
 
-    function setupHistoryModalToggle(history) {
-        const seeMoreBtn = document.getElementById("seeMoreBtn");
-        const historyModal = document.getElementById("historyModal");
-
-        if (!seeMoreBtn || !historyModal || history.length === 0) return;
-
-        // Remove any previous duplicate listeners before registering a new one
-        seeMoreBtn.replaceWith(seeMoreBtn.cloneNode(true));
-        document.getElementById("seeMoreBtn").addEventListener("click", () => {
-            historyModal.classList.remove("hidden");
-        });
-    }
-
-    function setupFoodModalToggle(history) {
-        const seeMoreFoodBtn = document.getElementById("seeMoreFoodBtn");
-        const foodHistoryModal = document.getElementById("foodHistoryModal");
-
-        if (!seeMoreFoodBtn || !foodHistoryModal || history.length === 0) return;
-
-        // Remove any previous duplicate listeners before registering a new one
-        seeMoreFoodBtn.replaceWith(seeMoreFoodBtn.cloneNode(true));
-        document.getElementById("seeMoreFoodBtn").addEventListener("click", () => {
-            foodHistoryModal.classList.remove("hidden");
-        });
-    }
