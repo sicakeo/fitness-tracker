@@ -14,4 +14,5 @@ public interface FoodEntryService {
     FoodEntry updateFoodEntry(Long id, FoodEntry foodEntry);
     void deleteFoodEntryById(Long id);
     Double getCaloriesToday(@Param("userId") Long userId, @Param("date") LocalDate date);
+    List<FoodEntry> getFoodEntriesByUserId(Long userId);
 }

@@ -51,7 +51,7 @@ public class WorkoutController {
 
     @GetMapping("/history")
     public ResponseEntity<List<Workout>> getWorkoutHistory(@RequestParam Long userId){
-        List<Workout> workouts= workoutService.getWorkoutsByUserId(userId);
+        List<Workout> workouts = workoutService.getWorkoutsByUserId(userId);
         return ResponseEntity.ok(workouts);
     }
 }

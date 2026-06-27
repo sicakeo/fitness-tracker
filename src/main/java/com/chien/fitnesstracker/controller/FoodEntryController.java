@@ -50,4 +50,10 @@ public class FoodEntryController {
         Double totalCalories = foodEntryService.getCaloriesToday(userId, localDate);
         return ResponseEntity.ok(totalCalories);
     }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<FoodEntry>> getFoodEntriesHistory(@RequestParam Long userId){
+        List<FoodEntry> foodEntries = foodEntryService.getFoodEntriesByUserId(userId);
+        return ResponseEntity.ok(foodEntries);
+    }
 }

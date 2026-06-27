@@ -40,11 +40,14 @@
         const workoutModal = document.getElementById("workoutModal");
         const closeHistoryBtn = document.getElementById("closeHistoryBtn");
         const historyModal = document.getElementById("historyModal");
+        const closeFoodHistoryBtn = document.getElementById("closeFoodHistoryBtn");
+        const foodHistoryModal = document.getElementById("foodHistoryModal");
         const foodForm = document.getElementById("foodForm");
 
         if (startWorkoutBtn) startWorkoutBtn.addEventListener("click", () => workoutModal.classList.remove("hidden"));
         if (closeModalBtn) closeModalBtn.addEventListener("click", () => workoutModal.classList.add("hidden"));
         if (closeHistoryBtn) closeHistoryBtn.addEventListener("click", () => historyModal.classList.add("hidden"));
+        if (closeFoodHistoryBtn) closeFoodHistoryBtn.addEventListener("click", () => foodHistoryModal.classList.add("hidden"));
         if (foodForm) foodForm.addEventListener("submit", submitFoodEntry);
     }
 
@@ -100,6 +103,73 @@
     /**
      * Handles dual-stage API pipeline relational persistence transactions
      */
+
+
+    async function submitFoodEntry(event){
+        event.preventDefault();
+        const userSession = sessionStorage.getItem("user");
+        if (!userSession) {
+            alert("User session not found. Please log in again.");
+            return;
+        }
+
+        const userObj = JSON.parse(userSession);
+        const userId = userObj.id;
+        const todayStr = new Date().toISOString().split('T')[0];
+
+        try {
+            const elMealType = document.getElementById("mealType");
+            const elFoodName = document.getElementById("foodName");
+            const elFoodCalories = document.getElementById("foodCalories");
+            const elProtein = document.getElementById("protein");
+            const elCarb = document.getElementById("carb");
+            const elFat = document.getElementById("fat");   
+
+            // Parse numerical strings safely to match your backend data types
+            const caloriesValue = elFoodCalories ? parseInt(elFoodCalories.value) || 0 : 0;
+            const proteinValue = elProtein ? parseFloat(elProtein.value) || 0 : 0;
+            const carbValue = elCarb ? parseFloat(elCarb.value) || 0 : 0;
+            const fatValue = elFat ? parseFloat(elFat.value) || 0 : 0;
+
+            // Construct payload matching your singular Java Entity fields
+            const foodEntryPayLoad = {
+                user: { id: userId },
+                mealType: elMealType ? elMealType.value.toUpperCase() : "BREAKFAST",
+                name: elFoodName ? elFoodName.value.trim() : "Unknown Meal",
+                calories: caloriesValue,
+                protein: proteinValue,
+                carb: carbValue,  
+                fat: fatValue,   
+                date: todayStr
+            };
+
+            const respone = await fetch(FOOD_API_URL,{
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(foodEntryPayLoad)
+            });
+            console.log(foodEntryPayLoad);
+            if(!respone.ok) throw new Error ("Failed to record active food entry");
+            alert("Meal logged successfully");
+            const netDisplay = document.getElementById("netCaloriesDisplay");
+            if (netDisplay) {
+                // Grab the current visible calories on screen (e.g., if they already had 200 kcal logged today)
+                const existingCalories = parseInt(netDisplay.innerText) || 0;
+                const updatedTotalTarget = existingCalories - foodEntryPayLoad.calories;
+
+                // Update the data-target data boundary attribute link directly
+                netDisplay.setAttribute("data-target", updatedTotalTarget);
+            }
+
+            // --- TRIGGER ANIMATION LAYER WITHOUT RESETTING PAGE ---
+            displayRing();
+            loadTodayCaloriesRing();
+        } catch (error) {
+            console.error("Pipeline failure:", error);
+            alert(error.message);
+        }
+    }
+
     async function submitWorkout(selectedType, fieldGroups) {
         const userSession = sessionStorage.getItem("user");
         if (!userSession) {
@@ -230,6 +300,7 @@
 
             // --- TRIGGER ANIMATION LAYER WITHOUT RESETTING PAGE ---
             displayRing();
+            loadTodayCaloriesRing();
 
         } catch (error) {
             console.error("Pipeline failure:", error);
@@ -363,14 +434,22 @@
         const userObj = JSON.parse(userSession);
         const userId = userObj.id;
         try {
-            const response = await fetch(`${WORKOUT_API_URL}/history?userId=${userId}`);
-            if (!response.ok) throw new Error("Failed to load history workout data.");
+            const [workoutResponse, foodResponse] = await Promise.all([
+                fetch(`${WORKOUT_API_URL}/history?userId=${userId}`),
+                fetch(`${FOOD_API_URL}/history?userId=${userId}`)
+            ]);
 
-            const workoutHistory = await response.json();
+            if (!workoutResponse.ok || !foodResponse.ok) throw new Error("Failed to sync metrics.");
+
+
+            const workoutHistory = await workoutResponse.json();
+            const foodHistory = await foodResponse.json();
 
             // --- CLEAN SEPARATION OF CONCERNS ---
             renderHistory(workoutHistory);
             setupHistoryModalToggle(workoutHistory);
+            renderFoodHistory(foodHistory);
+            setupFoodModalToggle(foodHistory);
         } catch (error) {
             console.error("Dashboard hydration error:", error);
         }
@@ -405,63 +484,53 @@
                 previewHistoryContainer.appendChild(previewLi);
             }
         });
+
+        setupHistoryModalToggle(workoutHistory);
     }
 
+    /**
+     * Iterates over food arrays and populates the nutrition dashboard card view areas
+     */
+    function renderFoodHistory(foodHistory) {
+        const fullFoodHistoryList = document.getElementById("fullFoodHistoryList");
+        const previewFoodHistoryContainer = document.getElementById("previewFoodHistoryList");
 
-    async function submitFoodEntry(event){
-        event.preventDefault();
-        const userSession = sessionStorage.getItem("user");
-        if (!userSession) {
-            alert("User session not found. Please log in again.");
+        if (!fullFoodHistoryList) return;
+
+        // Reset list contents cleanly
+        fullFoodHistoryList.innerHTML = "";
+        if (previewFoodHistoryContainer) previewFoodHistoryContainer.innerHTML = "";
+
+        if (foodHistory.length === 0) {
+            const emptyLi = "<li style='text-align:center; color:#999; padding:10px;'>No meals logged yet.</li>";
+            fullFoodHistoryList.innerHTML = emptyLi;
+            if (previewFoodHistoryContainer) previewFoodHistoryContainer.innerHTML = emptyLi;
             return;
         }
 
-        const userObj = JSON.parse(userSession);
-        const userId = userObj.id;
-        const todayStr = new Date().toISOString().split('T')[0];
+        foodHistory.forEach((food, index) => {
+            const displayHtml = formatFoodMetrics(food);
 
-        try {
-            const elMealType = document.getElementById("mealType");
-            const elFoodName = document.getElementById("foodName");
-            const elFoodCalories = document.getElementById("foodCalories");
-            const elProtein = document.getElementById("protein");
-            const elCarb = document.getElementById("carb");
-            const elFat = document.getElementById("fat");   
+            // 1. Append EVERYTHING to the master modal scrollable list
+            const mainLi = document.createElement("li");
+            mainLi.innerHTML = displayHtml;
+            fullFoodHistoryList.appendChild(mainLi);
 
-            // Parse numerical strings safely to match your backend data types
-            const caloriesValue = elFoodCalories ? parseInt(elFoodCalories.value) || 0 : 0;
-            const proteinValue = elProtein ? parseFloat(elProtein.value) || 0 : 0;
-            const carbValue = elCarb ? parseFloat(elCarb.value) || 0 : 0;
-            const fatValue = elFat ? parseFloat(elFat.value) || 0 : 0;
+            // 2. Append ONLY the 2 most recent rows to the dashboard summary card
+            if (previewFoodHistoryContainer && index < 2) {
+                const previewLi = document.createElement("li");
+                previewLi.innerHTML = displayHtml;
+                previewFoodHistoryContainer.appendChild(previewLi);
+            }
+        });
 
-            // Construct payload matching your singular Java Entity fields
-            const foodEntryPayLoad = {
-                user: { id: userId },
-                mealType: elMealType ? elMealType.value.toUpperCase() : "BREAKFAST",
-                name: elFoodName ? elFoodName.value.trim() : "Unknown Meal",
-                calories: caloriesValue,
-                protein: proteinValue,
-                carb: carbValue,  
-                fat: fatValue,   
-                date: todayStr
-            };
-
-            const respone = await fetch(FOOD_API_URL,{
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(foodEntryPayLoad)
-            });
-            console.log(foodEntryPayLoad);
-            if(!respone.ok) throw new Error ("Failed to record active food entry");
-            alert("Meal logged successfully");
-        } catch (error) {
-            console.error("Pipeline failure:", error);
-            alert(error.message);
-        }
+        // Wire up the popover toggles right after data rendering finishes
+        setupFoodModalToggle(foodHistory);
     }
-    /**
- * Formats a single food entry into a clean, structured HTML row block
- */
+
+     /**
+     * Formats a single food entry into a clean, structured HTML row block
+     */
     function formatFoodMetrics(food) {
         const mealType = food.mealType || "Meal";
         const name = food.name || "Unknown Item";
@@ -498,27 +567,6 @@
                     <span style="background: #e8f8f5; color: #27ae60; padding: 2px 8px; border-radius: 4px; font-weight: 600;">F: ${f}g</span>
                 </div>
             </div>`;
-    }
-
-    /**
-     * Iterates over food arrays and populates the nutrition dashboard card view areas
-     */
-    function renderFoodHistory(foodHistory) {
-        const foodHistoryList = document.getElementById("foodHistoryList");
-        if (!foodHistoryList) return;
-
-        foodHistoryList.innerHTML = "";
-
-        if (foodHistory.length === 0) {
-            foodHistoryList.innerHTML = "<li style='text-align:center; color:#999; padding:10px;'>No meals logged yet today.</li>";
-            return;
-        }
-
-        foodHistory.forEach(food => {
-            const mainLi = document.createElement("li");
-            mainLi.innerHTML = formatFoodMetrics(food);
-            foodHistoryList.appendChild(mainLi);
-        });
     }
 
     function formatWorkoutMetrics(workout){
@@ -592,5 +640,18 @@
         seeMoreBtn.replaceWith(seeMoreBtn.cloneNode(true));
         document.getElementById("seeMoreBtn").addEventListener("click", () => {
             historyModal.classList.remove("hidden");
+        });
+    }
+
+    function setupFoodModalToggle(history) {
+        const seeMoreFoodBtn = document.getElementById("seeMoreFoodBtn");
+        const foodHistoryModal = document.getElementById("foodHistoryModal");
+
+        if (!seeMoreFoodBtn || !foodHistoryModal || history.length === 0) return;
+
+        // Remove any previous duplicate listeners before registering a new one
+        seeMoreFoodBtn.replaceWith(seeMoreFoodBtn.cloneNode(true));
+        document.getElementById("seeMoreFoodBtn").addEventListener("click", () => {
+            foodHistoryModal.classList.remove("hidden");
         });
     }

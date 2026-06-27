@@ -174,9 +174,7 @@
                     <h2>History</h2>
                     <ul id="previewHistoryList" class="workout-list" style="list-style-type: none;">
                     </ul>
-                    <div id="seeMoreBtn">
-                        <span id="seeMoreLink" style = "text-decoration: underline">See More</span>
-                    </div>
+                    <button id="seeMoreBtn" class="link-btn">See More</button>
                 </div>
             </div>
 
@@ -194,12 +192,23 @@
             </div>
 
             <div class="history-section-card nutrition-card-spacing">
-                <div class="history-container">
+                <div class="card-header">
                     <h3>Nutrition History</h3>
                 </div>
-                <ul id="foodHistoryList">
+                <ul id="previewFoodHistoryList">
                     </ul>
                 <button id="seeMoreFoodBtn" class="link-btn">See More Meals</button>
+            </div>
+
+            <div id="foodHistoryModal" class="modal-overlay hidden">
+                <div class="modal-card">
+                    <h2>Nutrition History</h2>
+                    <ul id="fullFoodHistoryList">
+                        </ul>
+                    <div class="modal-actions">
+                        <button type="button" id="closeFoodHistoryBtn" class="btn-secondary">Close</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

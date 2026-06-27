@@ -59,4 +59,9 @@ public class FoodEntryServiceImpl implements FoodEntryService {
     public Double getCaloriesToday(Long userId, LocalDate Date){
         return foodEntryRepository.sumByCaloriesByUserIdAndDate(userId, Date);
     }
+
+    @Override
+    public List<FoodEntry> getFoodEntriesByUserId(Long userId){
+        return foodEntryRepository.findByUserIdOrderByDateDesc(userId);
+    }
 }
