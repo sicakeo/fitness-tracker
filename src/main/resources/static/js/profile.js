@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if(document.getElementById("displayWeight")) document.getElementById("displayWeight").textContent = `Weight: ${user.weight ? user.weight : ""}`;
             if(document.getElementById("displayBMR")) document.getElementById("displayBMR").textContent = `BMR: ${user.bmr ? user.bmr : ""}`;
             if(document.getElementById("displayActivityLevel")) document.getElementById("displayActivityLevel").textContent = `Activity Level: ${getReadableActivityLevelText(user.activityLevel) || ""}`;
-            if(document.getElementById("displayTDEE")) document.getElementById("displayTDEE").textContent = `TDEE: ${user.tdee ? user.tdee : ""} Calories/day`;
+            if(document.getElementById("displayTDEE")) document.getElementById("displayTDEE").textContent = `TDEE: ${user.tdee ? user.tdee : ""} kcal/day`;
             if(document.getElementById("displayFitnessGoal")) document.getElementById("displayFitnessGoal").textContent = `Fitness Goal: ${getReadableGoalText(user.fitnessGoal) || ""}`;
         }
 
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if(document.getElementById("displayHeight")) document.getElementById("displayHeight").textContent = `Height: ${user.height ? user.height + " cm" : ""}`;
                     if(document.getElementById("displayWeight")) document.getElementById("displayWeight").textContent = `Weight: ${user.weight ? user.weight + " kg" : ""}`;
                     if(document.getElementById("displayActivityLevel")) document.getElementById("displayActivityLevel").textContent = `Activity Level: ${getReadableActivityLevelText(user.activityLevel)}`;
-                    if(document.getElementById("displayTDEE")) document.getElementById("displayTDEE").textContent = `TDEE: ${user.tdee ? user.tdee + " Calories/day" : ""}`;
+                    if(document.getElementById("displayTDEE")) document.getElementById("displayTDEE").textContent = `TDEE: ${user.tdee ? user.tdee + " kcal/day" : ""}`;
                     if(document.getElementById("displayFitnessGoal")) document.getElementById("displayFitnessGoal").textContent = `Fitness Goal: ${getReadableGoalText(user.fitnessGoal)}`;
                 }
 

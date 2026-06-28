@@ -1,4 +1,21 @@
-#logoutBtn{
+/* Global Custom Properties & Shared Layout Presets */
+:root {
+    --card-bg: #ffffff;
+    --primary-blue: #1083ea;
+    --active-red: #ff4757;
+    --healthy-green: #2ecc71;
+    --text-muted: #7b7a7a;
+    --border-light: #e9ecef;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+}
+
+/* User Account Interface Dropdowns */
+#logoutBtn {
     text-decoration: none;
     border-radius: 4px;
     padding: 8px 16px;
@@ -9,18 +26,20 @@
     background-color: #ddd;
 }
 
-#signOutLink{
+#signOutLink {
     text-decoration: none;
-    color: #1083EA;
+    color: var(--primary-blue);
 }
-.wrapper{
+
+.wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: Arial, sans-serif;
-    color: #1083EA;
+    color: var(--primary-blue);
+    margin-top: 20px;
 }
 
+/* SVG Circular Vector Track Charts Layout rules */
 .calorie-ring-container {
     position: relative;
     width: 200px;
@@ -28,7 +47,6 @@
 }
 
 .progress-ring {
-    /* Rotates the ring -90 degrees so the animation starts at 12 o'clock */
     transform: rotate(-90deg);
 }
 
@@ -36,25 +54,18 @@
     fill: transparent;
 }
 
-/* The background track */
 .progress-ring .inner {
     stroke: #333;
 }
 
-:root {
-    --card-bg: #ffffff; /* Or whatever your preferred default color is */
-}
-/* The moving progress bar */
 .progress-ring .outer {
-    stroke: #ff4757;
+    stroke: var(--active-red);
     stroke-linecap: round;
-    /* 2 * PI * r (2 * 3.14159 * 80) = ~502.6 */
     stroke-dasharray: 502.6;
-    stroke-dashoffset: 502.6; /* Starts empty */
+    stroke-dashoffset: 502.6; 
     transition: stroke-dashoffset 1s linear;
 }
 
-/* Centers the calorie text right in the middle of the ring */
 .ring-text-center {
     position: absolute;
     top: 50%;
@@ -70,107 +81,90 @@
 }
 
 small {
-    color: #7b7a7a;
+    color: var(--text-muted);
 }
 
-.startWorkout {
-    color: blue;
-    cursor: pointer; 
-}
-
-.startWorkout:hover {
-    text-decoration: underline;
-}
-
-/* Utility helper class */
+/* Global Functional Layout Helpers rules */
 .hidden {
     display: none !important;
 }
 
-/* Modal Overlay covering the entire viewport screen */
+/* Modal Popup Core Component Framework overlays wrapper definitions */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Translucent dim background drop */
+    background-color: rgba(0, 0, 0, 0.6); 
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Ensures it sits on top of navbar and calorie ring track */
+    z-index: 1000;
 }
 
-/* Modal Box Container */
 .modal-card {
-    background-color: var(--card-bg, #ffffff);
+    background-color: var(--card-bg);
     border-radius: 12px;
     width: 90%;
     max-width: 400px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    margin: 0; /* Slightly lifts the modal up for a more dynamic entrance */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .modal-actions {
     margin-top: 16px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 12px;
-    flex-shrink: 0; /* Keeps the footer locked at the bottom without warping */
 }
 
-#historyDisplay {
-    display: flex;
-    flex-direction: column;
-    margin-left: 5%;
-    box-sizing: border-box;
-    position: relative; /* Establishes a new stacking context for the dropdown */
-    max-width: 480px;
+/* History Card & Container Modules definitions un-nested cleanly */
+.history-section-card {
+    background: #ffffff;
     border-radius: 12px;
-
-    border: 2px solid #ddd;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 480px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-light);
 }
 
-.history-container{
+.history-container { 
     max-height: 400px;
-    text-align: center;
     display: flex;     
     flex-direction: column; 
     width: 100%;
     overflow-y: auto;
-    h2{
-        margin-top: 0;
-        border-bottom: 2px solid #ddd;
-    }
 }
 
-.workout-list{
-    margin: 0;
-    padding: 0 10px; /* Extra right padding so content doesn't hug the scrollbar */
-    list-style: none;
-    font-size: 1.5rem;
-    /* 🌟 THE MAGIC LINES: Captures vertical growth and handles overflow */
-    flex-grow: 1;
-    li{
-        padding: 12px 0;
-        color: #333;
-        flex-direction: column;
-        text-align: left;
-    }
-}
-
-
-/* Food Logging Card Container */
-.food-logging-card {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+.history-container h2 {
     margin-top: 0;
-    width: 100%;
-    max-width: 480px;
-    box-sizing: border-box;
-    margin-right: 5%;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border-light);
+    text-align: center;
+}
+
+.history-list {
+    margin: 0;
+    padding: 0 5px; 
+    list-style: none;
+    flex-grow: 1;
+}
+
+.history-list li {
+    padding: 12px 0;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+/* Food Logging Core Input Panel styles module definitions */
+.food-logging-card {
+    padding: 24px;
 }
 
 .food-logging-card h3 {
@@ -180,9 +174,9 @@ small {
     color: #2c3e50;
     border-bottom: 2px solid #f1f3f5;
     padding-bottom: 8px;
+    text-align: center;
 }
 
-/* Layout Row Flexing */
 .form-row-group {
     display: flex;
     gap: 16px;
@@ -216,10 +210,10 @@ small {
 }
 
 .form-group-item input:focus, .form-group-item select:focus {
-    border-color: #2ecc71; /* Green accent focus color for food entries */
+    border-color: var(--healthy-green); 
 }
 
-/* 🌟 The Macro Grid Layout */
+/* Macronutrient Grid Layout Box modules formatting properties */
 .macro-input-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -236,10 +230,9 @@ small {
     flex-direction: column;
 }
 
-/* Macro Left Border Subtle Accents */
-.macro-box.protein-accent { border-left-color: #3498db; } /* Blue */
-.macro-box.carb-accent   { border-left-color: #f39c12; } /* Orange */
-.macro-box.fat-accent    { border-left-color: #2ecc71; } /* Green */
+.macro-box.protein-accent { border-left-color: #3498db; } 
+.macro-box.carb-accent    { border-left-color: #f39c12; } 
+.macro-box.fat-accent     { border-left-color: var(--healthy-green); } 
 
 .macro-box input {
     width: 100%;
@@ -252,10 +245,9 @@ small {
     padding: 4px 0 0 0;
 }
 
-/* Submit Action Button styling override */
 .btn-primary-food {
     width: 100%;
-    background: #2ecc71; /* Distinct healthy green color to separate it from exercise buttons */
+    background: var(--healthy-green); 
     color: white;
     border: none;
     padding: 12px;
@@ -270,13 +262,12 @@ small {
     background: #27ae60;
 }
 
-
-/* Master Grid Layout Row */
+/* Master Responsive Dashboard Grid system frameworks rules */
 .dashboard-grid {
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* 🌟 ENSURES THEY ALIGN ON THE SAME TOP LEVEL BASELINE */
-    gap: 40px; /* Generates clean breathing room between columns */
+    align-items: flex-start; 
+    gap: 40px; 
     max-width: 1200px;
     margin: 40px auto;
     padding: 0 20px;
@@ -284,34 +275,20 @@ small {
     box-sizing: border-box;
 }
 
-/* Column Proportion Layout Balancing */
 .dashboard-left {
-    flex: 1.2; /* Gives slightly more structural room for the circle and timelines */
+    flex: 1.2; 
     display: flex;
     flex-direction: column;
 }
 
 .dashboard-right {
-    flex: 1; /* Keeps the input column slightly tighter */
+    flex: 1; 
     position: sticky;
-    top: 40px; /* Optional: Locks the form on screen if your history list grows long */
+    top: 40px; 
+    display: flex;
+    flex-direction: column;
 }
 
-/* Responsive UI Safety Switch: Breaks to stacked mode on mobile screens */
-@media (max-width: 850px) {
-    .dashboard-grid {
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-    }
-    
-    .dashboard-left, .dashboard-right {
-        width: 100%;
-        max-width: 480px;
-    }
-}
-
-/* Adds breathing room between the stacked containers */
 .nutrition-card-spacing {
     margin-top: 24px; 
 }
@@ -330,14 +307,6 @@ small {
     text-align: center;
 }
 
-/* Row List Layout Mechanics */
-.history-section-card ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-/* Link Button for "See More" look */
 .link-btn {
     background: none;
     border: none;
@@ -351,4 +320,22 @@ small {
 
 .link-btn:hover {
     color: #2c3e50;
+}
+
+/* Screen Size Breakpoint Responsive Switch rules definitions */
+@media (max-width: 850px) {
+    .dashboard-grid {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    
+    .dashboard-left, .dashboard-right {
+        width: 100%;
+        max-width: 480px;
+    }
+    
+    .dashboard-right {
+        position: static;
+    }
 }

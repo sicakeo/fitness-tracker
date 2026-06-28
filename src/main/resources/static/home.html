@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name = "viewport" content = "width = device-width, initial-scale = 1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fitness Tracker Application</title>
-     <link rel="stylesheet" href="css/styles.css">
-     <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/home.css">
 </head>
 <body>
     <div class="nav-container">
-        <button class="hamburger" id="hamburgerBtn">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Menu">
             <span></span>
             <span></span>
             <span></span>
@@ -37,24 +37,24 @@
         </nav>
     </div>
 
-    <div class = "wrapper">
-        <div class = "calorie-ring-container">
-            <div class = "calorie-ring">
+    <div class="wrapper">
+        <div class="calorie-ring-container">
+            <div class="calorie-ring">
                 <svg class="progress-ring" width="200" height="200">
                     <circle class="inner" cx="100" cy="100" r="80" stroke-width="16"></circle>
                     <circle id="calorieFillCircle" class="outer" cx="100" cy="100" r="80" stroke-width="16"></circle>
                 </svg>
 
                 <div class="ring-text-center">
-                    <span id="netCaloriesDisplay" data-target="0"></span>
-                    <small> / <span id="targetCaloriesDisplay"></span> kcal</small>
+                    <span id="netCaloriesDisplay" data-target="0">0</span>
+                    <small> / <span id="targetCaloriesDisplay">2000</span> kcal</small>
                 </div>
             </div>
         </div>
     </div>  
 
-    <div class="start-container">
-        <h2><span id="startWorkoutBtn" class="startWorkoutBtn">Start a Workout</span></h2>
+    <div class="start-container" style="text-align: center; margin-bottom: 20px;">
+        <button id="startWorkoutBtn" class="link-btn" style="font-size: 1.5rem; font-weight: bold;">Start a Workout</button>
     </div>
 
     <div id="workoutModal" class="modal-overlay hidden">
@@ -96,10 +96,10 @@
                 <div class="form-group" id="intensityGroup" hidden>
                     <label for="intensity">Intensity:</label>
                     <select id="intensity">
-                        <option value= "" disabled selected>Select intensity</option>
-                        <option value = "Light">Light</option>
-                        <option value = "Moderate">Moderate</option>
-                        <option value = "Heavy">Heavy</option>
+                        <option value="" disabled selected>Select intensity</option>
+                        <option value="Light">Light</option>
+                        <option value="Moderate">Moderate</option>
+                        <option value="Heavy">Heavy</option>
                     </select>
                 </div>
                 <div class="form-group" id="durationGroup">
@@ -120,7 +120,7 @@
 
     <div class="dashboard-grid">
         <div class="dashboard-left">
-            <div class="modal-card">
+            <div class="modal-card food-logging-card">
                 <h3>Log a Meal</h3>
                 <form id="foodForm">
                     <div class="form-row-group">
@@ -133,7 +133,6 @@
                                 <option value="Snack">Snack</option>
                             </select>
                         </div>
-                        
                         <div class="form-group-item">
                             <label for="foodName">Food Name</label>
                             <input type="text" id="foodName" placeholder="e.g., Chicken Breast" required />
@@ -152,12 +151,10 @@
                             <label for="protein">Protein (g)</label>
                             <input type="number" id="protein" placeholder="0" min="0" step="0.1" />
                         </div>
-                        <div class="macro-box carbs-accent">
-                            <label for="carbs">Carbs (g)</label>
+                        <div class="macro-box carb-accent"> <label for="carb">Carbs (g)</label>
                             <input type="number" id="carb" placeholder="0" min="0" step="0.1" />
                         </div>
-                        <div class="macro-box fats-accent">
-                            <label for="fats">Fats (g)</label>  
+                        <div class="macro-box fat-accent"> <label for="fat">Fats (g)</label>  
                             <input type="number" id="fat" placeholder="0" min="0" step="0.1" />
                         </div>
                     </div>
@@ -167,52 +164,50 @@
             </div>
         </div>
 
-
-        <div class = "dashboard-right">
-            <div id="historyDisplay">
-                <div class="history-container">
-                    <h2>History</h2>
-                    <ul id="previewHistoryList" class="workout-list" style="list-style-type: none;">
-                    </ul>
-                    <button id="seeMoreBtn" class="link-btn">See More</button>
+        <div class="dashboard-right">
+            <div id="historyDisplay" class="history-section-card">
+                <div class="card-header">
+                    <h3>Workout History</h3>
                 </div>
-            </div>
-
-            <div id="historyModal" class="modal-overlay hidden">
-                <div class="modal-card">
-                    <h2>History</h2>
-                    <div class="history-container">
-                        <ul id="dailyHistoryList" class="workout-list" style="list-style-type: none;">
-                        </ul>
-                    </div>
-                    <div class="modal-actions">
-                        <button type="button" id="closeHistoryBtn" class="btn-secondary">Close</button>
-                    </div>
-                </div>
+                <ul id="previewHistoryList" class="history-list"></ul>
+                <button id="seeMoreBtn" class="link-btn">See More</button>
             </div>
 
             <div class="history-section-card nutrition-card-spacing">
                 <div class="card-header">
                     <h3>Nutrition History</h3>
                 </div>
-                <ul id="previewFoodHistoryList">
-                    </ul>
+                <ul id="previewFoodHistoryList" class="history-list"></ul>
                 <button id="seeMoreFoodBtn" class="link-btn">See More Meals</button>
-            </div>
-
-            <div id="foodHistoryModal" class="modal-overlay hidden">
-                <div class="modal-card">
-                    <h2>Nutrition History</h2>
-                    <ul id="fullFoodHistoryList">
-                        </ul>
-                    <div class="modal-actions">
-                        <button type="button" id="closeFoodHistoryBtn" class="btn-secondary">Close</button>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
-    <script type="module" src ="js/navbar.js"></script>
-    <script type="module" src ="js/home.js"></script>
+
+    <div id="historyModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <h2>Workout History</h2>
+            <div class="history-container">
+                <ul id="dailyHistoryList" class="history-list"></ul>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="closeHistoryBtn" class="btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="foodHistoryModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <h2>Nutrition History</h2>
+            <div class="history-container">
+                <ul id="fullFoodHistoryList" class="history-list"></ul>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="closeFoodHistoryBtn" class="btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/navbar.js"></script>
+    <script type="module" src="js/home.js"></script>
 </body>
 </html>
