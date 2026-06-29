@@ -53,7 +53,7 @@
 
         <form id="bmr-form" novalidate>
             <div class="input-group-row" id = "gender-group">
-              <label for="gender">Gender:</label>
+              <label for="gender">Gender</label>
               <select id="gender" required>
                 <option value="" disabled selected>Select your gender</option>
                 <option value="M">Male</option>              
@@ -61,30 +61,32 @@
               </select>
             </div>
 
-            <div class="input-group-row" id = "age-group">
-              <input type="number" id="age" inputmode="numeric" required>
-              <span class="unit-label">Years</span>
-            </div>
-
             <div class="form-row">
-            <label class="row-label">Height</label>
-            <div id="standard-height-group" class="input-group-row">
-              <input type="number" id="feet" inputmode="numeric"  required>
-              <span class="unit-label">Feet</span>
-
-              <input type="number" id="inches" inputmode="numeric" required>
-              <span class="unit-label">Inches</span>
+              <label class = "row-label">Age</label>
+              <div class="input-group-row" id = "age-group">
+                <input type="number" id="age" inputmode="numeric" required>
+                <span class="unit-label">Years</span>
+              </div>
             </div>
+            
+            <div class="form-row">
+              <label class="row-label">Height</label>
+              <div id="standard-height-group" class="input-group-row">
+                <input type="number" id="feet" inputmode="numeric" required>
+                <span class="unit-label">Feet</span>
 
-            <div id="metric-height-group" class="input-group-row hidden" style = "display: none">
-              <input type="number" id="cm" inputmode="numeric"  required>
-              <span class="unit-label">Cm</span>
+                <input type="number" id="inches" inputmode="numeric" required>
+                <span class="unit-label">Inches</span>
+              </div>
+
+              <div id="metric-height-group" class="input-group-row hidden" style = "display: none">
+                <input type="number" id="cm" inputmode="numeric" required>
+                <span class="unit-label">Cm</span>
+              </div>
             </div>
-          </div>
 
           <div class="form-row">
             <label class="row-label">Weight</label>
-
             <div class="input-group-row">
               <div id = "standard-weight-group" class="input-group-row">
                 <input type="number" id="lbs" inputmode="decimal" required>
@@ -92,11 +94,12 @@
               </div>
 
               <div id = "metric-weight-group" class="input-group-row hidden"  style = "display: none">
-                <input type="number" id="kg" inputmode="decimal"  required>
+                <input type="number" id="kg" inputmode="decimal" required>
                 <span id="metric-weight-unit" class="unit-label">Kilogram</span>
               </div>
             </div>
           </div>
+
           <button type = "submit" id = "submit">Calculate</button>
         </form>
 
