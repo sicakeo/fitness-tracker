@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BMR Calculator</title>
     <link rel="stylesheet" href="css/styles.css">
-</head>
 <body>
     <div class="nav-container">
-        <button class="hamburger" id="hamburgerBtn">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Menu">
             <span></span>
             <span></span>
             <span></span>
@@ -29,88 +29,84 @@
             </ul>
         </nav>
 
-        <div id="nav-right">
-            <div id="loginBtn">
-                <a href="/login">Login</a>
-            </div>
-            <div id="registerBtn">
-                <a href="/register">Signup</a>
-            </div>
+        <div id="nav-right" class="nav-right">
+            <div id="loginBtn"><a href="/login" class="link-btn">Login</a></div>
+            <div id="registerBtn"><a href="/register" class="link-btn">Signup</a></div>
         </div>
     </div>
 
-  <main class = "bmr-container">
-    <div class = "bmr-card">
-      <div class = "bmr-header">
-        <h2>BMR Calculator</h2>
-      </div>
+    <main class="bmr-container" style="display: flex; justify-content: center; margin-top: 40px; padding: 0 20px;">
+        <div class="modal-card" style="max-width: 480px; width: 100%;">
+            <div class="card-header" style="text-align: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; color: #2c3e50;">BMR Calculator</h2>
+            </div>
 
-      <div class = "bmr-content">
-        <div class = "toggle">
-          <button type = "submit" id = "standard-btn" style ="background-color: green">Standard</button>
-          <button type = "submit" id = "metric-btn" style = "background-color: gray">Metric</button>
+            <div class="bmr-content">
+                <div class="form-row-group" style="justify-content: center; margin-bottom: 24px;">
+                    <button type="button" id="standard-btn" class="btn-toggle active" style="padding: 10px 20px; border: none; border-radius: 6px 0 0 6px; cursor: pointer; font-weight: bold; background-color: #2ecc71; color: white;">Standard</button>
+                    <button type="button" id="metric-btn" class="btn-toggle" style="padding: 10px 20px; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-weight: bold; background-color: #dee2e6; color: #495057;">Metric</button>
+                </div>
+
+                <form id="bmr-form" novalidate>
+                  <div class="form-row-layout">
+                      <label for="gender">Gender</label>
+                      <select id="gender" required>
+                          <option value="" disabled selected>Select your gender</option>
+                          <option value="M">Male</option>              
+                          <option value="F">Female</option>
+                      </select>
+                  </div>
+
+                  <div class="form-row-layout">
+                      <label for="age">Age</label>
+                      <div class="input-inline-group">
+                          <input type="number" id="age" inputmode="numeric" required>
+                          <span class="unit-label">Years</span>
+                      </div>
+                  </div>
+                  
+                  <div class="form-row-layout">
+                      <label>Height</label>
+                      
+                      <div id="standard-height-group" class="input-inline-group">
+                          <input type="number" id="feet" inputmode="numeric">
+                          <span class="unit-label">Feet</span>
+
+                          <input type="number" id="inches" inputmode="numeric">
+                          <span class="unit-label">Inches</span>
+                      </div>
+
+                      <div id="metric-height-group" class="input-inline-group hidden">
+                          <input type="number" id="cm" inputmode="numeric">
+                          <span class="unit-label">Cm</span>
+                      </div>
+                  </div>
+
+                  <div class="form-row-layout">
+                      <label>Weight</label>
+                      
+                      <div id="standard-weight-group" class="input-inline-group">
+                          <input type="number" id="lbs" inputmode="decimal">
+                          <span class="unit-label">Pounds</span>
+                      </div>
+
+                      <div id="metric-weight-group" class="input-inline-group hidden">
+                          <input type="number" id="kg" inputmode="decimal">
+                          <span class="unit-label">Kilograms</span>
+                      </div>
+                  </div>
+                  <button type="submit" id="submit" class="btn-primary-food" style="background-color: #1083ea; margin-top: 10px;">Calculate BMR</button>
+                </form>
+
+                <div class="bmr-result" style="margin-top: 24px; padding: 16px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #1083ea; text-align: center;">
+                    <h4 style="margin: 0 0 6px 0; color: #6c757d; font-size: 0.9rem; text-transform: uppercase;">Your Daily Base Metabolism</h4>
+                    <span id="resultMessage" style="font-size: 1.4rem; font-weight: bold; color: #2c3e50;">BMR = 0.0 kcal/day</span>
+                </div>
+            </div>
         </div>
+    </main>
 
-        <form id="bmr-form" novalidate>
-            <div class="input-group-row" id = "gender-group">
-              <label for="gender">Gender</label>
-              <select id="gender" required>
-                <option value="" disabled selected>Select your gender</option>
-                <option value="M">Male</option>              
-                <option value="F">Female</option>
-              </select>
-            </div>
-
-            <div class="form-row">
-              <label class = "row-label">Age</label>
-              <div class="input-group-row" id = "age-group">
-                <input type="number" id="age" inputmode="numeric" required>
-                <span class="unit-label">Years</span>
-              </div>
-            </div>
-            
-            <div class="form-row">
-              <label class="row-label">Height</label>
-              <div id="standard-height-group" class="input-group-row">
-                <input type="number" id="feet" inputmode="numeric" required>
-                <span class="unit-label">Feet</span>
-
-                <input type="number" id="inches" inputmode="numeric" required>
-                <span class="unit-label">Inches</span>
-              </div>
-
-              <div id="metric-height-group" class="input-group-row hidden" style = "display: none">
-                <input type="number" id="cm" inputmode="numeric" required>
-                <span class="unit-label">Cm</span>
-              </div>
-            </div>
-
-          <div class="form-row">
-            <label class="row-label">Weight</label>
-            <div class="input-group-row">
-              <div id = "standard-weight-group" class="input-group-row">
-                <input type="number" id="lbs" inputmode="decimal" required>
-                <span id="standard-weight-unit" class="unit-label">Pounds</span>
-              </div>
-
-              <div id = "metric-weight-group" class="input-group-row hidden"  style = "display: none">
-                <input type="number" id="kg" inputmode="decimal" required>
-                <span id="metric-weight-unit" class="unit-label">Kilogram</span>
-              </div>
-            </div>
-          </div>
-
-          <button type = "submit" id = "submit">Calculate</button>
-        </form>
-
-        <div class = "bmr-result" >
-          <h2>Your BMR Result:</h2>
-          <lable id = "resultMessage">BMR = 0.0 kcal/day</lable>
-        </div>
-      </div>
-    </div>
-  </main>
-  <script type="module" src = "js/navbar.js"></script>
-  <script type="module" src = "js/bmr-calculator.js"></script>
+    <script type="module" src="js/navbar.js"></script>
+    <script type="module" src="js/bmr-calculator.js"></script>
 </body>
 </html>

@@ -84,11 +84,6 @@ small {
     color: var(--text-muted);
 }
 
-/* Global Functional Layout Helpers rules */
-.hidden {
-    display: none !important;
-}
-
 /* Modal Popup Core Component Framework overlays wrapper definitions */
 .modal-overlay {
     position: fixed;
