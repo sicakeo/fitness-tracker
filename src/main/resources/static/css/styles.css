@@ -1,6 +1,16 @@
 /* ==========================================
    1. GLOBAL RESET & NAVIGATION CONTAINERS
    ========================================== */
+
+:root {
+    --card-bg: #ffffff;
+    --primary-blue: #1083ea;
+    --active-red: #ff4757;
+    --healthy-green: #2ecc71;
+    --text-muted: #7b7a7a;
+    --border-light: #e9ecef;
+}
+
 body {
     font-family: Arial, sans-serif;
     background-color: #ededf3;
@@ -128,6 +138,23 @@ a {
     cursor: pointer; 
 }
 
+
+/* User Account Interface Dropdowns */
+#logoutBtn {
+    text-decoration: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    transition: background-color 0.3s ease;
+}
+
+#logoutBtn:hover {
+    background-color: #ddd;
+}
+
+#signOutLink {
+    text-decoration: none;
+    color: var(--primary-blue);
+}
 /* ==========================================
    3. HERO CONTENT SECTION
    ========================================== */

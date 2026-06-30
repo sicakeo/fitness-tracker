@@ -13,17 +13,26 @@ document.addEventListener("DOMContentLoaded", () => {
 /**
  * Initializes authentication views and handles demographic profile field hydration
  */
-function initializeDashBoard() {
+function initializeDashboard() {
     if (!isLoggedIn()) {
         clearFormFields();
         return;
     }
 
-    // Remap user layout context details to navbar controls
-    const navRight = document.getElementById("nav-right");
-    if (navRight) {
-        navRight.innerHTML = `<li><span id="signOutLink" class="logout-text" style="cursor:pointer; color:#1083ea;">Sign out</span></li>`;
-        document.getElementById("signOutLink").addEventListener("click", logout);
+    const authLinksLi = document.getElementById("authLinksLi");
+    if (authLinksLi) {
+        // Replace the entire list item cleanly to preserve your flex/grid nav alignment
+        authLinksLi.innerHTML = `
+           <div id="logoutBtn" class="nav-right">
+                <span id="signOutLink" class="logout-text">Sign out</span>
+            </div>
+        `;
+        
+        // Bind the active logout listener to the fresh DOM node
+        const signOutLink = document.getElementById("signOutLink");
+        if (signOutLink) {
+            signOutLink.addEventListener("click", logout);
+        }
     }
 
     hydrateFieldsFromSession();

@@ -1,118 +1,202 @@
-const USER_API_URL = "http://localhost:8080/api/users"
 import { isLoggedIn, logout } from "./login.js";
-import { calculateBMI } from "./fitnessMath.js";
+import { calculateBMI} from "./fitnessMath.js";
+
+const USER_API_URL = "http://localhost:8080/api/users";
+let unitSelect = "standard"; // State variable tracking active metric choice
+
 document.addEventListener("DOMContentLoaded", () => {
-    let unitSelect = "standard";
-    const standard = document.getElementById("standard-btn");
-    const metric = document.getElementById("metric-btn");
-    if(!isLoggedIn()){
-        if(document.getElementById("feet")) document.getElementById("feet").value = "";
-        if(document.getElementById("inches")) document.getElementById("inches").value = "";
-        if(document.getElementById("lbs")) document.getElementById("lbs").value = "";
-        if(document.getElementById("kg")) document.getElementById("kg").value = "";
-        if(document.getElementById("cm")) document.getElementById("cm").value = "";
-    } else{
-        const navRight = document.getElementById("nav-right");
-        navRight.innerHTML = `<li><span id="signOutLink" class="logout-text">Sign out</span></li>`;
-        document.getElementById("signOutLink").addEventListener("click", logout);
-        let userSession = sessionStorage.getItem("user");
-        if(userSession){
-            const user = JSON.parse(userSession);
-            const weight= user.weight || 0;
-            const height = user.height || 0;
-            const totalInches = height/2.54;
-            const feet = Math.floor(totalInches/12);
-            const inches = Math.round(totalInches%12);
-            document.getElementById("feet").value = feet.toFixed(2);
-            document.getElementById("inches").value = inches.toFixed(2);
-            document.getElementById("lbs").value = (weight*2.20462).toFixed(2);
-
-            document.getElementById("cm").value = height.toFixed(2);
-            document.getElementById("kg").value = weight.toFixed(2);
-
-        }
-    }
-    
-    standard.addEventListener("click", function(){
-        unitSelect = "standard";
-        document.getElementById("standard-height-group").style.cssText = "block";
-        document.getElementById("standard-weight-group").style.display = "block";
-        document.getElementById("metric-height-group").style.display = "none";
-        document.getElementById("metric-weight-group").style.display = "none";
-        document.getElementById("standard-btn").style.backgroundColor = "green";
-        document.getElementById("metric-btn").style.backgroundColor = "gray";
-    });
-    metric.addEventListener("click", function(){
-        unitSelect = "metric";
-        document.getElementById("standard-height-group").style.display = "none";
-        document.getElementById("standard-weight-group").style.display = "none";
-        document.getElementById("metric-height-group").style.display = "block";
-        document.getElementById("metric-weight-group").style.display = "block";
-        document.getElementById("standard-btn").style.backgroundColor = "gray";
-        document.getElementById("metric-btn").style.backgroundColor = "green";
-    });
-    
-
-    const bmiForm = document.getElementById("bmi-form");
-    if (bmiForm) {
-        bmiForm.addEventListener("submit", (event) => {
-            event.preventDefault(); 
-
-            //calculate BMI
-            let height = 0;
-            let weight = 0;
-            if (unitSelect === "standard") {
-                const feet = parseFloat(document.getElementById("feet").value) || "";
-                const inches = parseFloat(document.getElementById("inches").value) || 0;
-               
-                height = (feet * 12) + inches; 
-                weight = parseFloat(document.getElementById("lbs").value) || "";
-            } else {
-                height = parseFloat(document.getElementById("cm").value) || "";
-                weight = parseFloat(document.getElementById("kg").value) || "";
-            }
-            const userSession = sessionStorage.getItem("user");
-            if (userSession) {
-                const user = JSON.parse(userSession);
-                const updatedUser = {
-                    ...user,
-                    weight: unitSelect === "standard" ? weight / 2.20462 : weight, // Convert lbs to kg if in standard
-                    height: unitSelect === "standard" ? height * 2.54 : height // Convert inches to cm if in standard
-                }
-                sessionStorage.setItem("user", JSON.stringify(updatedUser));
-                fetch(`${USER_API_URL}/${user.id}`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(updatedUser)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Network response was not ok");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log("User updated successfully:", data);
-                })
-                .catch(error => {
-                    console.error("Error updating user:", error);
-                });
-            }
-
-            const bmi = calculateBMI(unitSelect, weight, height);
-            if (bmi>0) {
-                document.getElementById("resultMessage").innerHTML = `BMI = ${bmi.toFixed(2)} kg/m<sup>2</sup>`;
-                displayBmi(bmi);
-            } else {
-                document.getElementById("resultMessage").innerHTML = "Please enter valid values.";
-            }
-            
-        });
-    }
+    initializeDashboard();
+    setupUnitToggleListeners();
+    setupFormSubmission();
 });
 
+/**
+ * Initializes authentication views and handles demographic profile field hydration
+ */
+function initializeDashboard() {
+    if (!isLoggedIn()) {
+        clearFormFields();
+        return;
+    }
+
+    const authLinksLi = document.getElementById("authLinksLi");
+    if (authLinksLi) {
+        // Replace the entire list item cleanly to preserve your flex/grid nav alignment
+        authLinksLi.innerHTML = `
+           <div id="logoutBtn" class="nav-right">
+                <span id="signOutLink" class="logout-text">Sign out</span>
+            </div>
+        `;
+        
+        // Bind the active logout listener to the fresh DOM node
+        const signOutLink = document.getElementById("signOutLink");
+        if (signOutLink) {
+            signOutLink.addEventListener("click", logout);
+        }
+    }
+
+    hydrateFieldsFromSession();
+}
+
+/**
+ * Reads background session strings and populates inputs with appropriate metric scaling conversions
+ */
+function hydrateFieldsFromSession() {
+    const userSession = sessionStorage.getItem("user");
+    if (!userSession) return;
+
+    const user = JSON.parse(userSession);
+    const weightKgs = user.weight || 0;
+    const heightCms = user.height || 0;
+
+    // Convert metrics to imperial baseline figures safely
+    const totalInches = heightCms / 2.54;
+    const feetValue = Math.floor(totalInches / 12);
+    const inchesValue = Math.round(totalInches % 12);
+    const weightLbs = weightKgs * 2.20462;
+
+    // Populating imperial elements
+    setInputValues({
+        feet: heightCms > 0 ? feetValue : "",
+        inches: heightCms > 0 ? inchesValue : "",
+        lbs: weightKgs > 0 ? weightLbs.toFixed(1) : "",
+        // Populating fallback metric element baselines
+        cm: heightCms > 0 ? heightCms.toFixed(1) : "",
+        kg: weightKgs > 0 ? weightKgs.toFixed(1) : "",
+    });
+}
+
+/**
+ * Loops across key maps to assign value attributes cleanly
+ */
+function setInputValues(fields) {
+    Object.entries(fields).forEach(([id, val]) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val;
+    });
+}
+
+/**
+ * Handles explicit target resets when authorization states expire
+ */
+function clearFormFields() {
+    const fields = ["feet", "inches", "lbs", "kg", "cm"];
+    fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+    });
+}
+
+/**
+ * Binds click controls to unit selections, cleanly handling swaps using classes
+ */
+function setupUnitToggleListeners() {
+    const btnStandard = document.getElementById("standard-btn");
+    const btnMetric = document.getElementById("metric-btn");
+    
+    const groupStdHeight = document.getElementById("standard-height-group");
+    const groupStdWeight = document.getElementById("standard-weight-group");
+    const groupMetHeight = document.getElementById("metric-height-group");
+    const groupMetWeight = document.getElementById("metric-weight-group");
+
+    if (!btnStandard || !btnMetric) return;
+
+    btnStandard.addEventListener("click", () => {
+        unitSelect = "standard";
+        toggleVisibility(btnStandard, btnMetric, [groupStdHeight, groupStdWeight], [groupMetHeight, groupMetWeight]);
+    });
+
+    btnMetric.addEventListener("click", () => {
+        unitSelect = "metric";
+        toggleVisibility(btnMetric, btnStandard, [groupMetHeight, groupMetWeight], [groupStdHeight, groupStdWeight]);
+    });
+}
+
+/**
+ * Handles class list assignments and styling states cleanly
+ */
+function toggleVisibility(activeBtn, inactiveBtn, showElements, hideElements) {
+    activeBtn.style.backgroundColor = "#2ecc71";
+    activeBtn.style.color = "white";
+    inactiveBtn.style.backgroundColor = "#dee2e6";
+    inactiveBtn.style.color = "#495057";
+
+    showElements.forEach(el => el?.classList.remove("hidden"));
+    hideElements.forEach(el => el?.classList.add("hidden"));
+}
+
+/**
+ * Intercepts form submit actions, validates inputs, and triggers REST pipeline transmissions
+ */
+function setupFormSubmission() {
+    const bmiForm = document.getElementById("bmi-form");
+    if (!bmiForm) return;
+
+    bmiForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        let targetHeight = 0;
+        let targetWeight = 0;
+
+        if (unitSelect === "standard") {
+            const feet = parseFloat(document.getElementById("feet").value) || 0;
+            const inches = parseFloat(document.getElementById("inches").value) || 0;
+            targetHeight = (feet * 12) + inches;
+            targetWeight = parseFloat(document.getElementById("lbs").value) || 0;
+        } else {
+            targetHeight = parseFloat(document.getElementById("cm").value) || 0;
+            targetWeight = parseFloat(document.getElementById("kg").value) || 0;
+        }
+
+        // Compute bmi calculation from helper module definitions
+        const bmiResult = calculateBMI(unitSelect, targetWeight, targetHeight);
+        const display = document.getElementById("resultMessage");
+
+        if (bmiResult > 0) {
+            display.innerHTML = `BMI = ${bmiResult.toFixed(2)} kg/m<sup>2</sup>`;
+            await syncUpdatedUserData(targetWeight, targetHeight);
+            displayBmi(bmiResult);
+        } else {
+            display.innerHTML = "Please enter valid values.";
+        }
+    });
+}
+
+/**
+ * Normalizes input scales to metric standards and updates data buffers across backend clusters
+ */
+async function syncUpdatedUserData(weight, height) {
+    const userSession = sessionStorage.getItem("user");
+    if (!userSession) return;
+
+    const user = JSON.parse(userSession);
+    
+    // Standardize metrics into standardized metric formats before backend storage save routines execution
+    const metricWeight = unitSelect === "standard" ? weight * 0.453592 : weight;
+    const metricHeight = unitSelect === "standard" ? height * 2.54 : height;
+
+    const updatedUser = {
+        ...user,
+        weight: parseFloat(metricWeight.toFixed(2)),
+        height: parseFloat(metricHeight.toFixed(2)),
+    };
+
+    // Update local storage buffer immediately for snappy client navigation updates
+    sessionStorage.setItem("user", JSON.stringify(updatedUser));
+
+    try {
+        const response = await fetch(`${USER_API_URL}/${user.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedUser)
+        });
+
+        if (!response.ok) throw new Error("Database transaction profile storage sync failed.");
+        console.log("Database updated profile successfully.");
+    } catch (error) {
+        console.error("Network sync pipeline failure details:", error);
+    }
+}
 
 function displayBmi(bmiValue) {
     const minBmi = 18.5;
