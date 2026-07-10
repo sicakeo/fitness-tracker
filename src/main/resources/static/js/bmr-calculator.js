@@ -189,7 +189,6 @@ async function syncUpdatedUserData(weight, height, age, gender) {
 
     // Update local storage buffer immediately for snappy client navigation updates
     sessionStorage.setItem("user", JSON.stringify(updatedUser));
-
     try {
         const response = await fetch(`${USER_API_URL}/${user.id}`, {
             method: "PUT",
@@ -197,9 +196,20 @@ async function syncUpdatedUserData(weight, height, age, gender) {
             body: JSON.stringify(updatedUser)
         });
 
-        if (!response.ok) throw new Error("Database transaction profile storage sync failed.");
-        console.log("Database updated profile successfully.");
+        if (!response.ok){
+            const errorData = await response.json();
+            const serverErrorMessage = errorData.errors 
+                ? Object.values(errorData.errors).join("\n") 
+                : (errorData.message || "Failed to synchronize metrics with server.");
+                
+            throw new Error(serverErrorMessage);
+        }
+
+            const responseData = await response.json();
+            sessionStorage.setItem("user", JSON.stringify(responseData));
+            alert("Metrics updated successfully!");
     } catch (error) {
         console.error("Network sync pipeline failure details:", error);
+        alert(error.message);
     }
 }

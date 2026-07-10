@@ -1,5 +1,13 @@
 const LOGIN_API_URL = "http://localhost:8080/api/users/login"
 
+
+document.addEventListener("DOMContentLoaded", () => {
+    const loginForm = document.getElementById("loginForm"); 
+    if (loginForm) {
+        loginForm.addEventListener("submit", login);
+    }
+});
+
 async function login(event) {
     event.preventDefault();
     const username = document.getElementById("username").value;
@@ -13,8 +21,13 @@ async function login(event) {
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({username, password, role})
         });
-        if (!response.ok)
-            throw new Error("Your username or password may be incorrect");
+        if (!response.ok) {
+            if (response.status === 401 || response.status === 400) {
+                throw new Error("Your username or password may be incorrect.");
+            }
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || "The authentication server is temporarily unavailable. Please try again later.");
+        }
         const responseData = await response.json();
         sessionStorage.setItem("user", JSON.stringify(responseData));
         alert("Login succsessfully");
@@ -49,10 +62,3 @@ export function logout(){
     window.location.href = "/";
 }
 
-// Ensure this only runs on the login page where the form actually exists
-document.addEventListener("DOMContentLoaded", () => {
-    const loginForm = document.getElementById("loginForm"); // Make sure your HTML <form> has id="loginForm"
-    if (loginForm) {
-        loginForm.addEventListener("submit", login);
-    }
-});

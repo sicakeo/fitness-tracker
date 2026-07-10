@@ -191,8 +191,18 @@ async function syncUpdatedUserData(weight, height) {
             body: JSON.stringify(updatedUser)
         });
 
-        if (!response.ok) throw new Error("Database transaction profile storage sync failed.");
-        console.log("Database updated profile successfully.");
+        if (!response.ok){
+            const errorData = await response.json();
+            const serverErrorMessage = errorData.errors 
+                ? Object.values(errorData.errors).join("\n") 
+                : (errorData.message || "Failed to synchronize metrics with server.");
+                
+            throw new Error(serverErrorMessage);
+        }
+
+            const responseData = await response.json();
+            sessionStorage.setItem("user", JSON.stringify(responseData));
+            alert("Metrics updated successfully!");
     } catch (error) {
         console.error("Network sync pipeline failure details:", error);
     }

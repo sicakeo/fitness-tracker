@@ -159,29 +159,37 @@
                 date: todayStr
             };
 
-            const respone = await fetch(FOOD_API_URL,{
+            
+            const response = await fetch(FOOD_API_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(foodEntryPayLoad)
             });
-            console.log(foodEntryPayLoad);
-            if(!respone.ok) throw new Error ("Failed to record active food entry");
-            alert("Meal logged successfully");
-            const netDisplay = document.getElementById("netCaloriesDisplay");
-            if (netDisplay) {
-                // Grab the current visible calories on screen (e.g., if they already had 200 kcal logged today)
-                const existingCalories = parseInt(netDisplay.innerText) || 0;
-                const updatedTotalTarget = existingCalories + foodEntryPayLoad.calories;
 
-                // Update the data-target data boundary attribute link directly
-                netDisplay.setAttribute("data-target", updatedTotalTarget);
+            // 🌟 HIGH-PRECISION ERROR HANDLER
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                const serverErrorMessage = errorData.errors 
+                    ? Object.values(errorData.errors).join("\n") 
+                    : (errorData.message || "Failed to log meal entry validation rules.");
+                throw new Error(serverErrorMessage);
+            }
+
+            alert("Meal logged successfully!");
+
+            const netDisplay = document.getElementById("netCaloriesDisplay");
+            //Dynamically update data models without page reloads
+            if (netDisplay) {
+                const existingCalories = parseInt(netDisplay.innerText) || 0;
+                netDisplay.setAttribute("data-target", existingCalories + foodEntryPayLoad.calories);
             }
 
             // --- TRIGGER ANIMATION LAYER WITHOUT RESETTING PAGE ---
             displayRing();
             loadTodayCaloriesRing();
+            loadTodayHistory();
         } catch (error) {
-            console.error("Pipeline failure:", error);
+            console.error("Meal pipeline failure:", error);
             alert(error.message);
         }
     }
@@ -276,7 +284,11 @@
                 body: JSON.stringify(exercisePayload)
             });
 
-            if (!exerciseResponse.ok) throw new Error("Failed to register exercise blueprint configuration.");
+            if (!exerciseResponse.ok) {
+                const errorData = await exerciseResponse.json().catch(() => ({}));
+                throw new Error(errorData.message || "Failed to register exercise blueprint configuration.");
+            }
+
             const savedExercise = await exerciseResponse.json();
 
             // Phase 2 Payload Mapping: Conditional validation reads clean cache variables
@@ -300,7 +312,14 @@
                 body: JSON.stringify(workoutPayload)
             });
 
-            if (!workoutResponse.ok) throw new Error("Failed to record active workout history profile.");
+            if (!workoutResponse.ok) {
+                const errorData = await workoutResponse.json().catch(() => ({}));
+                const serverErrorMessage = errorData.errors 
+                    ? Object.values(errorData.errors).join("\n") 
+                    : (errorData.message || "Failed to finalize workout logging transaction.");
+                throw new Error(serverErrorMessage);
+        }
+                
             const netDisplay = document.getElementById("netCaloriesDisplay");
             if (netDisplay) {
                 // Grab the current visible calories on screen (e.g., if they already had 200 kcal logged today)
@@ -414,25 +433,20 @@
                 fetch(`${FOOD_API_URL}/today-calories?userId=${userId}&date=${todayStr}`)
             ]);
 
-            if (!workoutResponse.ok || !foodResponse.ok) throw new Error("Failed to sync metrics.");
+            if (!workoutResponse.ok || !foodResponse.ok) throw new Error("Could not load current tracking metrics.");
 
             const totalBurned = await workoutResponse.json();
             const totalEaten = await foodResponse.json();
 
-            // Net math calculations
             const netCalories = totalEaten - totalBurned;
             const netDisplay = document.getElementById("netCaloriesDisplay");
             if (netDisplay) {
-                // Set the target attribute link that displayRing reads from
                 netDisplay.setAttribute("data-target", netCalories);
 
-                // Run your engine cleanly!
                 displayRing();
             }
         } catch (error) {
             console.error("Dashboard hydration error:", error);
-
-            // Quiet fallback so the UI doesn't visually hang on network lag
             const netDisplay = document.getElementById("netCaloriesDisplay");
             if (netDisplay) {
                 netDisplay.setAttribute("data-target", "0");
@@ -452,7 +466,7 @@
                 fetch(`${FOOD_API_URL}/history?userId=${userId}`)
             ]);
 
-            if (!workoutResponse.ok || !foodResponse.ok) throw new Error("Failed to sync metrics.");
+            if (!workoutResponse.ok || !foodResponse.ok) throw new Error("Could not synchronize activity log maps.");
 
 
             const workoutHistory = await workoutResponse.json();
@@ -462,7 +476,7 @@
             renderHistory(workoutHistory);
             renderFoodHistory(foodHistory);
         } catch (error) {
-            console.error("Dashboard hydration error:", error);
+            console.error("History logging pipeline crash:", error);
         }
     }
 
