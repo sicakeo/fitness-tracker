@@ -1,201 +1,190 @@
-import { checkAuth } from "./login.js";
+import { checkAuth, logout } from "./login.js";
 import { calculateBMR, calculateTDEE, getReadableActivityLevelText, getReadableGoalText } from "./fitnessMath.js";
 
 const USER_API_URL = "http://localhost:8080/api/users";
 document.addEventListener("DOMContentLoaded", () => {
-    if(!checkAuth()) return;
+    setUpNavigation();
+    hydrateFieldsFromSession();
+    setUpFormSubmission();
+});
 
+function setUpNavigation() {
     const signOutLink = document.getElementById("signOutLink");
-    if (signOutLink) {
-        signOutLink.addEventListener("click", (event) => {
-            // 1. Prevent the default empty link jump behavior
-            event.preventDefault();
+    if (signOutLink) signOutLink.addEventListener("click", logout);
 
-            // 2. Clear out the session memory completely
-            sessionStorage.removeItem("user");
+    
+    const editBtn = document.getElementById("editBtn");
+    const cancelBtn = document.getElementById("closeBtn");
+    const calculateBMRBtn = document.getElementById("calculateBMRBtn");
+    const calculateTDEEBtn = document.getElementById("calculateTDEEBtn");
+    const profileModal = document.getElementById("profileModal");
 
-            // 3. Optional: Give them a friendly confirmation message
-            alert("You have been signed out successfully.");
+    if (editBtn) editBtn.addEventListener("click", () => {profileModal.classList.remove("hidden")});
+    if (cancelBtn) cancelBtn.addEventListener("click", () => {profileModal.classList.add("hidden")});
+    if (calculateBMRBtn) calculateBMRBtn.addEventListener("click", handleBmrCalculation);
+    if (calculateTDEEBtn) calculateTDEEBtn.addEventListener("click", handleTdeeCalculation);
+}
 
-            // 4. Safely redirect them back to the clean Home/Dashboard path!
-            window.location.href = "/";
+/**
+ * Reads background session strings and populates inputs with appropriate metric scaling conversions
+ */
+
+function hydrateFieldsFromSession() {
+    const userSession = sessionStorage.getItem("user");
+    if (!userSession) return;
+
+    const user = JSON.parse(userSession);
+    const weightKgs = user.weight || 0;
+    const heightCms = user.height || 0;
+
+    // Populating imperial elements
+    setLabelText({
+        displayName: `Name: ${user.name || ""}`,
+        displayAge: `Age: ${user.age ? user.age + " years" : ""}`,
+        displayGender: `Gender: ${user.gender === 'M' ? 'Male' : 'Female'}`,
+        displayWeight: `Weight: ${weightKgs ? weightKgs + " kg" : ""}`,
+        displayHeight: `Height: ${heightCms? heightCms + " cm" : ""}`,
+        displayBMR: `BMR: ${user.bmr || "0.0"}`,
+        displayActivityLevel: `Activity Level: ${getReadableActivityLevelText(user.activityLevel)}`,
+        displayTDEE: `TDEE: ${user.tdee || "0.0"} kcal/day`,
+        displayFitnessGoal: `Fitness Goal: ${getReadableGoalText(user.fitnessGoal)}`
+    });
+    
+    const editButton = document.getElementById("editBtn");
+    if(editButton){
+        setInputValues({
+            name: user.name || "",
+            age: user.age || "",
+            gender: (user.gender === 'M' ? 'Male' : 'Female') || "",
+            height: heightCms > 0 ? heightCms.toFixed(1) : "",
+            weight: weightKgs > 0 ? weightKgs.toFixed(1) : "",
+            activityLevel: getReadableActivityLevelText(user.activityLevel || ""),
+            tdee: user.tdee || "",
+            fitnessGoal: getReadableGoalText( user.fitnessGoal || "")
         });
     }
-    
-        const profileCardDisplay = document.getElementById("profileCardDisplay");
-        const profileCardEdit = document.getElementById("profileCardEdit");
-        const editProfileBtn = document.getElementById("editProfileBtn");
-        const unitSelect = document.getElementById("unitSelect");
-
-        const userSession = sessionStorage.getItem("user");
-        if (userSession) {
-            const user = JSON.parse(userSession);
-
-            // Pre-fill the display card with user info
-            if(document.getElementById("displayName")) document.getElementById("displayName").textContent = `Name: ${user.name || ""}`;
-            if(document.getElementById("displayGender")) document.getElementById("displayGender").textContent = `Gender: ${user.gender === 'M' ? 'Male' : 'Female' || ""}`;
-            if(document.getElementById("displayAge")) document.getElementById("displayAge").textContent = `Age: ${user.age ? user.age + " years" : ""}`;
-            if(document.getElementById("displayHeight")) document.getElementById("displayHeight").textContent = `Height: ${user.height ? user.height  : ""}`;
-            if(document.getElementById("displayWeight")) document.getElementById("displayWeight").textContent = `Weight: ${user.weight ? user.weight : ""}`;
-            if(document.getElementById("displayBMR")) document.getElementById("displayBMR").textContent = `BMR: ${user.bmr ? user.bmr : ""}`;
-            if(document.getElementById("displayActivityLevel")) document.getElementById("displayActivityLevel").textContent = `Activity Level: ${getReadableActivityLevelText(user.activityLevel) || ""}`;
-            if(document.getElementById("displayTDEE")) document.getElementById("displayTDEE").textContent = `TDEE: ${user.tdee ? user.tdee : ""} kcal/day`;
-            if(document.getElementById("displayFitnessGoal")) document.getElementById("displayFitnessGoal").textContent = `Fitness Goal: ${getReadableGoalText(user.fitnessGoal) || ""}`;
-        }
-
-        if (editProfileBtn) { 
-            editProfileBtn.addEventListener("click", (event) => {
-                event.preventDefault();
-                profileCardDisplay.style.display = "none";
-                profileCardEdit.style.display = "block";
-
-                if (userSession) {
-                    const user = JSON.parse(userSession);
-                    if(document.getElementById("name")) document.getElementById("name").value = user.name || "";
-                    if(document.getElementById("gender")) document.getElementById("gender").value = (user.gender === 'M' ? 'M' : 'F') || "";
-                    if(document.getElementById("age")) document.getElementById("age").value = user.age || "";
-                    if(document.getElementById("height")) document.getElementById("height").value = user.height || "";
-                    if(document.getElementById("weight")) document.getElementById("weight").value = user.weight || "";
-                    if(document.getElementById("bmr")) document.getElementById("bmr").value = user.bmr || "";
-                    if(document.getElementById("activityLevel")) document.getElementById("activityLevel").value = user.activityLevel || "";
-                    if(document.getElementById("tdee")) document.getElementById("tdee").value = user.tdee || "";
-                    if(document.getElementById("fitnessGoal")) document.getElementById("fitnessGoal").value = getReadableGoalText(user.fitnessGoal) || "";
-                    
-                    // Run conversion setup based on current state
-                    updateUnits();
-                }
-            });
-        }
-        
-        if (unitSelect) {
-            unitSelect.addEventListener("change", updateUnits);
-        }
-
-            
-            //finding BMR
-            const calculateBMRBtn = document.getElementById("calculateBMRBtn");
-            if (calculateBMRBtn) {
-                calculateBMRBtn.addEventListener("click", (event) => {
-                    event.preventDefault();
-                    const height = parseFloat(document.getElementById("height").value);
-                    const weight = parseFloat(document.getElementById("weight").value);
-                    const age = parseInt(document.getElementById("age").value);
-                    const gender = document.getElementById("gender").value;
-                   if (isNaN(height) || isNaN(weight) || isNaN(age) || !gender) {
-                        alert("Please enter valid height, weight, age, and gender values to calculate BMR.");
-                        return;
-                    }
-                    console.log(`Height input: ${height}, Weight input: ${weight}`); // Debugging log
-                    const bmr = calculateBMR(unitSelect, weight, height, age, gender);
-                    console.log(`Calculated BMR: ${bmr}`); // Debugging log
-                    if (document.getElementById("bmr")) document.getElementById("bmr").value = bmr ? bmr.toFixed(2) : "";
-                });
-            }
-
-        //finding activity level and TDEE
-        const activityLevelSelect = document.getElementById("activityLevel");
-        if (activityLevelSelect) {
-            activityLevelSelect.addEventListener("change", (event) => {
-                event.preventDefault();
-                const activityLevel = event.target.value;
-                const bmrValue = parseFloat(document.getElementById("bmr").value);
-                if (isNaN(bmrValue)) {
-                    alert("Please calculate BMR first before selecting activity level.");
-                    return;
-                }
-            });
-        }
-
-        const calculateTDEEBtn = document.getElementById("calculateTDEEBtn");
-        if (calculateTDEEBtn) {
-            calculateTDEEBtn.addEventListener("click", (event) => {
-                event.preventDefault();
-                const bmrValue = parseFloat(document.getElementById("bmr").value);
-                const activityLevel = document.getElementById("activityLevel").value;
-                if (isNaN(bmrValue) || isNaN(activityLevel)) {
-                    alert("Please ensure you have calculated BMR and selected an activity level to calculate TDEE.");
-                    return;
-                }
-                console.log("activityLevel:", activityLevel); // Debugging log
-                console.log("bmrValue:", bmrValue); // Debugging log
-                const tdee = calculateTDEE(bmrValue, activityLevel);
-                if (document.getElementById("tdee")) document.getElementById("tdee").value = tdee ? tdee.toFixed(2) : "";
-            });
-        }
-
-        const saveProfileBtn = document.getElementById("saveProfileBtn");
-        if (saveProfileBtn) {
-            saveProfileBtn.addEventListener("click", (event) => {
-                event.preventDefault();
-                profileCardDisplay.style.display = "block";
-                profileCardEdit.style.display = "none";
-
-                //store the updated info in session storage
-                let userSession = sessionStorage.getItem("user");
-                if (userSession) {
-                    const user = JSON.parse(userSession);
-                    user.name = document.getElementById("name").value || user.name;
-                    user.gender = (document.getElementById("gender").value === "M" ? "M" : "F") || user.gender;
-                    user.age = parseInt(document.getElementById("age").value) || user.age;
-                    user.height = parseFloat(document.getElementById("height").value) || user.height;
-                    user.weight = parseFloat(document.getElementById("weight").value) || user.weight;
-                    user.activityLevel = (document.getElementById("activityLevel").value || user.activityLevel);
-                    user.tdee = parseFloat(document.getElementById("tdee").value) || user.tdee;
-                    user.fitnessGoal = (document.getElementById("fitnessGoal").value || user.fitnessGoal);
-
-
-                    console.log("Updated user object before saving to session and syncing:", user); // Debugging log
-                    sessionStorage.setItem("user", JSON.stringify(user));
-                    //Send the entire user object payload to your new unified sync endpoint
-                    fetch(`${USER_API_URL}/${user.id}`, {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(user) // Passing the complete object!
-                    })
-                    .then(response => {
-                        console.log("Response from server after profile update:", response); // Debugging log
-                        if (!response.ok) {
-                            throw new Error("Failed to sync user profile data with database.");
-                        }
-                        console.log("Profile synchronized successfully.");
-                    })
-                    .catch(error => console.error("Error:", error));
-
-                    // Update the display card with new info
-                    // Pre-fill the display card text fields cleanly on page load
-                    if(document.getElementById("displayName")) document.getElementById("displayName").textContent = `Name: ${user.name || ""}`;
-                    if(document.getElementById("displayGender")) document.getElementById("displayGender").textContent = `Gender: ${(user.gender === 'M' ? 'Male' : 'Female') || ""}`;
-                    if(document.getElementById("displayAge")) document.getElementById("displayAge").textContent = `Age: ${user.age ? user.age + " years" : ""}`;
-                    if(document.getElementById("displayHeight")) document.getElementById("displayHeight").textContent = `Height: ${user.height ? user.height + " cm" : ""}`;
-                    if(document.getElementById("displayWeight")) document.getElementById("displayWeight").textContent = `Weight: ${user.weight ? user.weight + " kg" : ""}`;
-                    if(document.getElementById("displayActivityLevel")) document.getElementById("displayActivityLevel").textContent = `Activity Level: ${getReadableActivityLevelText(user.activityLevel)}`;
-                    if(document.getElementById("displayTDEE")) document.getElementById("displayTDEE").textContent = `TDEE: ${user.tdee ? user.tdee + " kcal/day" : ""}`;
-                    if(document.getElementById("displayFitnessGoal")) document.getElementById("displayFitnessGoal").textContent = `Fitness Goal: ${getReadableGoalText(user.fitnessGoal)}`;
-                }
-
-                
-               
-            });
-        }
+}
+/**
+ * Loops across key maps to assign value attributes cleanly
+ */
+function setInputValues(fields) {
+    Object.entries(fields).forEach(([id, val]) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val;
     });
+}
+/**
+ * Updates text containers using textContent safely
+ */
+function setLabelText(labels) {
+    Object.entries(labels).forEach(([id, text]) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+    });
+}
 
-// Function to update the text labels
-function updateUnits() {
-    const unitSelect = document.getElementById("unitSelect");
-    const heightUnit = document.getElementById("heightUnit");
-    const weightUnit = document.getElementById("weightUnit");
+function setUpFormSubmission(){
+    const profileForm = document.getElementById("profileForm");
+    if(!profileForm)
+        return;
+    profileForm.addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const name = document.getElementById("name").value || "";
+        const age = document.getElementById("age").value || "";
+        const gender = document.getElementById("gender").value || "";
+        const weight = document.getElementById("weight").value || 0;
+        const height = document.getElementById("height").value || 0;
+        const activityLevel = document.getElementById("activityLevel").value || "";
+        const tdee = document.getElementById("tdee").value || 0;
+        
+        await syncUpdatedUserData(name, age, gender, weight, height, activityLevel, tdee);
+        setLabelText({
+            displayName: `Name: ${name}`,
+            displayAge: `Age: ${age} years`,
+            displayGender: `Gender: ${gender === 'M' ? 'Male' : 'Female'}`,
+            displayWeight: `Weight: ${weight} kg`,
+            displayHeight: `Height: ${height} cm`,
+            displayActivityLevel: `Activity Level: ${getReadableActivityLevelText(activityLevel)}`,
+            displayTDEE: `TDEE: ${tdee} kcal/day`,
+            displayFitnessGoal: `Fitness Goal: ${getReadableGoalText(fitnessGoal)}`
+        });
 
-    if (!unitSelect || !heightUnit || !weightUnit) return;
+        document.getElementById("profileModal")?.classList.add("hidden");
+    });
+}
 
-    if (unitSelect.value === "metric") {
-        heightUnit.textContent = " cm";
-        weightUnit.textContent = " kg";
-    } else {
-        heightUnit.textContent = " inches";
-        weightUnit.textContent = " lbs";
+/**
+ * Normalizes input scales to metric standards and updates data buffers across backend clusters
+ */
+async function syncUpdatedUserData(name , age, gender, weight, height, activityLevel, tdee) {
+    const userSession = sessionStorage.getItem("user");
+    if (!userSession) return;
+
+    const user = JSON.parse(userSession);
+    const updatedUser = {
+        ...user,
+        name: name,
+        weight: parseFloat(weight.toFixed(2)),
+        height: parseFloat(height.toFixed(2)),
+        age: age,
+        gender: gender.toUpperCase(), // Keep consistency with backend enum standards
+        activityLevel: activityLevel,
+        tdee: tdee
+    };
+
+    // Update local storage buffer immediately for snappy client navigation updates
+    sessionStorage.setItem("user", JSON.stringify(updatedUser));
+
+    try {
+        const response = await fetch(`${USER_API_URL}/${user.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedUser)
+        });
+
+        if (!response.ok) throw new Error("Database transaction profile storage sync failed.");
+        console.log("Database updated profile successfully.");
+        alert("Profile updated successfully");
+    } catch (error) {
+        console.error("Network sync pipeline failure details:", error);
     }
 }
 
 
+/**
+ * Handles calculation event for BMR inputs
+ */
+function handleBmrCalculation(event) {
+    event.preventDefault();
+    const height = parseFloat(document.getElementById("height").value);
+    const weight = parseFloat(document.getElementById("weight").value);
+    const age = parseInt(document.getElementById("age").value);
+    const gender = document.getElementById("gender").value;
+
+    if (isNaN(height) || isNaN(weight) || isNaN(age) || !gender) {
+        alert("Please enter valid height, weight, age, and gender values to calculate BMR.");
+        return;
+    }
+
+    const bmr = calculateBMR("standard", weight, height, age, gender);
+    const bmrInput = document.getElementById("bmr");
+    if (bmrInput) bmrInput.value = bmr ? bmr.toFixed(2) : "";
+}
+
+/**
+ * Handles calculation event for TDEE inputs
+ */
+function handleTdeeCalculation(event) {
+    event.preventDefault();
+    const bmrValue = parseFloat(document.getElementById("bmr").value);
+    const activityLevel = document.getElementById("activityLevel").value;
+
+    if (isNaN(bmrValue) || !activityLevel) {
+        alert("Please ensure you have calculated BMR and selected an activity level to calculate TDEE.");
+        return;
+    }
+
+    const tdee = calculateTDEE(bmrValue, activityLevel);
+    const tdeeInput = document.getElementById("tdee");
+    if (tdeeInput) tdeeInput.value = tdee ? tdee.toFixed(2) : "";
+}

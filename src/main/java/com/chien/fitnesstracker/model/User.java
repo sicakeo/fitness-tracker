@@ -1,5 +1,7 @@
 package com.chien.fitnesstracker.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -23,6 +25,7 @@ public class User {
     private String username;
 
     @Size(min = 8, message = "Password has at least 8 characters.")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Column(name = "height")

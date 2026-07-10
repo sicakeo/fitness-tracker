@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/bmi.css">
 </head>
 <body>
-      <div class="nav-container">
+      <header class="nav-container">
         <button class="hamburger" id="hamburgerBtn">
             <span></span>
             <span></span>
@@ -39,22 +39,22 @@
                 </li>
             </ul>
         </nav>
-      </div>
+      </header>
     
     <main class="bmi-container" style = "display: flex; justify-content: center; margin-top: 40px; padding: 0 20px">
-      <div class="modal-card" style="max-width: 480px; width: 100%;">
+      <div class="bmi-card" style="max-width: 480px; width: 100%;">
         <div class="card-header" style="text-align: center; margin-bottom: 20px;">
             <h2 style="margin: 0; color: #2c3e50;">BMI Calculator</h2>
         </div>
 
         <div class = "bmi-content">
-          <div class="form-row-group" style="justify-content: center; margin-bottom: 24px;">
+          <div class="form-group" style="justify-content: center; margin-bottom: 24px;">
               <button type="button" id="standard-btn" class="btn-toggle active" style="padding: 10px 20px; border: none; border-radius: 6px 0 0 6px; cursor: pointer; font-weight: bold; background-color: #2ecc71; color: white;">Standard</button>
               <button type="button" id="metric-btn" class="btn-toggle" style="padding: 10px 20px; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-weight: bold; background-color: #dee2e6; color: #495057;">Metric</button>
           </div>
 
           <form id="bmi-form" novalidate>
-            <div class="form-row-layout">
+            <div class="form-group">
               <label>Height</label>
               <div id="standard-height-group" class="input-inline-group">
                   <input type="number" id="feet" inputmode="numeric">
@@ -70,7 +70,7 @@
               </div>
           </div>
 
-          <div class="form-row-layout">
+          <div class="form-group">
               <label>Weight</label>
               <div id="standard-weight-group" class="input-inline-group">
                   <input type="number" id="lbs" inputmode="decimal">

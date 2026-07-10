@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-<div class="nav-container">
+<header class="nav-container">
     <button class="hamburger" id="hamburgerBtn">
         <span></span>
         <span></span>
@@ -14,34 +14,34 @@
     </button>
 
     <nav class="nav-menu" id="navMenu">
-            <ul id="nav-list">
-                <li><a href="/">Home</a></li>
-                <li><a href="/about">About Us</a></li>
-                <li><a href="/profile">User Profile</a></li>
-                <li id="toolDropdown" class="dropdown-parent">
-                    <a href="#">Tools</a>
-                    <ul id="toolDropdownMenu">
-                        <li><a href="/bmi-calculator">BMI Calculator</a></li>
-                        <li><a href="/bmr-calculator">BMR Calculator</a></li>
-                        <li><a href="/tdee-calculator">TDEE Calculator</a></li>
-                    </ul>
-                </li>
-                <li id="authLinksLi">
-                    <div id="nav-right">
-                        <div id="loginBtn">
-                            <a href="/login">Login</a>
-                        </div>
-                        <div id="registerBtn">
-                            <a href="/register">Signup</a>
-                        </div>
+        <ul id="nav-list">
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/profile">User Profile</a></li>
+            <li id="toolDropdown" class="dropdown-parent">
+                <a href="#">Tools</a>
+                <ul id="toolDropdownMenu">
+                    <li><a href="/bmi-calculator">BMI Calculator</a></li>
+                    <li><a href="/bmr-calculator">BMR Calculator</a></li>
+                    <li><a href="/tdee-calculator">TDEE Calculator</a></li>
+                </ul>
+            </li>
+            <li id="authLinksLi">
+                <div id="nav-right">
+                    <div id="loginBtn">
+                        <a href="/login">Login</a>
                     </div>
-                </li>
-            </ul>
-        </nav>
-</div>
+                    <div id="registerBtn">
+                        <a href="/register">Signup</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</header>
 
   <main class="tdee-container" style="display: flex; justify-content: center; margin-top: 40px; padding: 0 20px;">
-        <div class="modal-card" style="max-width: 480px; width: 100%;">
+        <div class="tdee-card" style="max-width: 480px; width: 100%;">
             <div class="card-header" style="text-align: center; margin-bottom: 20px;">
                 <h2 style="margin: 0; color: #2c3e50;">TDEE Calculator</h2>
             </div>
@@ -52,7 +52,7 @@
                     <button type="button" id="metric-btn" class="btn-toggle" style="padding: 10px 20px; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-weight: bold; background-color: #dee2e6; color: #495057;">Metric</button>
                 </div>
 
-                <form id="tdee-form" novalidate>
+                <form id="tdeeForm" novalidate>
                     <div class="form-row-layout" id = "gender-group">
                         <label for="gender">Gender</label>
                         <select id="gender" required>

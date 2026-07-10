@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="nav-container">
+    <header class="nav-container">
         <button class="hamburger" id="hamburgerBtn">
             <span></span>
             <span></span>
@@ -17,6 +17,7 @@
             <ul id="nav-list">
                 <li><a href="/">Home</a></li>
                 <li><a href="/about">About Us</a></li>
+                <li><a href="/profile">User Profile</a></li>
                 <li id="toolDropdown" class="dropdown-parent">
                     <a href="#">Tools</a>
                     <ul id="toolDropdownMenu">
@@ -25,62 +26,76 @@
                         <li><a href="/tdee-calculator">TDEE Calculator</a></li>
                     </ul>
                 </li>
-                <li><span id="signOutLink" class="logout-text">Sign out</span></li>
             </ul>
         </nav>
-    </div>
+    </header>
     
     
-    <main id = "profileContainer" class = "profile-container">
-        <section id = "profileCardEdit" class = "profile-card" style = "display: none;">
-            <form id = "profileForm" class = "profile-form">
+    <main class="profile-container" id = "profileContainer">
+        <div class="profile-card" style="max-width: 480px; width: 100%;">
+            <div class="card-header" style="text-align: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; color: #2c3e50;">User Profile</h2>
+            </div>
+
+            <p id = "displayName"> Name: </h2>
+            <p id = "displayAge"> Age: </p>
+            <p id = "displayGender"> Gender: </p>
+            <p id = "displayHeight"> Height: </p>
+            <p id = "displayWeight"> Weight: </p>
+            <p id = "displayActivityLevel"> Activity Level: </p>
+            <p id = "displayTDEE"> TDEE: </p>
+            <p id = "displayFitnessGoal"> Fitness Goal: </p>
+            <div class = "form-group">
+                <button id = "editBtn" type = "button"> Edit Profile </button>   
+            </div>
+        </div>
+    </main>
+
+    <div id = "profileModal" class = "modal-overlay hidden">
+        <div class = "modal-card">
+            <div class="card-header" style="text-align: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; color: #2c3e50;">User Profile</h2>
+            </div>
+            <form id = "profileForm">
                 <div class = "form-group">
-                    <label for = "name"> Name: </label>
+                    <label for = "name"> Name </label>
                     <input id = "name" type = "text">
                 </div>
 
                 <div class = "form-group">
-                    <label for = "age"> Age:</label>
+                    <label for = "age"> Age</label>
                     <input id = "age" type = "number">
                 </div>
 
                 <div class = "form-group">
-                    <label for = "gender"> Gender: </label>
+                    <label for = "gender"> Gender </label>
                     <select name = "gender" id = "gender">
                         <option value = "M">Male</option>
                         <option value = "F">Female</option>
                     </select>
                 </div>
 
-                <div id="bodyInformation" class="body-information">
-                    <label for = "unitSelect">Body Information</label>
-                    <select id="unitSelect">
-                        <option value="metric">Metric</option>
-                        <option value="standard">Standard</option>
-                    </select>
-                </div>
-
                 <div class="form-group">
-                    <label for="height">Height:</label>
+                    <label for="height">Height </label>
                     <input id="height" type="number">
-                    <span id="heightUnit">lbs</span> 
+                    <span id="heightUnit">cm</span> 
                 </div>
 
                 <div class="form-group">
-                    <label for="weight">Weight:</label>
+                    <label for="weight">Weight </label>
                     <input id="weight" type="number">
-                    <span id="weightUnit">lbs</span>
+                    <span id="weightUnit">kg</span>
                 </div>
 
                 <div class="form-group">
-                    <label for="bmr">BMR:</label>
+                    <label for="bmr">BMR </label>
                     <input id="bmr" type="number" readonly>
                     <span id="bmrUnit">kcal/day</span>
                     <button id="calculateBMRBtn" type="button">Calculate BMR</button>
                 </div>
 
                 <div class="form-group">
-                    <label for="activityLevel">Activity Level:</label>
+                    <label for="activityLevel">Activity Level </label>
                     <select id="activityLevel">
                         <option value="" disabled selected>Select your activity level</option>
                         <option value="1.2">Sedentary (little or no exercise)</option>
@@ -92,44 +107,31 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="tdee">TDEE:</label>
+                    <label for="tdee">TDEE </label>
                     <input id="tdee" type="number" readonly>
                     <span id="tdeeUnit">kcal/day</span>
                     <button id="calculateTDEEBtn" type="button">Calculate TDEE</button>
                 </div>
                 
                 <div class="form-group">
-                <label for="fitnessGoal">Fitness Goal:</label>
-                <select id="fitnessGoal" name="fitnessGoal" required>
-                    <option value="" disabled selected>-- Select Your Goal --</option>
-                    <option value="MILD_LOSS">Mild Weight Loss (~0.25 kg/week)</option>
-                    <option value="WEIGHT_LOSS">Weight Loss (~0.5 kg/week)</option>
-                    <option value="MAINTAIN">Maintain Current Weight</option>
-                    <option value="WEIGHT_GAIN">Muscle Building / Weight Gain (~0.25 kg/week)</option>
-                    <option value="HEAVY_GAIN">Aggressive Weight Gain (~0.5 kg/week)</option>
-                </select>
+                    <label for="fitnessGoal">Fitness Goal </label>
+                    <select id="fitnessGoal" name="fitnessGoal" required>
+                        <option value="" disabled selected>-- Select Your Goal --</option>
+                        <option value="MILD_LOSS">Mild Weight Loss (~0.25 kg/week)</option>
+                        <option value="WEIGHT_LOSS">Weight Loss (~0.5 kg/week)</option>
+                        <option value="MAINTAIN">Maintain Current Weight</option>
+                        <option value="WEIGHT_GAIN">Muscle Building / Weight Gain (~0.25 kg/week)</option>
+                        <option value="HEAVY_GAIN">Aggressive Weight Gain (~0.5 kg/week)</option>
+                    </select>
                 </div>
 
-                <div class = "form-group">
-                    <button id = "saveProfileBtn" type = "button"> Save Profile </button>   
+                <div class="modal-actions">
+                    <button type="button" id="closeBtn" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="btn-primary">Save</button>
                 </div>
             </form>
-        </section>
-
-        <section id = "profileCardDisplay" class = "profile-card">
-            <h2 id = "displayName"> Name: </h2>
-            <p id = "displayAge"> Age: </p>
-            <p id = "displayGender"> Gender: </p>
-            <p id = "displayHeight"> Height: </p>
-            <p id = "displayWeight"> Weight: </p>
-            <p id = "displayActivityLevel"> Activity Level: </p>
-            <p id = "displayTDEE"> TDEE: </p>
-            <p id = "displayFitnessGoal"> Fitness Goal: </p>
-            <div class = "form-group">
-                <button id = "editProfileBtn" type = "button"> Edit Profile </button>   
-            </div>
-        </section>
-    </main>
+        </div>
+    </div>
     <script type="module" src = "js/navbar.js"></script>
     <script type="module" src="js/profile.js"></script>
 </body>

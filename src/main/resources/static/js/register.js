@@ -1,5 +1,11 @@
 const REGISTER_API_URL = "http://localhost:8080/api/users/register"
 
+document.addEventListener("DOMContentLoaded", () =>{
+    const registerForm = document.getElementById("registerForm");
+    if(registerForm)
+        registerForm.addEventListener("submit", register);
+});
+
 async function register(event){
     event.preventDefault();
     const username = document.getElementById("username").value;
@@ -33,8 +39,3 @@ async function register(event){
 
 }
 
-document.addEventListener("DOMContentLoaded", () =>{
-    const registerForm = document.getElementById("registerForm");
-    if(registerForm)
-        registerForm.addEventListener("submit", register);
-});

@@ -5,7 +5,9 @@
     <title>Login</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
-    <div class="nav-container">
+    
+    <body>
+    <header class="nav-container">
         <button class="hamburger" id="hamburgerBtn">
             <span></span>
             <span></span>
@@ -26,12 +28,14 @@
                 </li>
             </ul>
         </nav>
-    </div>
-    <body>
+    </header>
 
-    <div id = "loginContainer" class = "login-container">
-        <section class = "login-card">
-            <h2>Login</h2>
+    <main class = "login-container" style = "display: flex; justify-content: center; margin-top: 40px; padding: 0 20px">
+        <div class="login-card" style="max-width: 400px; width: 100%;">
+            <div class="card-header" style="text-align: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; color: #2c3e50;">Login</h2>
+            </div>
+            
             <form id = "loginForm" novalidate>
                 <div class = "form-group">
                     <label for = "username">Username</label>
@@ -48,8 +52,8 @@
                 </div>
                 <p>New User? Register <a href="/register" style = "color: #007bff">here</a></p>
             </form>
-        </section>
-    </div>
+        </div>
+    </main>
     <script type="module" src = "js/navbar.js"></script>
     <script type ="module" src="js/login.js"></script>
 </body>

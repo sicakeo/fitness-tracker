@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="nav-container">
+    <header class="nav-container">
         <button class="hamburger" id="hamburgerBtn">
             <span></span>
             <span></span>
@@ -27,12 +27,15 @@
                 </li>
             </ul>
         </nav>
-    </div>
+    </header>
 
-    <main id = "registerContainer" class = "register-container">
-        <h2>Register</h2>
-        <section class = "register-card">
-            <form id = "registerForm" class = "register-form">
+    <main class = "register-container" style = "display: flex; justify-content: center; margin-top: 40px; padding: 0 20px">
+        <div class="register-card" style="max-width: 480px; width: 100%;">
+            <div class="card-header" style="text-align: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; color: #2c3e50;">Login</h2>
+            </div>
+
+            <form id = "registerForm" novalidate>
                 <div class = "form-group">
                     <label for = "username">Username</label>
                     <input id = "username" type = "text" name = "username" placeholder = "Username" required>
@@ -62,10 +65,9 @@
                     <button type = "submit" id = "submitButton" name = "submitButton" value = "submitButton">Register</button>
                 </div>
                 
-                
                 <p>Existing user? Login <a href = "/login" style = "color:blue">here</a></p>
             </form>
-        </section>
+        </div>
     </main>
     <script type="module" src = "js/navbar.js"></script>
     <script src = "js/register.js"></script>
