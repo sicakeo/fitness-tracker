@@ -92,8 +92,8 @@ function setUpFormSubmission(){
         const name = document.getElementById("name").value || "";
         const age = document.getElementById("age").value || "";
         const gender = document.getElementById("gender").value || "";
-        const weight = document.getElementById("weight").value || 0;
-        const height = document.getElementById("height").value || 0;
+        const weight = parseFloat(document.getElementById("weight").value).toFixed(2) || 0;
+        const height = parseFloat(document.getElementById("height").value).toFixed(2) || 0;
         const activityLevel = document.getElementById("activityLevel").value || "";
         const tdee = document.getElementById("tdee").value || 0;
         
@@ -124,8 +124,8 @@ async function syncUpdatedUserData(name , age, gender, weight, height, activityL
     const updatedUser = {
         ...user,
         name: name,
-        weight: parseFloat(weight.toFixed(2)),
-        height: parseFloat(height.toFixed(2)),
+        weight: weight,
+        height: height,
         age: age,
         gender: gender.toUpperCase(), // Keep consistency with backend enum standards
         activityLevel: activityLevel,
@@ -176,7 +176,7 @@ function handleBmrCalculation(event) {
         return;
     }
 
-    const bmr = calculateBMR("standard", weight, height, age, gender);
+    const bmr = calculateBMR("metric", weight, height, age, gender);
     const bmrInput = document.getElementById("bmr");
     if (bmrInput) bmrInput.value = bmr ? bmr.toFixed(2) : "";
 }
