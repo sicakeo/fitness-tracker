@@ -376,3 +376,18 @@ a {
     justify-content: center;
     gap: 12px;
 }
+
+.field-error {
+    color: #e74c3c;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-top: 4px;
+    display: block;
+    min-height: 18px; /* Prevents layout shifting when error appears */
+}
+
+/* Optional styling to highlight the actual input boundary */
+input.invalid-field {
+    border-color: #e74c3c;
+    background-color: #fdf2f2;
+}

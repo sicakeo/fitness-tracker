@@ -47,15 +47,35 @@ async function handleRegistration(event) {
 
         // THE EXACT BACKEND ERROR HANDLER: Parse validation models safely
         if (!response.ok) {
-            const errorData = await response.json();
+            const errorData = await response.json().catch(() => ({}));
             
-            // If your Spring Boot validation filter sends a list of fields, join them; 
-            // otherwise check for a direct message property, then fall back
-            const serverErrorMessage = errorData.errors 
-                ? Object.values(errorData.errors).join("\n") 
-                : (errorData.message || "Registration failed due to invalid field constraints.");
-                
-            throw new Error(serverErrorMessage);
+            if (errorData.errors) {
+                // 🌟 Step 1: Clear all stale errors from previous attempts
+                document.querySelectorAll('.field-error').forEach(el => el.textContent = "");
+                document.querySelectorAll('input').forEach(el => el.classList.remove('invalid-field'));
+
+                // 🌟 Step 2: Loop through specific backend map keys (e.g., "name", "reps")
+                Object.entries(errorData.errors).forEach(([fieldKey, errorMessage]) => {
+                    // Find the matching error placeholder span
+                    const errorEl = document.getElementById(`error-${fieldKey}`);
+                    const inputEl = document.getElementById(fieldKey);
+                    
+                    if (errorEl) {
+                        errorEl.textContent = errorMessage; 
+                    }
+                    if (inputEl) {
+                        inputEl.classList.add('invalid-field');
+                    }
+                });
+            
+                return;
+            }
+
+            if (response.status === 500) {
+                throw new Error("Internal server error occurred. Please verify your backend logs.");
+            }
+            
+            throw new Error(errorData.message || "Registration failed due to invalid field constraints.");
         }
 
         const responseData = await response.json();

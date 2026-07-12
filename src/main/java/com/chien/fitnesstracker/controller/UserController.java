@@ -31,8 +31,9 @@ public class UserController{
 
     @PostMapping("/register")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user){
-        return  ResponseEntity.ok(userService.saveUser(user));
+        return ResponseEntity.ok(userService.registerNewUser(user));    
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<Object> loginUser(@RequestBody User loginRequest){
@@ -40,7 +41,7 @@ public class UserController{
 
         // TEMPORARY DEBUG LOGS
         System.out.println("From Frontend DB Request -> User: '" + loginRequest.getUsername() + "' Pass: '" + loginRequest.getPassword() + "'");
-        if (user != null) {
+        if (user != null) { 
             System.out.println("From MySQL Database Row -> User: '" + user.getUsername() + "' Pass: '" + user.getPassword() + "'");
         } else {
             System.out.println("User was NOT found in the database at all!");

@@ -129,6 +129,15 @@
             return;
         }
 
+        
+        const foodForm = document.getElementById("foodForm");
+    
+       
+        if (foodForm && !foodForm.checkValidity()) {
+            foodForm.reportValidity(); 
+            return; 
+        }
+
         const userObj = JSON.parse(userSession);
         const userId = userObj.id;
         const todayStr = new Date().toISOString().split('T')[0];
@@ -318,7 +327,7 @@
                     ? Object.values(errorData.errors).join("\n") 
                     : (errorData.message || "Failed to finalize workout logging transaction.");
                 throw new Error(serverErrorMessage);
-        }
+            }
                 
             const netDisplay = document.getElementById("netCaloriesDisplay");
             if (netDisplay) {
