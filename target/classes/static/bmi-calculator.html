@@ -18,7 +18,7 @@
             <ul id="nav-list">
                 <li><a href="/">Home</a></li>
                 <li><a href="/about">About Us</a></li>
-                <li><a href="/profile">User Profile</a></li>
+                <li id="profile-item"><a href="/profile">User Profile</a></li>
                 <li id="toolDropdown" class="dropdown-parent">
                     <a href="#">Tools</a>
                     <ul id="toolDropdownMenu">
@@ -85,9 +85,9 @@
             <button type="submit" id="submit" class="btn-primary-food" style="background-color: #1083ea; margin-top: 10px;">Calculate BMR</button>
           </form>
 
-          <div class = "bmi-result" >
-            <h2>Your BMI Result:</h2>
-            <lable id = "resultMessage">BMI = 0.0 kg/m<sup>2</sup></lable>
+          <div class="bmi-result" style="margin-top: 24px; padding: 16px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #1083ea; text-align: center;">
+            <h4 style="margin: 0 0 6px 0; color: #6c757d; font-size: 0.9rem; text-transform: uppercase;">Your Body Mass Index</h4>
+            <span id="resultMessage" style="font-size: 1.4rem; font-weight: bold; color: #2c3e50;">BMI = 0.0 kcal/day</span>
           </div>
 
           <div class="bmi-scale-container">

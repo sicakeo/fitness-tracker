@@ -17,7 +17,7 @@
         <ul id="nav-list">
             <li><a href="/">Home</a></li>
             <li><a href="/about">About Us</a></li>
-            <li><a href="/profile">User Profile</a></li>
+            <li id="profile-item"><a href="/profile">User Profile</a></li>
             <li id="toolDropdown" class="dropdown-parent">
                 <a href="#">Tools</a>
                 <ul id="toolDropdownMenu">
@@ -52,7 +52,7 @@
                     <button type="button" id="metric-btn" class="btn-toggle" style="padding: 10px 20px; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-weight: bold; background-color: #dee2e6; color: #495057;">Metric</button>
                 </div>
 
-                <form id="tdeeForm" novalidate>
+                <form id="tdee-form" novalidate>
                     <div class="form-row-layout" id = "gender-group">
                         <label for="gender">Gender</label>
                         <select id="gender" required>
@@ -110,13 +110,12 @@
                             <option value="1.9">Very active (very hard exercise/sports & physical job or 2x training)</option>
                         </select>
                     </div>
-            
-                    <button type = "submit" id = "submit">Calculate</button>
+                    <button type="submit" id="submit" class="btn-primary" style="background-color: #1083ea; margin-top: 10px;">Calculate TDEE</button>
                 </form>
 
-                <div class = "tdee-result" >
-                    <h2>Your TDEE Result:</h2>
-                    <p id = "resultMessage">TDEE = 0.0 kcal/day</p>
+                <div class="tdee-result">
+                    <h4>Total Daily Energy Expenditure </h4>
+                    <span id="resultMessage" style="font-size: 1.4rem; font-weight: bold; color: #2c3e50;">TDEE = 0.0 kcal/day</span>
                 </div>
             </div>
         </div>
