@@ -8,11 +8,10 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST) // Forces a clean 400 Bad Request
-                .body(Map.of("message", ex.getMessage())); // Sends back "Username is already taken."
+                .body(Map.of("message", ex.getMessage())); // Sends message
     }
 }

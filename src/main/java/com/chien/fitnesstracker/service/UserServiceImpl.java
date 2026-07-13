@@ -62,7 +62,6 @@ public class UserServiceImpl implements UserService {
     }
 
     public User registerNewUser(User user) {
-        //You call the repository methods here to perform the logic checks
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new IllegalArgumentException("Username is already taken.");
         }
