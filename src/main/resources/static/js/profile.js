@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function setUpNavigation() {
+    if(!checkAuth()) {
+        return;
+    }
     const signOutLink = document.getElementById("signOutLink");
     if (signOutLink) signOutLink.addEventListener("click", logout);
 

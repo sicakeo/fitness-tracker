@@ -14,13 +14,19 @@ document.addEventListener("DOMContentLoaded", () => {
  * Initializes authentication views and handles demographic profile field hydration
  */
 function initializeDashboard() {
-    if (!isLoggedIn()) {
+    const profileItem = document.getElementById("profile-item");
+    const loggedIn = isLoggedIn();
+
+    if (!loggedIn) {
         clearFormFields();
-        return;
     }
 
+    if (profileItem) {  
+        profileItem.classList.toggle("hidden", !loggedIn);
+    } 
+
     const authLinksLi = document.getElementById("authLinksLi");
-    if (authLinksLi) {
+    if (authLinksLi && loggedIn) {
         // Replace the entire list item cleanly to preserve your flex/grid nav alignment
         authLinksLi.innerHTML = `
            <div id="logoutBtn" class="nav-right">

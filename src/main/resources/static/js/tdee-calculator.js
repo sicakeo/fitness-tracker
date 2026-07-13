@@ -14,14 +14,19 @@ document.addEventListener("DOMContentLoaded", () => {
  * Initializes authentication views and handles demographic profile field hydration
  */
 function initializeDashboard() {
-    if (!isLoggedIn()) {
+    const profileItem = document.getElementById("profile-item");
+    const loggedIn = isLoggedIn();
+
+    if (!loggedIn) {
         clearFormFields();
-        return;
     }
 
+    if (profileItem) {
+        profileItem.classList.toggle("hidden", !loggedIn);
+    } 
+
     const authLinksLi = document.getElementById("authLinksLi");
-    if (authLinksLi) {
-        // Replace the entire list item cleanly to preserve your flex/grid nav alignment
+    if (authLinksLi && loggedIn) {
         authLinksLi.innerHTML = `
            <div id="logoutBtn" class="nav-right">
                 <span id="signOutLink" class="logout-text">Sign out</span>
@@ -137,7 +142,6 @@ function setupFormSubmission() {
 
     tdeeForm.addEventListener("submit", async (event) => {
         event.preventDefault();
-
         let targetHeight = 0;
         let targetWeight = 0;
 
