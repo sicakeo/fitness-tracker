@@ -124,7 +124,7 @@ a {
 
 #profileDropdownMenu {
     position: absolute;
-    top: 100%;
+    top: 50%;
     right: 0; /* Anchors it cleanly to the avatar's right boundary[cite: 14] */
     max-width: 360px; /* 👈 Set standard width so content layout is predictable */
     background-color: #ffff; /* Dark background matching the image */

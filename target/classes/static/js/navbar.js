@@ -12,8 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (profileDropdown && profileDropdownMenu) {
         profileDropdown.addEventListener("click", (e) => {
-            e.preventDefault();
             profileDropdownMenu.style.display = profileDropdownMenu.style.display === "block" ? "none" : "block";
         });
     }
+
 });
