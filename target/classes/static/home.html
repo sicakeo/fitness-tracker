@@ -6,8 +6,10 @@
     <title>Fitness Tracker Application</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/home.css">
+    <script src="https://kit.fontawesome.com/36a7b8a438.js" crossorigin="anonymous"></script>
 </head>
 <body>
+
     <header class="nav-container">
         <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Menu">
             <span></span>
@@ -15,11 +17,18 @@
             <span></span>
         </button>
 
+        <div class="nav-spacer"></div>
+
+        <div class="nav-skeleton-wrapper" id ="navSkeletonWrapper">
+            <div class="nav-skeleton"></div>
+            <div class="nav-skeleton"></div>
+            <div class="nav-skeleton"></div>
+        </div>
+
         <nav class="nav-menu" id="navMenu">     
-            <ul id="nav-list">
+            <ul class="nav-list">
                 <li><a href="/">Home</a></li>
                 <li><a href="/about">About Us</a></li>
-                <li><a href="/profile">User Profile</a></li>
                 <li id="toolDropdown" class="dropdown-parent">
                     <a href="#">Tools</a>
                     <ul id="toolDropdownMenu">
@@ -29,12 +38,47 @@
                     </ul>
                 </li>
                 <li>
-                    <div id="logoutBtn" class="nav-right">
-                        <span id="signOutLink" class="logout-text">Sign out</span>
-                    </div>
+                    
                 </li>
             </ul>
         </nav>
+
+        <div id="profileDropdown" class="nav-right dropdown-parent">
+            <a href="#" id="userProfileLink" class="user-profile-link">
+                <i class="fa-solid fa-user" alt="User Profile"></i>
+            </a>
+            <ul id="profileDropdownMenu" class="profile-card-dropdown" hidden>
+                <!-- User Profile Header -->
+                <div class="dropdown-user-header">
+                    <img src="images/user-icon.png" class = "fa-solid fa-user">
+                    <span class="user-name-text">Username</span>
+                </div>
+                
+                <hr class="dropdown-divider">
+                
+                <a href="/profile" class="view-all-btn">Profile</a>
+
+                <!-- Menu Links List -->
+                <li>
+                    <a href="/settings" class="menu-item">
+                        <div class="menu-left">
+                            <div class="icon-circle">⚙️</div>
+                            <span>Setting</span>
+                        </div>
+                        <div class="menu-right">❯</div>
+                    </a>
+                </li>
+               
+                <li>
+                    <span id="signOutLink" class="menu-item logout-row">
+                        <div class="menu-left">
+                            <div class="icon-circle">🚪</div>
+                            <span>Logout</span>
+                        </div>
+                    </span>
+                </li>
+            </ul>
+        </div>
     </header>
 
     <div class="wrapper">
@@ -73,10 +117,12 @@
                         <option value="HIIT">HIIT</option>
                     </select>
                 </div>
+
                 <div class="form-group" id="distanceGroup" hidden>
                     <label for="distance">Distance (km):</label>
                     <input type="number" id="distance" min="0" step="0.01">
                 </div>
+
                 <div class="form-group" id="nameGroup" hidden>
                     <label for="name">Exercise Name:</label>
                     <input type="text" id="name">
@@ -85,14 +131,17 @@
                     <label for="reps">Reps:</label>
                     <input type="number" id="reps" min="0">
                 </div>
+
                 <div class="form-group" id="setsGroup" hidden>
                     <label for="sets">Sets:</label>
                     <input type="number" id="sets" min="0">
                 </div>
+
                 <div class="form-group" id="weightGroup" hidden>
                     <label for="weight">Weight (kg):</label>
                     <input type="number" id="weight" min="0" step="0.1">
                 </div>
+
                 <div class="form-group" id="intensityGroup" hidden>
                     <label for="intensity">Intensity:</label>
                     <select id="intensity">
@@ -102,14 +151,17 @@
                         <option value="Heavy">Heavy</option>
                     </select>
                 </div>
+
                 <div class="form-group" id="durationGroup">
                     <label for="workoutDuration">Duration (minutes):</label>
                     <input type="number" id="workoutDuration" required min="1">
                 </div>
+
                 <div class="form-group" id="dateGroup">
                     <label for="workoutDate">Date:</label>
                     <input type="date" id="workoutDate" required>
                 </div>
+                
                 <div class="modal-actions">
                     <button type="button" id="closeModalBtn" class="btn-secondary">Cancel</button>
                     <button type="submit" class="btn-primary">Save Workout</button>
@@ -133,6 +185,9 @@
                                 <option value="Snack">Snack</option>
                             </select>
                         </div>
+                    </div>
+
+                    <div class="form-group">
                         <div class="form-group-item">
                             <label for="foodName">Food Name</label>
                             <input type="text" id="foodName" placeholder="e.g., Chicken Breast" required />

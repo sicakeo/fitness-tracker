@@ -21,7 +21,7 @@
         "HEAVY_GAIN": 150   // Minimize cardio burn to maximize muscle mass
     };
     document.addEventListener("DOMContentLoaded", () => {
-        if (!checkAuth()) return;
+        //if (!checkAuth()) return;
         setupNavigation();
         setupFormToggling();
         loadTodayCaloriesRing()
