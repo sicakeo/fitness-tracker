@@ -3,22 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>BMI Calculator</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/bmi.css">
+    <script src="https://kit.fontawesome.com/36a7b8a438.js" crossorigin="anonymous"></script>
 </head>
 <body>
-      <header class="nav-container">
-        <button class="hamburger" id="hamburgerBtn">
+    <header class="nav-container">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Menu">
             <span></span>
             <span></span>
             <span></span>
         </button>
 
-        <nav class="nav-menu" id="navMenu">
-            <ul id="nav-list">
+        <div class="nav-spacer"></div>
+
+        <div class="nav-skeleton-wrapper" id ="navSkeletonWrapper">
+            <div class="nav-skeleton"></div>
+            <div class="nav-skeleton"></div>
+            <div class="nav-skeleton"></div>
+        </div>
+
+        <nav class="nav-menu" id="navMenu">     
+            <ul class="nav-list" id="navList">
                 <li><a href="/">Home</a></li>
                 <li><a href="/about">About Us</a></li>
-                <li id="profile-item"><a href="/profile">User Profile</a></li>
                 <li id="toolDropdown" class="dropdown-parent">
                     <a href="#">Tools</a>
                     <ul id="toolDropdownMenu">
@@ -27,20 +35,54 @@
                         <li><a href="/tdee-calculator">TDEE Calculator</a></li>
                     </ul>
                 </li>
+
                 <li id="authLinksLi">
-                    <div id="nav-right">
-                        <div id="loginBtn">
-                            <a href="/login">Login</a>
-                        </div>
-                        <div id="registerBtn">
-                            <a href="/register">Signup</a>
-                        </div>
+                    <div class="nav-right">
+                        <a href="/login" id="loginBtn">Login</a>
+                        <a href="/register" id="registerBtn">Register</a>
                     </div>
                 </li>
             </ul>
         </nav>
-      </header>
-    
+
+        <div id="profileDropdown" class="dropdown-parent hidden">
+            <a href="#" id="userProfileLink" class="user-profile-link">
+                <svg class="svg-inline--fa fa-user" alt="User Profile" data-prefix="fas" data-icon="user" role="img" viewBox="0 0 448 512" aria-hidden="true" data-fa-i2svg=""><path fill="currentColor" d="M224 248a120 120 0 1 0 0-240 120 120 0 1 0 0 240zm-29.7 56C95.8 304 16 383.8 16 482.3 16 498.7 29.3 512 45.7 512l356.6 0c16.4 0 29.7-13.3 29.7-29.7 0-98.5-79.8-178.3-178.3-178.3l-59.4 0z"></path></svg><!-- <i class="fa-solid fa-user" alt="User Profile"></i> Font Awesome fontawesome.com -->
+            </a>
+            <ul id="profileDropdownMenu" class="profile-card-dropdown" hidden>
+                <!-- User Profile Header -->
+                <div class="dropdown-user-header">
+                    <svg src="images/user-icon.png" class="svg-inline--fa fa-user" data-prefix="fas" data-icon="user" role="img" viewBox="0 0 448 512" aria-hidden="true" data-fa-i2svg=""><path fill="currentColor" d="M224 248a120 120 0 1 0 0-240 120 120 0 1 0 0 240zm-29.7 56C95.8 304 16 383.8 16 482.3 16 498.7 29.3 512 45.7 512l356.6 0c16.4 0 29.7-13.3 29.7-29.7 0-98.5-79.8-178.3-178.3-178.3l-59.4 0z"></path></svg><!-- <img src="images/user-icon.png" class="fa-solid fa-user"> Font Awesome fontawesome.com -->
+                    <span class="user-name-text">Username</span>
+                </div>
+                
+                <hr class="dropdown-divider">
+                
+                <a href="/profile" class="view-all-btn">Profile</a>
+
+                <!-- Menu Links List -->
+                <li>
+                    <a href="/settings" class="menu-item">
+                        <div class="menu-left">
+                            <div class="icon-circle">⚙️</div>
+                            <span>Setting</span>
+                        </div>
+                        <div class="menu-right">❯</div>
+                    </a>
+                </li>
+               
+                <li>
+                    <span id="signOutLink" class="menu-item logout-row">
+                        <div class="menu-left">
+                            <div class="icon-circle">🚪</div>
+                            <span>Logout</span>
+                        </div>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </header>
+      
     <main class="bmi-container" style = "display: flex; justify-content: center; margin-top: 40px; padding: 0 20px">
       <div class="bmi-card" style="max-width: 480px; width: 100%;">
         <div class="card-header" style="text-align: center; margin-bottom: 20px;">
@@ -82,7 +124,7 @@
                   <span class="unit-label">Kilograms</span>
               </div>
             </div>
-            <button type="submit" id="submit" class="btn-primary-food" style="background-color: #1083ea; margin-top: 10px;">Calculate BMR</button>
+            <button type="submit" id="calculateBtn" class="calculate-btn">Calculate BMI</button>
           </form>
 
           <div class="bmi-result" style="margin-top: 24px; padding: 16px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #1083ea; text-align: center;">

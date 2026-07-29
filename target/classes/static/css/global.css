@@ -31,17 +31,14 @@ a {
 .nav-container {
     position: relative; /* Ensures dropdowns are positioned relative to this container */
     display: flex;
-    padding: 0 20px;
+    padding: 10px 20px;
     background-color: #fff; /* Ensures the nav has a solid background */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional subtle shadow for depth */
     border-bottom: 2px solid #ccc; 
     box-sizing: border-box; /* Ensures padding doesn't affect total width */
     justify-content: flex-end; /* Distributes space evenly between nav items */
     align-items: center; /* Vertically centers nav items */
-}
-
-.nav-spacer, .nav-right {
-    width: 50px; /* Adjust this value to control the spacing */
+    min-height: 60px;
 }
 
 .nav-list {
@@ -52,6 +49,8 @@ a {
     font-size: 15px;
     gap: 40px;
     color: #333;
+    align-items: center;
+    justify-content: center; /* Centers the nav items horizontally */
 }
 
 .nav-menu {
@@ -77,21 +76,26 @@ a {
 
 
 .nav-right {
-    padding: 8px 0;
+    padding: 0;
+    gap: 5px;
     display: flex;
-    margin-right: 10px; /* Adds a bit of spacing from the right edge */
+    
 }
 
-.nav-right a {
-    text-decoration: none;
-    font-size: 15px;
+.nav-right a{
+    border: none;
     border-radius: 4px;
+    cursor: pointer;
+    padding: 8px 16px;
+    font-size: 16px;
+}
+
+[id*="Btn"]{
     transition: background-color 0.3s ease;
 }
 
-.nav-right a:hover {
-    background-color: #ddd;
-
+.calculate-btn:hover{
+    background-color: var(--healthy-green);
 }
 
  #toolDropdownMenu {
@@ -136,6 +140,13 @@ a {
     box-sizing: border-box;
 }
 
+/* 👥 Menu Rows: The Magic Flex Layout */
+#profileDropdownMenu li {
+    list-style: none;
+    padding: 4px 0 !important;
+}
+
+
 /* Header Info styling */
 .dropdown-user-header {
     display: flex;
@@ -165,13 +176,7 @@ a {
     border-radius: 6px;
     font-weight: 600;
     margin-bottom: 16px;
-    transition: background-color 0.2s;
-}
-
-/* 👥 Menu Rows: The Magic Flex Layout */
-#profileDropdownMenu li {
-    list-style: none;
-    padding: 4px 0;
+    transition: background 0.3s ease;
 }
 
 .menu-item {
@@ -207,11 +212,6 @@ a {
     font-size: 14px;
 }
 
-/* Custom alignment adjustment for the logout text node */
-.logout-row {
-    color: #f02849; /* Distinct color style rule indicator */
-}    
-    
 .fa-user{
     width: 40px;
     height: 40px;
@@ -230,16 +230,19 @@ a {
     color: #1083EA;
 }
 
-#registerBtn a {
-    color: white;
+#registerBtn {
     background-color: #1083EA;
+    color: white;
+}
+
+#registerBtn:hover{
+    background-color: #ddd;
 }
 
 .logout-text {
     color: blue;
     cursor: pointer; 
 }
-
 
 /* User Account Interface Dropdowns */
 #logoutBtn {
@@ -317,7 +320,7 @@ a {
     .hamburger {
         display: flex; /* Triggers button flex rendering */
     }
-
+    
     .nav-menu {
         display: none; /* Kept default hidden */
         flex-direction: column;
@@ -339,9 +342,9 @@ a {
         flex-direction: column;
         align-items: center;
         font-size: 15px;
+        padding: 20px 0;
         gap: 10px;
         height: auto; /* Allow menu list to shrink wrap items */
-        padding: 0;
     }
     
     .nav-spacer {
@@ -350,10 +353,8 @@ a {
 
     .nav-right {
         display: flex;
-        justify-content: flex-end;
-        & a {
-            font-size: 15px;
-        }
+        flex-direction: column;
+        align-items: center;
     }
 
     .nav-menu.active {
@@ -389,20 +390,6 @@ a {
         margin-bottom: 20px;
     }
    
-[class*="-card"] .toggle{
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    button {
-        padding: 10px 10px;
-        border: none;
-        border-radius: 4px;
-        background-color: green;
-        color: white;
-        cursor: pointer;
-        font-size: 14px;
-    }
-}
 
 [class*="-card"] form {
     display: flex;
@@ -410,19 +397,19 @@ a {
     gap: 25px;
 }
 
-[class*="-card"] form .label {
+[class*="-card"] form label {
     font-size: 14px;
     color: #555;
 }
 
-[class*="-card"] form .input {
+[class*="-card"] form input {
         padding: 3px;
         border: 1px solid #ccc;
         border-radius: 4px;
         font-size: 14px;
         background-color: #f3efefb1;
     }
-[class*="-card"] form .button {
+[class*="-card"] form button {
     padding: 10px;
     width: 40%;
     align-self: center;
@@ -434,7 +421,7 @@ a {
     font-size: 16px;
 }
 
-[class*="-card"] form .select {
+[class*="-card"] form select {
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;

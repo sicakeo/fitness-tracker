@@ -3,19 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/global.css">
+    <script src="https://kit.fontawesome.com/36a7b8a438.js" crossorigin="anonymous"></script>
 </head>
     
     <body>
     <header class="nav-container">
-        <button class="hamburger" id="hamburgerBtn">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Menu">
             <span></span>
             <span></span>
             <span></span>
         </button>
 
-        <nav class="nav-menu" id="navMenu">
-            <ul id="nav-list">
+        <div class="nav-spacer"></div>
+
+        <div class="nav-skeleton-wrapper" id ="navSkeletonWrapper">
+            <div class="nav-skeleton"></div>
+            <div class="nav-skeleton"></div>
+            <div class="nav-skeleton"></div>
+        </div>
+
+        <nav class="nav-menu" id="navMenu">     
+            <ul class="nav-list" id="navList">
                 <li><a href="/">Home</a></li>
                 <li><a href="/about">About Us</a></li>
                 <li id="toolDropdown" class="dropdown-parent">
@@ -48,7 +57,7 @@
                 </div>
 
                 <div class = "form-group">
-                    <button type = "submit" id = "loginButton">Login</button>
+                    <button type = "submit" id = "loginBtn">Login</button>
                 </div>
                 <p>New User? Register <a href="/register" style = "color: #007bff">here</a></p>
             </form>

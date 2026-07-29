@@ -4,21 +4,29 @@
     <meta charset="UTF-8">
     <meta name = "viewport" content = "width = device-width, initial-scale = 1" />
     <title>Fitness Tracker</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/global.css">
+    <script src="https://kit.fontawesome.com/36a7b8a438.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <header class="nav-container">
-        <button class="hamburger" id="hamburgerBtn">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Menu">
             <span></span>
             <span></span>
             <span></span>
         </button>
 
-        <nav class="nav-menu" id="navMenu">
-            <ul id="nav-list">
+        <div class="nav-spacer"></div>
+
+        <div class="nav-skeleton-wrapper" id ="navSkeletonWrapper">
+            <div class="nav-skeleton"></div>
+            <div class="nav-skeleton"></div>
+            <div class="nav-skeleton"></div>
+        </div>
+
+        <nav class="nav-menu" id="navMenu">     
+            <ul class="nav-list" id="navList">
                 <li><a href="/">Home</a></li>
                 <li><a href="/about">About Us</a></li>
-            
                 <li id="toolDropdown" class="dropdown-parent">
                     <a href="#">Tools</a>
                     <ul id="toolDropdownMenu">
@@ -27,14 +35,11 @@
                         <li><a href="/tdee-calculator">TDEE Calculator</a></li>
                     </ul>
                 </li>
-                <li>
-                    <div id="nav-right">
-                        <div id="loginBtn">
-                            <a href="/login">Login</a>
-                        </div>
-                        <div id="registerBtn">
-                            <a href="/register">Signup</a>
-                        </div>
+
+                <li id="authLinksLi">
+                    <div class="nav-right">
+                        <a href="/login" id="loginBtn">Login</a>
+                        <a href="/register" id="registerBtn">Register</a>
                     </div>
                 </li>
             </ul>

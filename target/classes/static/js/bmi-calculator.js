@@ -14,33 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
  * Initializes authentication views and handles demographic profile field hydration
  */
 function initializeDashboard() {
-    const profileItem = document.getElementById("profile-item");
     const loggedIn = isLoggedIn();
 
     if (!loggedIn) {
         clearFormFields();
     }
-
-    if (profileItem) {
-        profileItem.classList.toggle("hidden", !loggedIn);
-    } 
-
-    const authLinksLi = document.getElementById("authLinksLi");
-    if (authLinksLi && loggedIn) {
-        // Replace the entire list item cleanly to preserve your flex/grid nav alignment
-        authLinksLi.innerHTML = `
-           <div id="logoutBtn" class="nav-right">
-                <span id="signOutLink" class="logout-text">Sign out</span>
-            </div>
-        `;
-        
-        // Bind the active logout listener to the fresh DOM node
-        const signOutLink = document.getElementById("signOutLink");
-        if (signOutLink) {
-            signOutLink.addEventListener("click", logout);
-        }
-    }
-
+    
     hydrateFieldsFromSession();
 }
 
