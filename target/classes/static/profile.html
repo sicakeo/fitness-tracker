@@ -16,14 +16,20 @@
 
         <div class="nav-spacer"></div>
 
-        <div class="nav-skeleton-wrapper" id ="navSkeletonWrapper">
-            <div class="nav-skeleton"></div>
-            <div class="nav-skeleton"></div>
-            <div class="nav-skeleton"></div>
+        <div class="nav-skeleton-wrapper nav-menu" id ="navSkeletonWrapper">
+            <div class="skeleton-element nav-skeleton-item"></div>
+            <div class="skeleton-element nav-skeleton-item"></div>
+            <div class="skeleton-element nav-skeleton-item"></div>
+            <div class="skeleton-element nav-skeleton-item"></div>
+            <div class="skeleton-element nav-skeleton-item"></div>
         </div>
 
-        <nav class="nav-menu" id="navMenu">     
-            <ul class="nav-list">
+        <div class="profile-skeleton-wrapper dropdown-parent" id="profileSkeletonWrapper">
+            <div class="skeleton-element nav-skeleton-circle"></div>
+        </div>
+
+        <nav class="nav-menu hidden" id="navMenu">     
+            <ul class="nav-list" id="navList">
                 <li><a href="/">Home</a></li>
                 <li><a href="/about">About Us</a></li>
                 <li id="toolDropdown" class="dropdown-parent">
@@ -34,45 +40,8 @@
                         <li><a href="/tdee-calculator">TDEE Calculator</a></li>
                     </ul>
                 </li>
-                <li>
-                </li>
             </ul>
         </nav>
-
-        <div id="profileDropdown" class="dropdown-parent">
-            <a href="#" id="userProfileLink" class="user-profile-link">
-                <i class="fa-solid fa-user" alt="User Profile"></i>
-            </a>
-            <ul id="profileDropdownMenu" class="profile-card-dropdown" hidden>
-                <!-- User Profile Header -->
-                <div class="dropdown-user-header">
-                    <img id = "userIcon" src="images/user-icon.png" alt="User Profile" class = "fa-solid fa-user">
-                    <span class="user-name-text">Username</span>
-                </div>
-                <hr class="dropdown-divider">
-                <a href="/profile" class="view-all-btn">Profile</a>
-
-                <!-- Menu Links List -->
-                <li>
-                    <a href="/settings" class="menu-item">
-                        <div class="menu-left">
-                            <div class="icon-circle">⚙️</div>
-                            <span>Setting</span>
-                        </div>
-                        <div class="menu-right">❯</div>
-                    </a>
-                </li>
-               
-                <li>
-                    <span id="signOutLink" class="menu-item logout-row">
-                        <div class="menu-left">
-                            <div class="icon-circle">🚪</div>
-                            <span>Logout</span>
-                        </div>
-                    </span>
-                </li>
-            </ul>
-        </div>
     </header>
     
     <main class="profile-container" id = "profileContainer">

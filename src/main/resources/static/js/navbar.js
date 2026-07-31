@@ -1,4 +1,4 @@
-import { isLoggedIn } from "./login.js";
+import { isLoggedIn, logout } from "./login.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     initializeDashboard();
@@ -23,7 +23,9 @@ function initializeDashboard() {
     const navMenu = document.getElementById("navMenu");
     const profileDropdown = document.getElementById("profileDropdown");
     const profileDropdownMenu = document.getElementById("profileDropdownMenu");
+    const signOutLink = document.getElementById("signOutLink");
 
+    if (signOutLink) signOutLink.addEventListener("click", logout);
 
     if (hamburgerBtn && navMenu) {
         hamburgerBtn.addEventListener("click", () => {

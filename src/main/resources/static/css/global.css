@@ -515,7 +515,7 @@ input.invalid-field {
 
 .nav-skeleton-item {
 width: 70px;
-height: 18px;
+height: 20px;
 border-radius: 4px;
 }
 .nav-skeleton-circle {
@@ -524,7 +524,7 @@ border-radius: 4px;
     border-radius: 50%; /* Perfect circle for the profile picture/initial boundary */
 }
 
-/* 🌟 THE CORE SHIMMER ENGINE */
+/* THE CORE SHIMMER ENGINE */
 .skeleton-element {
     background-color: #e2e8f0;
     position: relative;

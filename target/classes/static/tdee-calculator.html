@@ -16,13 +16,19 @@
 
         <div class="nav-spacer"></div>
 
-        <div class="nav-skeleton-wrapper" id ="navSkeletonWrapper">
-            <div class="nav-skeleton"></div>
-            <div class="nav-skeleton"></div>
-            <div class="nav-skeleton"></div>
+        <div class="nav-skeleton-wrapper nav-menu" id ="navSkeletonWrapper">
+            <div class="skeleton-element nav-skeleton-item"></div>
+            <div class="skeleton-element nav-skeleton-item"></div>
+            <div class="skeleton-element nav-skeleton-item"></div>
+            <div class="skeleton-element nav-skeleton-item"></div>
+            <div class="skeleton-element nav-skeleton-item"></div>
         </div>
 
-        <nav class="nav-menu" id="navMenu">     
+        <div class="profile-skeleton-wrapper dropdown-parent" id="profileSkeletonWrapper">
+            <div class="skeleton-element nav-skeleton-circle"></div>
+        </div>
+
+        <nav class="nav-menu hidden" id="navMenu">     
             <ul class="nav-list" id="navList">
                 <li><a href="/">Home</a></li>
                 <li><a href="/about">About Us</a></li>
@@ -44,7 +50,7 @@
             </ul>
         </nav>
 
-        <div id="profileDropdown" class="dropdown-parent">
+        <div id="profileDropdown" class="dropdown-parent hidden">
             <a href="#" id="userProfileLink" class="user-profile-link">
                 <svg class="svg-inline--fa fa-user" alt="User Profile" data-prefix="fas" data-icon="user" role="img" viewBox="0 0 448 512" aria-hidden="true" data-fa-i2svg=""><path fill="currentColor" d="M224 248a120 120 0 1 0 0-240 120 120 0 1 0 0 240zm-29.7 56C95.8 304 16 383.8 16 482.3 16 498.7 29.3 512 45.7 512l356.6 0c16.4 0 29.7-13.3 29.7-29.7 0-98.5-79.8-178.3-178.3-178.3l-59.4 0z"></path></svg><!-- <i class="fa-solid fa-user" alt="User Profile"></i> Font Awesome fontawesome.com -->
             </a>
@@ -52,7 +58,7 @@
                 <!-- User Profile Header -->
                 <div class="dropdown-user-header">
                     <svg src="images/user-icon.png" class="svg-inline--fa fa-user" data-prefix="fas" data-icon="user" role="img" viewBox="0 0 448 512" aria-hidden="true" data-fa-i2svg=""><path fill="currentColor" d="M224 248a120 120 0 1 0 0-240 120 120 0 1 0 0 240zm-29.7 56C95.8 304 16 383.8 16 482.3 16 498.7 29.3 512 45.7 512l356.6 0c16.4 0 29.7-13.3 29.7-29.7 0-98.5-79.8-178.3-178.3-178.3l-59.4 0z"></path></svg><!-- <img src="images/user-icon.png" class="fa-solid fa-user"> Font Awesome fontawesome.com -->
-                    <span class="user-name-text">Username</span>
+                    <span class="user-name-text" id="profileName">Username</span>
                 </div>
                 
                 <hr class="dropdown-divider">
@@ -69,7 +75,7 @@
                         <div class="menu-right">❯</div>
                     </a>
                 </li>
-               
+                
                 <li>
                     <span id="signOutLink" class="menu-item logout-row">
                         <div class="menu-left">
@@ -82,7 +88,7 @@
         </div>
     </header>
 
-  <main class="tdee-container" style="display: flex; justify-content: center; margin-top: 40px; padding: 0 20px;">
+    <main class="tdee-container" style="display: flex; justify-content: center; margin-top: 40px; padding: 0 20px;">
         <div class="tdee-card" style="max-width: 480px; width: 100%;">
             <div class="card-header" style="text-align: center; margin-bottom: 20px;">
                 <h2 style="margin: 0; color: #2c3e50;">TDEE Calculator</h2>
@@ -110,7 +116,7 @@
                             <input type="number" id="age" inputmode="numeric" required>
                             <span class="unit-label">Years</span>
                         </div>
-                     </div>
+                    </div>
 
                     <div class="form-row-layout">
                         <label>Height</label>
@@ -161,8 +167,8 @@
                 </div>
             </div>
         </div>
-  </main>
-  <script type="module" src = "js/navbar.js"></script>
-  <script type="module" src = "js/tdee-calculator.js"></script>
+    </main>
+    <script type="module" src = "js/navbar.js"></script>
+    <script type="module" src = "js/tdee-calculator.js"></script>
 </body>
 </html>

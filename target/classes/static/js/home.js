@@ -32,8 +32,6 @@
      * Handles basic navbar event wireframes
      */
     function setupNavigation() {
-        const signOutLink = document.getElementById("signOutLink");
-        if (signOutLink) signOutLink.addEventListener("click", logout);
 
         const startWorkoutBtn = document.getElementById("startWorkoutBtn");
         const closeModalBtn = document.getElementById("closeModalBtn");
