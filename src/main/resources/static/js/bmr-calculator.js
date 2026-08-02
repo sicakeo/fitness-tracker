@@ -1,4 +1,4 @@
-import { isLoggedIn, logout } from "./login.js";
+import { isLoggedIn, logout } from "./auth.js";
 import { calculateBMR } from "./fitnessMath.js";
 
 const USER_API_URL = "http://localhost:8080/api/users";

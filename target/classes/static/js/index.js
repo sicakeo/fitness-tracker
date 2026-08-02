@@ -1,5 +1,5 @@
 const USER_API_URL = "http://localhost:8080/";
-import { isLoggedIn } from "./login.js";
+import { isLoggedIn } from "./auth.js";
 
 // Run auth-related routing logic separately
 document.addEventListener("DOMContentLoaded", () => {

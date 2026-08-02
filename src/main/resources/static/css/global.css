@@ -547,3 +547,39 @@ border-radius: 4px;
 @keyframes navShimmer {
     100% { transform: translateX(100%); }
 }
+
+
+.loader-overlay{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    display: flex;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    top: 0;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  /* The ring border */
+  border: 5px solid #f3f3f3; /* Light grey base ring */
+  border-top: 5px solid #3498db; /* Blue accent color */
+  border-radius: 50%; /* Turns the square box into a circle */
+  
+  /* Continuous spin animation */
+  animation: spin 1s linear infinite;
+}
+
+/* Keyframes for full 360-degree rotation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

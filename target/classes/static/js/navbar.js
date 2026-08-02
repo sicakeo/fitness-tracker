@@ -1,4 +1,4 @@
-import { isLoggedIn, logout } from "./login.js";
+import { isLoggedIn, logout } from "./auth.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     initializeDashboard();
@@ -80,5 +80,3 @@ function initializeNavbar(){
         navMenu?.classList.remove("hidden");        
     }
 }
-
-

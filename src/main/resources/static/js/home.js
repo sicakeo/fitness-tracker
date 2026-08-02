@@ -1,4 +1,4 @@
-    import { checkAuth, logout } from "./login.js";
+    import { checkAuth, logout } from "./auth.js";
 
     const WORKOUT_API_URL = "http://localhost:8080/api/workouts";
     const EXERCISE_API_URL = "http://localhost:8080/api/exercises";
@@ -405,11 +405,11 @@
             const percentage = currentCalories / targetCalories;
             
             if (isNegative) {
-                // 🚴‍♂️ OPTION A: Animate COUNTER-CLOCKWISE for deficits
+                //Animate COUNTER-CLOCKWISE for deficits
                 circle.style.strokeDashoffset = circumference + (Math.min(percentage, 1) * circumference);
                 circle.style.stroke = "#e74c3c";// Change to blue to flag a calorie deficit
             } else {
-                // 🍎 OPTION B: Animate CLOCKWISE for normal accumulation
+                //Animate CLOCKWISE for normal accumulation
                 circle.style.strokeDashoffset = circumference - (Math.min(percentage, 1) * circumference);
                 circle.style.stroke = "#3498db";  // Your standard active color
             }

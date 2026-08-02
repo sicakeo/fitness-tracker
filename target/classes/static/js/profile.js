@@ -1,4 +1,4 @@
-import { checkAuth, logout } from "./login.js";
+import { checkAuth, logout } from "./auth.js";
 import { calculateBMR, calculateTDEE, getReadableActivityLevelText, getReadableGoalText } from "./fitnessMath.js";
 
 const USER_API_URL = "http://localhost:8080/api/users";
