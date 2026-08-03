@@ -30,14 +30,14 @@
 
         <nav class="nav-menu hidden" id="navMenu">     
             <ul class="nav-list" id="navList">
-                <li><a href="/">Home</a></li>
-                <li><a href="/about">About Us</a></li>
+                <li><a href="/" class="transition-link">Home</a></li>
+                <li><a href="/about" class="transition-link">About Us</a></li>
                 <li id="toolDropdown" class="dropdown-parent">
                     <a href="#">Tools</a>
                     <ul id="toolDropdownMenu">
-                        <li><a href="/bmi-calculator">BMI Calculator</a></li>
-                        <li><a href="/bmr-calculator">BMR Calculator</a></li>
-                        <li><a href="/tdee-calculator">TDEE Calculator</a></li>
+                        <li><a href="/bmi-calculator" class="transition-link">BMI Calculator</a></li>
+                        <li><a href="/bmr-calculator" class="transition-link">BMR Calculator</a></li>
+                        <li><a href="/tdee-calculator" class="transition-link">TDEE Calculator</a></li>
                     </ul>
                 </li>
 
@@ -63,7 +63,7 @@
                 
                 <hr class="dropdown-divider">
                 
-                <a href="/profile" class="view-all-btn">Profile</a>
+                <a href="/profile" class="view-all-btn transition-link">Profile</a>
 
                 <!-- Menu Links List -->
                 <li>
@@ -88,82 +88,87 @@
         </div>
     </header>
 
-    <main class="tdee-container" style="display: flex; justify-content: center; margin-top: 40px; padding: 0 20px;">
-        <div class="tdee-card" style="max-width: 480px; width: 100%;">
-            <div class="card-header" style="text-align: center; margin-bottom: 20px;">
-                <h2 style="margin: 0; color: #2c3e50;">TDEE Calculator</h2>
-            </div>
-
-            <div class = "tdee-content">
-                <div class="form-row-group" style="justify-content: center; margin-bottom: 24px;">
-                    <button type="button" id="standard-btn" class="btn-toggle active" style="padding: 10px 20px; border: none; border-radius: 6px 0 0 6px; cursor: pointer; font-weight: bold; background-color: #2ecc71; color: white;">Standard</button>
-                    <button type="button" id="metric-btn" class="btn-toggle" style="padding: 10px 20px; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-weight: bold; background-color: #dee2e6; color: #495057;">Metric</button>
+    <div id="loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+    <main class="page-content">
+        <div class="tdee-container" style="display: flex; justify-content: center; margin-top: 40px; padding: 0 20px;">
+            <div class="tdee-card" style="max-width: 480px; width: 100%;">
+                <div class="card-header" style="text-align: center; margin-bottom: 20px;">
+                    <h2 style="margin: 0; color: #2c3e50;">TDEE Calculator</h2>
                 </div>
 
-                <form id="tdee-form" novalidate>
-                    <div class="form-row-layout" id = "gender-group">
-                        <label for="gender">Gender</label>
-                        <select id="gender" required>
-                            <option value="" disabled selected>Select your gender</option>
-                            <option value="M">Male</option>              
-                            <option value="F">Female</option>
-                        </select>
+                <div class = "tdee-content">
+                    <div class="form-row-group" style="justify-content: center; margin-bottom: 24px;">
+                        <button type="button" id="standard-btn" class="btn-toggle active" style="padding: 10px 20px; border: none; border-radius: 6px 0 0 6px; cursor: pointer; font-weight: bold; background-color: #2ecc71; color: white;">Standard</button>
+                        <button type="button" id="metric-btn" class="btn-toggle" style="padding: 10px 20px; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-weight: bold; background-color: #dee2e6; color: #495057;">Metric</button>
                     </div>
 
-                    <div class="form-row-layout">
-                        <label for="age">Age</label>
-                        <div class="input-inline-group">
-                            <input type="number" id="age" inputmode="numeric" required>
-                            <span class="unit-label">Years</span>
+                    <form id="tdee-form" novalidate>
+                        <div class="form-row-layout" id = "gender-group">
+                            <label for="gender">Gender</label>
+                            <select id="gender" required>
+                                <option value="" disabled selected>Select your gender</option>
+                                <option value="M">Male</option>              
+                                <option value="F">Female</option>
+                            </select>
                         </div>
+
+                        <div class="form-row-layout">
+                            <label for="age">Age</label>
+                            <div class="input-inline-group">
+                                <input type="number" id="age" inputmode="numeric" required>
+                                <span class="unit-label">Years</span>
+                            </div>
+                        </div>
+
+                        <div class="form-row-layout">
+                            <label>Height</label>
+                            <div id="standard-height-group" class="input-inline-group">
+                                <input type="number" id="feet" inputmode="numeric">
+                                <span class="unit-label">Feet</span>
+
+                                <input type="number" id="inches" inputmode="numeric">
+                                <span class="unit-label">Inches</span>
+                            </div>
+
+                            <div id="metric-height-group" class="input-inline-group hidden">
+                                <input type="number" id="cm" inputmode="numeric">
+                                <span class="unit-label">Cm</span>
+                            </div>
+                        </div>
+
+                        <div class="form-row-layout">
+                            <label>Weight</label>
+                            <div id="standard-weight-group" class="input-inline-group">
+                                <input type="number" id="lbs" inputmode="decimal">
+                                <span class="unit-label">Pounds</span>
+                            </div>
+
+                            <div id="metric-weight-group" class="input-inline-group hidden">
+                                <input type="number" id="kg" inputmode="decimal">
+                                <span class="unit-label">Kilograms</span>
+                            </div>
+                        </div>
+
+                        <div class="form-row-layout">
+                            <label for="activityLevel">Activity Level:</label>
+                            <select id="activityLevel">
+                                <option value="" disabled selected>Select your activity level</option>
+                                <option value="1.2">Sedentary (little or no exercise)</option>
+                                <option value="1.375">Lightly active (light exercise/sports 1-3 days/week)</option>
+                                <option value="1.55">Moderately active (moderate exercise/sports 3-5 days/week)</option>
+                                <option value="1.725">Active (hard exercise/sports 6-7 days a week)</option>
+                                <option value="1.9">Very active (very hard exercise/sports & physical job or 2x training)</option>
+                            </select>
+                        </div>
+                        <button type="submit" id="calculateBtn" class="calculate-btn">Calculate TDEE</button>
+                    </form>
+
+                    <div class="tdee-result">
+                        <h4>Total Daily Energy Expenditure </h4>
+                        <span id="resultMessage" style="font-size: 1.4rem; font-weight: bold; color: #2c3e50;">TDEE = 0.0 kcal/day</span>
                     </div>
-
-                    <div class="form-row-layout">
-                        <label>Height</label>
-                        <div id="standard-height-group" class="input-inline-group">
-                            <input type="number" id="feet" inputmode="numeric">
-                            <span class="unit-label">Feet</span>
-
-                            <input type="number" id="inches" inputmode="numeric">
-                            <span class="unit-label">Inches</span>
-                        </div>
-
-                        <div id="metric-height-group" class="input-inline-group hidden">
-                            <input type="number" id="cm" inputmode="numeric">
-                            <span class="unit-label">Cm</span>
-                        </div>
-                    </div>
-
-                    <div class="form-row-layout">
-                        <label>Weight</label>
-                        <div id="standard-weight-group" class="input-inline-group">
-                            <input type="number" id="lbs" inputmode="decimal">
-                            <span class="unit-label">Pounds</span>
-                        </div>
-
-                        <div id="metric-weight-group" class="input-inline-group hidden">
-                            <input type="number" id="kg" inputmode="decimal">
-                            <span class="unit-label">Kilograms</span>
-                        </div>
-                    </div>
-
-                    <div class="form-row-layout">
-                        <label for="activityLevel">Activity Level:</label>
-                        <select id="activityLevel">
-                            <option value="" disabled selected>Select your activity level</option>
-                            <option value="1.2">Sedentary (little or no exercise)</option>
-                            <option value="1.375">Lightly active (light exercise/sports 1-3 days/week)</option>
-                            <option value="1.55">Moderately active (moderate exercise/sports 3-5 days/week)</option>
-                            <option value="1.725">Active (hard exercise/sports 6-7 days a week)</option>
-                            <option value="1.9">Very active (very hard exercise/sports & physical job or 2x training)</option>
-                        </select>
-                    </div>
-                    <button type="submit" id="calculateBtn" class="calculate-btn">Calculate TDEE</button>
-                </form>
-
-                <div class="tdee-result">
-                    <h4>Total Daily Energy Expenditure </h4>
-                    <span id="resultMessage" style="font-size: 1.4rem; font-weight: bold; color: #2c3e50;">TDEE = 0.0 kcal/day</span>
                 </div>
             </div>
         </div>

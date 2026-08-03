@@ -583,3 +583,17 @@ border-radius: 4px;
     transform: rotate(360deg);
   }
 }
+
+.loader-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.page-content {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.page-content.visible {
+  opacity: 1;
+}

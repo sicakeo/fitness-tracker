@@ -36,9 +36,9 @@
                 <li id="toolDropdown" class="dropdown-parent">
                     <a href="#">Tools</a>
                     <ul id="toolDropdownMenu">
-                        <li><a href="/bmi-calculator">BMI Calculator</a></li>
-                        <li><a href="/bmr-calculator">BMR Calculator</a></li>
-                        <li><a href="/tdee-calculator">TDEE Calculator</a></li>
+                        <li><a href="/bmi-calculator" class="transition-link">BMI Calculator</a></li>
+                        <li><a href="/bmr-calculator" class="transition-link">BMR Calculator</a></li>
+                        <li><a href="/tdee-calculator" class="transition-link">TDEE Calculator</a></li>
                     </ul>
                 </li>
 
@@ -64,7 +64,7 @@
                 
                 <hr class="dropdown-divider">
                 
-                <a href="/profile" class="view-all-btn">Profile</a>
+                <a href="/profile" class="view-all-btn transition-link">Profile</a>
 
                 <!-- Menu Links List -->
                 <li>
@@ -89,66 +89,68 @@
         </div>
     </header>
     
-    <div class="loader-overlay hidden">
+    <div id="loader" class="loader-overlay">
         <div class="spinner"></div>
     </div>
     
-    <main class="bmi-container" style = "display: flex; justify-content: center; margin-top: 40px; padding: 0 20px">
-      <div class="bmi-card" style="max-width: 480px; width: 100%;">
-        <div class="card-header" style="text-align: center; margin-bottom: 20px;">
-            <h2 style="margin: 0; color: #2c3e50;">BMI Calculator</h2>
-        </div>
-
-        <div class = "bmi-content">
-          <div class="form-group" style="justify-content: center; margin-bottom: 24px;">
-              <button type="button" id="standard-btn" class="btn-toggle active" style="padding: 10px 20px; border: none; border-radius: 6px 0 0 6px; cursor: pointer; font-weight: bold; background-color: #2ecc71; color: white;">Standard</button>
-              <button type="button" id="metric-btn" class="btn-toggle" style="padding: 10px 20px; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-weight: bold; background-color: #dee2e6; color: #495057;">Metric</button>
-          </div>
-
-          <form id="bmi-form" novalidate>
-            <div class="form-group">
-              <label>Height</label>
-              <div id="standard-height-group" class="input-inline-group">
-                  <input type="number" id="feet" inputmode="numeric">
-                  <span class="unit-label">Feet</span>
-
-                  <input type="number" id="inches" inputmode="numeric">
-                  <span class="unit-label">Inches</span>
-              </div>
-
-              <div id="metric-height-group" class="input-inline-group hidden">
-                  <input type="number" id="cm" inputmode="numeric">
-                  <span class="unit-label">Cm</span>
-              </div>
-          </div>
-
-          <div class="form-group">
-              <label>Weight</label>
-              <div id="standard-weight-group" class="input-inline-group">
-                  <input type="number" id="lbs" inputmode="decimal">
-                  <span class="unit-label">Pounds</span>
-              </div>
-
-              <div id="metric-weight-group" class="input-inline-group hidden">
-                  <input type="number" id="kg" inputmode="decimal">
-                  <span class="unit-label">Kilograms</span>
-              </div>
+    <main class="page-content">
+        <div class="bmi-container" style = "display: flex; justify-content: center; margin-top: 40px; padding: 0 20px">
+        <div class="bmi-card" style="max-width: 480px; width: 100%;">
+            <div class="card-header" style="text-align: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; color: #2c3e50;">BMI Calculator</h2>
             </div>
-            <button type="submit" id="calculateBtn" class="calculate-btn">Calculate BMI</button>
-          </form>
 
-          <div class="bmi-result" style="margin-top: 24px; padding: 16px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #1083ea; text-align: center;">
-            <h4 style="margin: 0 0 6px 0; color: #6c757d; font-size: 0.9rem; text-transform: uppercase;">Your Body Mass Index</h4>
-            <span id="resultMessage" style="font-size: 1.4rem; font-weight: bold; color: #2c3e50;">BMI = 0.0 kcal/day</span>
-          </div>
+            <div class = "bmi-content">
+            <div class="form-group" style="justify-content: center; margin-bottom: 24px;">
+                <button type="button" id="standard-btn" class="btn-toggle active" style="padding: 10px 20px; border: none; border-radius: 6px 0 0 6px; cursor: pointer; font-weight: bold; background-color: #2ecc71; color: white;">Standard</button>
+                <button type="button" id="metric-btn" class="btn-toggle" style="padding: 10px 20px; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-weight: bold; background-color: #dee2e6; color: #495057;">Metric</button>
+            </div>
 
-          <div class="bmi-scale-container">
-              <div class="bmi-scale-track">
-                  <div class="bmi-scale-fill" id="bmiScaleFill">
-                  <div class="bmi-scale-pointer">➔</div>
-              </div>
-          </div>
-      </div>
+            <form id="bmi-form" novalidate>
+                <div class="form-group">
+                <label>Height</label>
+                <div id="standard-height-group" class="input-inline-group">
+                    <input type="number" id="feet" inputmode="numeric">
+                    <span class="unit-label">Feet</span>
+
+                    <input type="number" id="inches" inputmode="numeric">
+                    <span class="unit-label">Inches</span>
+                </div>
+
+                <div id="metric-height-group" class="input-inline-group hidden">
+                    <input type="number" id="cm" inputmode="numeric">
+                    <span class="unit-label">Cm</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Weight</label>
+                <div id="standard-weight-group" class="input-inline-group">
+                    <input type="number" id="lbs" inputmode="decimal">
+                    <span class="unit-label">Pounds</span>
+                </div>
+
+                <div id="metric-weight-group" class="input-inline-group hidden">
+                    <input type="number" id="kg" inputmode="decimal">
+                    <span class="unit-label">Kilograms</span>
+                </div>
+                </div>
+                <button type="submit" id="calculateBtn" class="calculate-btn">Calculate BMI</button>
+            </form>
+
+            <div class="bmi-result" style="margin-top: 24px; padding: 16px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #1083ea; text-align: center;">
+                <h4 style="margin: 0 0 6px 0; color: #6c757d; font-size: 0.9rem; text-transform: uppercase;">Your Body Mass Index</h4>
+                <span id="resultMessage" style="font-size: 1.4rem; font-weight: bold; color: #2c3e50;">BMI = 0.0 kcal/day</span>
+            </div>
+
+            <div class="bmi-scale-container">
+                <div class="bmi-scale-track">
+                    <div class="bmi-scale-fill" id="bmiScaleFill">
+                    <div class="bmi-scale-pointer">➔</div>
+                </div>
+            </div>
+        </div>
+        </div>
     </main>
     <script type="module" src = "js/navbar.js"></script>
     <script type="module" src = "js/bmi-calculator.js"></script>
