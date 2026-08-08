@@ -17,22 +17,28 @@
 
         <div class="nav-spacer"></div>
 
-        <div class="nav-skeleton-wrapper" id ="navSkeletonWrapper">
-            <div class="nav-skeleton"></div>
-            <div class="nav-skeleton"></div>
-            <div class="nav-skeleton"></div>
+        <<div class="nav-skeleton-wrapper nav-menu" id ="navSkeletonWrapper">
+            <div class="skeleton-element nav-skeleton-item"></div>
+            <div class="skeleton-element nav-skeleton-item"></div>
+            <div class="skeleton-element nav-skeleton-item"></div>
+            <div class="skeleton-element nav-skeleton-item"></div>
+            <div class="skeleton-element nav-skeleton-item"></div>
         </div>
 
-        <nav class="nav-menu" id="navMenu">     
+        <div class="profile-skeleton-wrapper dropdown-parent" id="profileSkeletonWrapper">
+            <div class="skeleton-element nav-skeleton-circle"></div>
+        </div>
+
+        <nav class="nav-menu hidden" id="navMenu">     
             <ul class="nav-list" id="navList">
                 <li><a href="/">Home</a></li>
                 <li><a href="/about">About Us</a></li>
                 <li id="toolDropdown" class="dropdown-parent">
                     <a href="#">Tools</a>
                     <ul id="toolDropdownMenu">
-                        <li><a href="/bmi-calculator">BMI Calculator</a></li>
-                        <li><a href="/bmr-calculator">BMR Calculator</a></li>
-                        <li><a href="/tdee-calculator">TDEE Calculator</a></li>
+                        <li><a href="/bmi-calculator" class="transition-link">BMI Calculator</a></li>
+                        <li><a href="/bmr-calculator" class="transition-link">BMR Calculator</a></li>
+                        <li><a href="/tdee-calculator" class="transition-link">TDEE Calculator</a></li>
                     </ul>
                 </li>
 
@@ -45,16 +51,23 @@
             </ul>
         </nav>
     </header>
+
+    <div id="loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+    
+    <main class="page-content">
         <section id = "welcomeSection" class = "welcome-section">
-        <div class = "welcome-text-container">
-            <div class = "heading-title">
-                <h1>Gym & Fitness Log</h1>
-                <h1>Stay Strong</h1>
-                <h1>Stay Fit</h1>
+            <div class = "welcome-text-container">
+                <div class = "heading-title">
+                    <h1>Gym & Fitness Log</h1>
+                    <h1>Stay Strong</h1>
+                    <h1>Stay Fit</h1>
+                </div>
+                <p>Track your calories, build routine, calculate BMI or BMR</p>
             </div>
-            <p>Track your calories, build routine, calculate BMI or BMR</p>
-        </div>
-    </section>
+        </section>
+    </main>
     <script type="module" src = "js/navbar.js"></script>
     <script type="module" src="js/index.js"></script>
 </body>

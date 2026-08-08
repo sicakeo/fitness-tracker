@@ -33,14 +33,14 @@
 
         <nav class="nav-menu hidden" id="navMenu">     
             <ul class="nav-list" id="navList">
-                <li><a href="/">Home</a></li>
-                <li><a href="/about">About Us</a></li>
+                <li><a href="/home" class="transition-link">Home</a></li>
+                <li><a href="/about" class="transition-link">About Us</a></li>
                 <li id="toolDropdown" class="dropdown-parent">
                     <a href="#">Tools</a>
                     <ul id="toolDropdownMenu">
-                        <li><a href="/bmi-calculator">BMI Calculator</a></li>
-                        <li><a href="/bmr-calculator">BMR Calculator</a></li>
-                        <li><a href="/tdee-calculator">TDEE Calculator</a></li>
+                        <li><a href="/bmi-calculator" class="transition-link">BMI Calculator</a></li>
+                        <li><a href="/bmr-calculator" class="transition-link">BMR Calculator</a></li>
+                        <li><a href="/tdee-calculator" class="transition-link">TDEE Calculator</a></li>
                     </ul>
                 </li>
             </ul>
@@ -59,7 +59,7 @@
                 
                 <hr class="dropdown-divider">
                 
-                <a href="/profile" class="view-all-btn">Profile</a>
+                <a href="/profile" class="view-all-btn transition-link">Profile</a>
 
                 <!-- Menu Links List -->
                 <li>
@@ -84,186 +84,192 @@
         </div>
     </header>
 
-    <div class="wrapper">
-        <div class="calories-ring-container">
-            <div class="calories-ring">
-                <svg class="progress-ring" width="200" height="200">
-                    <circle class="inner" cx="100" cy="100" r="80" stroke-width="16"></circle>
-                    <circle id="calorieFillCircle" class="outer" cx="100" cy="100" r="80" stroke-width="16"></circle>
-                </svg>
+    <div id="loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
 
-                <div class="ring-text-center">
-                    <span id="netCaloriesDisplay" data-target="0">0</span>
-                    <small> / <span id="targetCaloriesDisplay">2000</span> kcal</small>
+    <main class="page-content">
+        <div class="wrapper">
+            <div class="calories-ring-container">
+                <div class="calories-ring">
+                    <svg class="progress-ring" width="200" height="200">
+                        <circle class="inner" cx="100" cy="100" r="80" stroke-width="16"></circle>
+                        <circle id="calorieFillCircle" class="outer" cx="100" cy="100" r="80" stroke-width="16"></circle>
+                    </svg>
+
+                    <div class="ring-text-center">
+                        <span id="netCaloriesDisplay" data-target="0">0</span>
+                        <small> / <span id="targetCaloriesDisplay">2000</span> kcal</small>
+                    </div>
                 </div>
             </div>
+        </div>  
+
+        <div class="start-container" style="text-align: center; margin-bottom: 20px;">
+            <button id="startWorkoutBtn" class="link-btn" style="font-size: 1.5rem; font-weight: bold;">Start a Workout</button>
         </div>
-    </div>  
 
-    <div class="start-container" style="text-align: center; margin-bottom: 20px;">
-        <button id="startWorkoutBtn" class="link-btn" style="font-size: 1.5rem; font-weight: bold;">Start a Workout</button>
-    </div>
-
-    <div id="workoutModal" class="modal-overlay hidden">
-        <div class="modal-card">
-            <h2>Log a New Workout</h2>
-            <form id="workoutForm">
-                <div class="form-group">
-                    <label for="workoutType">Exercise Type:</label>
-                    <select id="workoutType" required>
-                        <option value="" disabled selected>Select an exercise</option>
-                        <option value="Running">Running</option>
-                        <option value="Cycling">Cycling</option>
-                        <option value="Swimming">Swimming</option>
-                        <option value="Weightlifting">Weightlifting</option>
-                        <option value="Yoga">Yoga</option>
-                        <option value="HIIT">HIIT</option>
-                    </select>
-                </div>
-
-                <div class="form-group" id="distanceGroup" hidden>
-                    <label for="distance">Distance (km):</label>
-                    <input type="number" id="distance" min="0" step="0.01">
-                </div>
-
-                <div class="form-group" id="nameGroup" hidden>
-                    <label for="name">Exercise Name:</label>
-                    <input type="text" id="name">
-                </div>
-                <div class="form-group" id="repsGroup" hidden>
-                    <label for="reps">Reps:</label>
-                    <input type="number" id="reps" min="0">
-                </div>
-
-                <div class="form-group" id="setsGroup" hidden>
-                    <label for="sets">Sets:</label>
-                    <input type="number" id="sets" min="0">
-                </div>
-
-                <div class="form-group" id="weightGroup" hidden>
-                    <label for="weight">Weight (kg):</label>
-                    <input type="number" id="weight" min="0" step="0.1">
-                </div>
-
-                <div class="form-group" id="intensityGroup" hidden>
-                    <label for="intensity">Intensity:</label>
-                    <select id="intensity">
-                        <option value="" disabled selected>Select intensity</option>
-                        <option value="Light">Light</option>
-                        <option value="Moderate">Moderate</option>
-                        <option value="Heavy">Heavy</option>
-                    </select>
-                </div>
-
-                <div class="form-group" id="durationGroup">
-                    <label for="workoutDuration">Duration (minutes):</label>
-                    <input type="number" id="workoutDuration" required min="1">
-                </div>
-
-                <div class="form-group" id="dateGroup">
-                    <label for="workoutDate">Date:</label>
-                    <input type="date" id="workoutDate" required>
-                </div>
-                
-                <div class="modal-actions">
-                    <button type="button" id="closeModalBtn" class="btn-secondary">Cancel</button>
-                    <button type="submit" class="btn-primary">Save Workout</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="dashboard-grid">
-        <div class="dashboard-left">
-            <div class="modal-card food-logging-card">
-                <h3>Log a Meal</h3>
-                <form id="foodForm">
+        <div id="workoutModal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <h2>Log a New Workout</h2>
+                <form id="workoutForm">
                     <div class="form-group">
-                        <div class="form-group-item">
-                            <label for="mealType">Meal Type</label>
-                            <select id="mealType" required>
-                                <option value="Breakfast">Breakfast</option>
-                                <option value="Lunch">Lunch</option>
-                                <option value="Dinner">Dinner</option>
-                                <option value="Snack">Snack</option>
-                            </select>
-                        </div>
+                        <label for="workoutType">Exercise Type:</label>
+                        <select id="workoutType" required>
+                            <option value="" disabled selected>Select an exercise</option>
+                            <option value="Running">Running</option>
+                            <option value="Cycling">Cycling</option>
+                            <option value="Swimming">Swimming</option>
+                            <option value="Weightlifting">Weightlifting</option>
+                            <option value="Yoga">Yoga</option>
+                            <option value="HIIT">HIIT</option>
+                        </select>
                     </div>
 
-                    <div class="form-group">
-                        <div class="form-group-item">
-                            <label for="foodName">Food Name</label>
-                            <input type="text" id="foodName" placeholder="e.g., Chicken Breast" required />
-                        </div>
+                    <div class="form-group" id="distanceGroup" hidden>
+                        <label for="distance">Distance (km):</label>
+                        <input type="number" id="distance" min="0" step="0.01">
                     </div>
 
-                    <div class="form-group">
-                        <div class="form-group-item full-width">
-                            <label for="foodCalories">Total Calories (kcal)</label>
-                            <input type="number" id="foodCalories" placeholder="e.g., 450" min="0" required />
-                        </div>
+                    <div class="form-group" id="nameGroup" hidden>
+                        <label for="name">Exercise Name:</label>
+                        <input type="text" id="name">
+                    </div>
+                    <div class="form-group" id="repsGroup" hidden>
+                        <label for="reps">Reps:</label>
+                        <input type="number" id="reps" min="0">
                     </div>
 
-                    <div class="macro-input-grid">
-                        <div class="macro-box protein-accent">
-                            <label for="protein">Protein (g)</label>
-                            <input type="number" id="protein" placeholder="0" min="0" step="0.1" />
-                        </div>
-                        <div class="macro-box carb-accent"> <label for="carb">Carbs (g)</label>
-                            <input type="number" id="carb" placeholder="0" min="0" step="0.1" />
-                        </div>
-                        <div class="macro-box fat-accent"> <label for="fat">Fats (g)</label>  
-                            <input type="number" id="fat" placeholder="0" min="0" step="0.1" />
-                        </div>
+                    <div class="form-group" id="setsGroup" hidden>
+                        <label for="sets">Sets:</label>
+                        <input type="number" id="sets" min="0">
                     </div>
 
-                    <button type="submit" id="submitFoodBtn" class="btn-primary-food">Save Meal</button>
+                    <div class="form-group" id="weightGroup" hidden>
+                        <label for="weight">Weight (kg):</label>
+                        <input type="number" id="weight" min="0" step="0.1">
+                    </div>
+
+                    <div class="form-group" id="intensityGroup" hidden>
+                        <label for="intensity">Intensity:</label>
+                        <select id="intensity">
+                            <option value="" disabled selected>Select intensity</option>
+                            <option value="Light">Light</option>
+                            <option value="Moderate">Moderate</option>
+                            <option value="Heavy">Heavy</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="durationGroup">
+                        <label for="workoutDuration">Duration (minutes):</label>
+                        <input type="number" id="workoutDuration" required min="1">
+                    </div>
+
+                    <div class="form-group" id="dateGroup">
+                        <label for="workoutDate">Date:</label>
+                        <input type="date" id="workoutDate" required>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" id="closeModalBtn" class="btn-secondary">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Workout</button>
+                    </div>
                 </form>
             </div>
         </div>
 
-        <div class="dashboard-right">
-            <div id="historyDisplay" class="history-section-card">
-                <div class="card-header">
-                    <h3>Workout History</h3>
+        <div class="dashboard-grid">
+            <div class="dashboard-left">
+                <div class="modal-card food-logging-card">
+                    <h3>Log a Meal</h3>
+                    <form id="foodForm">
+                        <div class="form-group">
+                            <div class="form-group-item">
+                                <label for="mealType">Meal Type</label>
+                                <select id="mealType" required>
+                                    <option value="Breakfast">Breakfast</option>
+                                    <option value="Lunch">Lunch</option>
+                                    <option value="Dinner">Dinner</option>
+                                    <option value="Snack">Snack</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-group-item">
+                                <label for="foodName">Food Name</label>
+                                <input type="text" id="foodName" placeholder="e.g., Chicken Breast" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-group-item full-width">
+                                <label for="foodCalories">Total Calories (kcal)</label>
+                                <input type="number" id="foodCalories" placeholder="e.g., 450" min="0" required />
+                            </div>
+                        </div>
+
+                        <div class="macro-input-grid">
+                            <div class="macro-box protein-accent">
+                                <label for="protein">Protein (g)</label>
+                                <input type="number" id="protein" placeholder="0" min="0" step="0.1" />
+                            </div>
+                            <div class="macro-box carb-accent"> <label for="carb">Carbs (g)</label>
+                                <input type="number" id="carb" placeholder="0" min="0" step="0.1" />
+                            </div>
+                            <div class="macro-box fat-accent"> <label for="fat">Fats (g)</label>  
+                                <input type="number" id="fat" placeholder="0" min="0" step="0.1" />
+                            </div>
+                        </div>
+
+                        <button type="submit" id="submitFoodBtn" class="btn-primary-food">Save Meal</button>
+                    </form>
                 </div>
-                <ul id="previewHistoryList" class="history-list"></ul>
-                <button id="seeMoreBtn" class="link-btn">See More</button>
             </div>
 
-            <div class="history-section-card nutrition-card-spacing">
-                <div class="card-header">
-                    <h3>Nutrition History</h3>
+            <div class="dashboard-right">
+                <div id="historyDisplay" class="history-section-card">
+                    <div class="card-header">
+                        <h3>Workout History</h3>
+                    </div>
+                    <ul id="previewHistoryList" class="history-list"></ul>
+                    <button id="seeMoreBtn" class="link-btn">See More</button>
                 </div>
-                <ul id="previewFoodHistoryList" class="history-list"></ul>
-                <button id="seeMoreFoodBtn" class="link-btn">See More Meals</button>
-            </div>
-        </div>
-    </div>
 
-    <div id="historyModal" class="modal-overlay hidden">
-        <div class="modal-card">
-            <h2>Workout History</h2>
-            <div class="history-container">
-                <ul id="dailyHistoryList" class="history-list"></ul>
-            </div>
-            <div class="modal-actions">
-                <button type="button" id="closeHistoryBtn" class="btn-secondary">Close</button>
+                <div class="history-section-card nutrition-card-spacing">
+                    <div class="card-header">
+                        <h3>Nutrition History</h3>
+                    </div>
+                    <ul id="previewFoodHistoryList" class="history-list"></ul>
+                    <button id="seeMoreFoodBtn" class="link-btn">See More Meals</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="foodHistoryModal" class="modal-overlay hidden">
-        <div class="modal-card">
-            <h2>Nutrition History</h2>
-            <div class="history-container">
-                <ul id="fullFoodHistoryList" class="history-list"></ul>
-            </div>
-            <div class="modal-actions">
-                <button type="button" id="closeFoodHistoryBtn" class="btn-secondary">Close</button>
+        <div id="historyModal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <h2>Workout History</h2>
+                <div class="history-container">
+                    <ul id="dailyHistoryList" class="history-list"></ul>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="closeHistoryBtn" class="btn-secondary">Close</button>
+                </div>
             </div>
         </div>
-    </div>
+
+        <div id="foodHistoryModal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <h2>Nutrition History</h2>
+                <div class="history-container">
+                    <ul id="fullFoodHistoryList" class="history-list"></ul>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="closeFoodHistoryBtn" class="btn-secondary">Close</button>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script type="module" src="js/navbar.js"></script>
     <script type="module" src="js/home.js"></script>

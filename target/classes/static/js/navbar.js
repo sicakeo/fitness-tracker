@@ -1,6 +1,7 @@
 import { isLoggedIn, logout } from "./auth.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+    setupNavigation();
     initializeDashboard();
 });
 
@@ -16,7 +17,7 @@ handleBreakpointChange(desktopView);
 
 desktopView.addEventListener("change", handleBreakpointChange);
 
-function initializeDashboard() {
+function setupNavigation() {
     const loggedIn = isLoggedIn();
     const authLinksLi = document.getElementById("authLinksLi");
     const hamburgerBtn = document.getElementById("hamburgerBtn");
@@ -72,11 +73,43 @@ function initializeNavbar(){
             navMenu?.classList.remove("hidden");
             profileDropdown?.classList.remove("hidden");
             profileSkeletonWrapper?.classList.add("hidden");
-        }, 800);
+        }, 400);
     }
     else {
         navSkeleton?.classList.add("hidden");
         profileSkeletonWrapper?.classList.add("hidden");
         navMenu?.classList.remove("hidden");        
     }
+}
+
+function initializeDashboard(){
+    const loader = document.getElementById("loader");
+    const content = document.querySelector(".page-content");
+    const links = document.querySelectorAll(".transition-link");
+
+    // 1. PAGE LOAD: Hide spinner and reveal content
+    setTimeout(() => {
+        loader.classList.add("hidden");
+        if (content) content.classList.add("visible");
+    }, 500); // 500ms delay ensures user sees the loader briefly
+
+    // 2. PAGE NAVIGATE: Intercept clicks to animate exit
+    links.forEach(link => {
+        link.addEventListener("click", (e) => {
+        // Don't interrupt target="_blank" or external links
+        if (link.hostname === window.location.hostname && !link.target) {
+            e.preventDefault(); // Stop instant navigation
+            const targetUrl = link.href;
+
+            // Show the loader again
+            loader.classList.remove("hidden");
+            if (content) content.classList.remove("visible");
+
+            // Wait for the CSS fade transition to finish before redirecting
+            setTimeout(() => {
+            window.location.href = targetUrl;
+            }, 400); // Matches the CSS transition time (0.4s)
+        }
+        });
+    });
 }
