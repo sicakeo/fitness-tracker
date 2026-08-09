@@ -82,7 +82,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should save user when saveUser is called")
-    void shouldSaveUserWhenSaveUserIsCalled(){
+    void shouldSaveUserWhenSaveUserIsCalled() {
         //GIVEN: The repository returns the user when saving
         when(userRepository.save(testUser)).thenReturn(testUser);
         //WHEN: Calling saveUser
@@ -98,7 +98,9 @@ class UserServiceTest {
     void shouldUpdateUserWhenUpdateUserIsCalledWithExistingId() {
         // GIVEN: The repository returns a user for the given id
         when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(testUser));
-        when(userRepository.save(any(User.class))).thenReturn(testUser);
+
+         // Tell Mockito to return whatever object is passed into save(...)
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // WHEN: Calling updateUser
         User updatedDetails = new User();
@@ -109,7 +111,8 @@ class UserServiceTest {
         assertEquals(updatedDetails.getEmail(), result.getEmail());
 
         // THEN: Verify that the repository's save method was called with the updated user
-        verify(userRepository).save(any(User.class));
+        verify(userRepository, times(1)).save(any(User.class));
+        verify(userRepository, times(1)).findById(1L);
     }
 
     @Test
