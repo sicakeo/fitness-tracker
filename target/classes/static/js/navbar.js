@@ -88,10 +88,12 @@ function initializeDashboard(){
     const links = document.querySelectorAll(".transition-link");
 
     // 1. PAGE LOAD: Hide spinner and reveal content
-    setTimeout(() => {
-        loader.classList.add("hidden");
-        if (content) content.classList.add("visible");
-    }, 500); // 500ms delay ensures user sees the loader briefly
+    if (loader) {
+        setTimeout(() => {
+            loader.classList.add("hidden");
+            if (content) content.classList.add("visible");
+        }, 500); // 500ms delay ensures user sees the loader briefly
+    }
 
     // 2. PAGE NAVIGATE: Intercept clicks to animate exit
     links.forEach(link => {
