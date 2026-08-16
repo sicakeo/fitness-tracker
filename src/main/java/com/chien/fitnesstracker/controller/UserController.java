@@ -52,7 +52,7 @@ public class UserController{
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your username or password is incorrect");
     }
-    
+
 
    @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User incomingData) {
