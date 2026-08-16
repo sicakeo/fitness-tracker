@@ -34,7 +34,11 @@ public class SecurityConfig {
                     "/css/**",
                     "/js/**",
                     "/images/**",
-                    "/api/users/**"
+                    "/api/users/**",
+                    "/api/auth/**",
+                    "/api/exercises/**",
+                    "/api/workouts/**",
+                    "/api/food-entries/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
