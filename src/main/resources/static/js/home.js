@@ -431,7 +431,7 @@
 
         try {
 
-            const userCaloriesInput = Math.round(userObj.tdee - getTargetCaloriesBurned(userObj.fitnessGoal));
+            const userCaloriesInput = userObj.fitnessGoal ? Math.round(userObj.tdee - getTargetCaloriesBurned(userObj.fitnessGoal)) : 2000;
             document.getElementById("targetCaloriesDisplay").textContent = userCaloriesInput;
             document.getElementById("targetCaloriesDisplay").setAttribute("data-target", userCaloriesInput);
             // Fetch only the compiled integer sum directly from the endpoint

@@ -1,4 +1,4 @@
-const REGISTER_API_URL = "http://localhost:8080/api/users/register";
+const REGISTER_API_URL = "http://localhost:8080/api/auth/register";
 
 document.addEventListener("DOMContentLoaded", () => {
     const registerForm = document.getElementById("registerForm");
@@ -50,11 +50,11 @@ async function handleRegistration(event) {
             const errorData = await response.json().catch(() => ({}));
             
             if (errorData.errors) {
-                // 🌟 Step 1: Clear all stale errors from previous attempts
+                // Clear all stale errors from previous attempts
                 document.querySelectorAll('.field-error').forEach(el => el.textContent = "");
                 document.querySelectorAll('input').forEach(el => el.classList.remove('invalid-field'));
 
-                // 🌟 Step 2: Loop through specific backend map keys (e.g., "name", "reps")
+                // Loop through specific backend map keys (e.g., "name", "reps")
                 Object.entries(errorData.errors).forEach(([fieldKey, errorMessage]) => {
                     // Find the matching error placeholder span
                     const errorEl = document.getElementById(`error-${fieldKey}`);
