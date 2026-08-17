@@ -2,6 +2,7 @@ package com.chien.fitnesstracker.service;
 import com.chien.fitnesstracker.model.User;
 import com.chien.fitnesstracker.repository.UserRepository;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -81,11 +82,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User authenticateUser(String username, String rawPassword) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password."));
+                .orElseThrow(() -> new BadCredentialsException("Invalid username or password."));
 
-        // Securely compare raw password against the hashed database value
         if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
-            throw new IllegalArgumentException("Invalid username or password.");
+            throw new BadCredentialsException("Invalid username or password.");
         }
 
         return user;
