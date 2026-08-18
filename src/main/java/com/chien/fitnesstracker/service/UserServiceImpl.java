@@ -84,10 +84,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User authenticateUser(String username, String rawPassword) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new BadCredentialsException("Invalid username or password."));
+                .orElseThrow(() -> new BadCredentialsException("Invalid username."));
 
         if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
-            throw new BadCredentialsException("Invalid username or password.");
+            throw new BadCredentialsException("Invalid password.");
         }
 
         return user;

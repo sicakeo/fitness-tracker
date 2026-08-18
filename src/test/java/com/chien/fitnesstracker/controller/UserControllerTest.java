@@ -50,7 +50,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/users/{id} should return 200 with a existing id")
+    @DisplayName("GET /api/users/{id} should return 200 when user exists")
     void getUserById_existingId_return200OkAndUser() throws Exception{
 
         when(userService.getUserById(1L)).thenReturn(reqUser);
@@ -61,7 +61,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/users/{id} should return 404 with non-existing id")
+    @DisplayName("GET /api/users/{id} should return 404 when user does not exist")
     void getUserById_nonExistingId_return404NotFound() throws Exception {
         // Guarantee the exception is thrown on any login attempt
         doThrow(new ResourceNotFoundException("User not found for id: 1"))
@@ -73,7 +73,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /api/users/{id} should return 200 with existing id")
+    @DisplayName("PUT /api/users/{id} should return 200 when user exists")
     void updateUser_existingId_return200OkAndUser() throws Exception {
 
         // Stimulate the service return the user given id
@@ -95,7 +95,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /api/users/{id} should return 404 with non-existing id")
+    @DisplayName("PUT /api/users/{id} should return 404 when user does not exist")
     void updateUser_nonExistingId_returns404NotFound() throws Exception {
         User updateUser = new User();
         updateUser.setUsername("updateuser");
@@ -111,7 +111,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /api/users/{id} should return 200 with existing id")
+    @DisplayName("DELETE /api/users/{id} should return 200 when user exists")
     void deleteUser_existingId_return204Nocontent() throws Exception {
 
         doNothing().when(userService).deleteUserById(1L);
@@ -121,7 +121,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /api/users/{id} should return 404 with non-existing id")
+    @DisplayName("DELETE /api/users/{id} should return 404 when user does not exists")
     void deleteUserById_nonExistingId_returns404NotFound() throws Exception {
         doThrow(new ResourceNotFoundException("User not found for id: 1"))
                 .when(userService).deleteUserById(1L);
