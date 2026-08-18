@@ -1,10 +1,12 @@
 package com.chien.fitnesstracker.service;
+import com.chien.fitnesstracker.exception.ResourceNotFoundException;
 import com.chien.fitnesstracker.model.User;
 import com.chien.fitnesstracker.repository.UserRepository;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +32,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> optional = userRepository.findById(id);
         User user;
         if (optional.isPresent()) user = optional.get();
-        else throw new RuntimeException("User not found for id: " + id);
+        else throw new ResourceNotFoundException("User not found for id: " + id) ;
         return user;
     }
     @Override
