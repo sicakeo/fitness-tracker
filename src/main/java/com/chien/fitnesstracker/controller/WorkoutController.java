@@ -22,7 +22,7 @@ public class WorkoutController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Workout> getFoodEntryById(@PathVariable Long id){
+    public ResponseEntity<Workout> getWorkoutById(@PathVariable Long id){
         return ResponseEntity.ok(workoutService.getWorkoutById(id));
     }
 

@@ -51,7 +51,7 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("GET /api/users/{id} should return 200 when user exists")
-    void getUserById_existingId_return200OkAndUser() throws Exception{
+    void getUserById_validRequest_return200OkAndUser() throws Exception{
 
         when(userService.getUserById(1L)).thenReturn(reqUser);
 
@@ -74,7 +74,7 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("PUT /api/users/{id} should return 200 when user exists")
-    void updateUser_existingId_return200OkAndUser() throws Exception {
+    void updateUser_validRequest_return200OkAndUser() throws Exception {
 
         // Stimulate the service return the user given id
         when(userService.getUserById(1L)).thenReturn(reqUser);
