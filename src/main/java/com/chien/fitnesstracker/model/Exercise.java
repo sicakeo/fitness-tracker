@@ -25,10 +25,6 @@ public class Exercise {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Min(value = 0, message = "Weight can not be negative")
-    private Double weight;
-
-
     @Column(name = "workout_type")
     @NotNull(message = "Workout type is required")
     private String workoutType;
