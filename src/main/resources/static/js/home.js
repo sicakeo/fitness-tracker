@@ -1,40 +1,33 @@
-import { checkAuth, logout } from "./auth.js";
 
+
+import { checkAuth, logout } from "./auth.js";
+import { 
+    getMetValue, 
+    getTargetCaloriesBurned, 
+    calculateCaloriesBurned 
+} from "./fitnessMath.js";
+
+// ==========================================
+// 1. CONSTANTS & GLOBAL STATE
+// ==========================================
 const WORKOUT_SESSION_API_URL = "http://localhost:8080/api/workout-sessions";
 const EXERCISE_API_URL = "http://localhost:8080/api/exercises";
 const FOOD_API_URL = "http://localhost:8080/api/food-entries";
+let currentWorkoutEntries = []; // Staged workout items for active session
 
-
-let currentWorkoutEntries = [];  // Global state to hold the current exercises for the day
-
-// Constant Metric Lookups declared outside loops to optimize heap memory reuse
-const MET_MATRIX = {
-    "Weightlifting": { "Light": 3.0, "Moderate": 3.5, "Heavy": 6.0 },
-    "Running":       { "Light": 8.3, "Moderate": 9.8, "Heavy": 11.8 },
-    "Cycling":       { "Light": 5.8, "Moderate": 7.5, "Heavy": 10.0 },
-    "HIIT":          { "Light": 5.0, "Moderate": 8.0, "Heavy": 11.0 },
-    "Yoga":          { "Light": 2.5, "Moderate": 2.5, "Heavy": 2.5 }
-};
-
-const TARGET_BURN_MATRIX = {
-    "MILD_LOSS": 300,  // Burn 300 kcal from exercise
-    "WEIGHT_LOSS": 500,  // Burn 500 kcal from exercise (Standard deficit)
-    "MAINTAIN": 400,  // Burn 400 kcal from exercise just for heart health
-    "WEIGHT_GAIN": 200,  // Burn less exercise calories to help gain weight
-    "HEAVY_GAIN": 150   // Minimize cardio burn to maximize muscle mass
-};
+// ==========================================   
+// 2. INITIALIZATION & LIFECYCLE
+// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     if (!checkAuth()) return;
     setupNavigation();
     setupFormToggling();
-    loadTodayCaloriesRing()
-    loadTodayHistory()
+    loadTodayCaloriesRing();
+    loadTodayHistory();
 });
 
-/**
- * Handles basic navbar event wireframes
- */
 function setupNavigation() {
+    // Navigation button event listeners
     const startWorkoutBtn = document.getElementById("startWorkoutBtn");
     const closeExerciseModalBtn = document.getElementById("closeModalBtn");
     const workoutModal = document.getElementById("workoutModal");
@@ -50,47 +43,43 @@ function setupNavigation() {
     const cancelSessionBtn = document.getElementById("cancelSessionBtn");
     const saveSessionBtn = document.getElementById("saveSessionBtn");
 
-    if (closeExerciseModalBtn) closeExerciseModalBtn.addEventListener("click", () => exerciseModal.classList.add("hidden"));
-    if (closeHistoryBtn) closeHistoryBtn.addEventListener("click", () => historyModal.classList.add("hidden"));
-    if (closeFoodHistoryBtn) closeFoodHistoryBtn.addEventListener("click", () => foodHistoryModal.classList.add("hidden"));
+    if (closeExerciseModalBtn) closeExerciseModalBtn.addEventListener("click", () => exerciseModal?.classList.add("hidden"));
+    if (closeHistoryBtn) closeHistoryBtn.addEventListener("click", () => historyModal?.classList.add("hidden"));
+    if (closeFoodHistoryBtn) closeFoodHistoryBtn.addEventListener("click", () => foodHistoryModal?.classList.add("hidden"));
     if (foodForm) foodForm.addEventListener("submit", submitFoodEntry);
-    if (addExerciseBtn) addExerciseBtn.addEventListener("click", () => exerciseModal.classList.remove("hidden"));
-    
-    
+    if (addExerciseBtn) addExerciseBtn.addEventListener("click", () => exerciseModal?.classList.remove("hidden"));
+
     if (startWorkoutBtn) {
         startWorkoutBtn.addEventListener("click", () => {
-            currentWorkoutEntries = []; // Reset staged items
-            renderExerciseList();
-            workoutModal.classList.remove("hidden");
+            currentWorkoutEntries = [];
+            renderExerciseList(document.getElementById("exerciseList"), currentWorkoutEntries);
+            workoutModal?.classList.remove("hidden");
         });
     }
 
-    if (cancelSessionBtn) cancelSessionBtn.addEventListener("click", () => {
-        currentWorkoutEntries = [];
-        if (exerciseModal) exerciseModal.classList.add("hidden");
-        if (workoutModal) workoutModal.classList.add("hidden");
-    });
+    if (cancelSessionBtn) {
+        cancelSessionBtn.addEventListener("click", () => {
+            currentWorkoutEntries = [];
+            exerciseModal?.classList.add("hidden");
+            workoutModal?.classList.add("hidden");
+        });
+    }
 
-    // Save final session to backend
     if (saveSessionBtn) saveSessionBtn.addEventListener("click", submitWorkoutSession);
 
-    // THE SAFE WIREFRAME: Simple open modifiers without dataset dependency traps
     if (seeMoreBtn) {
         seeMoreBtn.addEventListener("click", () => {
-            if (historyModal) historyModal.classList.remove("hidden");
+            historyModal?.classList.remove("hidden");
         });
     }
-    
+
     if (seeMoreFoodBtn) {
         seeMoreFoodBtn.addEventListener("click", () => {
-            if (foodHistoryModal) foodHistoryModal.classList.remove("hidden");
+            foodHistoryModal?.classList.remove("hidden");
         });
     }
 }
 
-/**
- * Orchestrates form group visibility toggle maps based on workout categories
- */
 function setupFormToggling() {
     const exerciseTypeSelect = document.getElementById("exerciseType");
     const exerciseForm = document.getElementById("exerciseForm");
@@ -98,30 +87,27 @@ function setupFormToggling() {
 
     if (!exerciseTypeSelect) return;
 
-    // Mapping strategy: Clean, maintainable, and descriptive dictionary routing paths
     const fieldGroups = {
-        distance: document.getElementById("distanceGroup") || document.querySelector(".form-group:nth-child(2)"),
-        name:     document.getElementById("nameGroup")     || document.querySelector(".form-group:nth-child(3)"),
-        reps:     document.getElementById("repsGroup")     || document.querySelector(".form-group:nth-child(4)"),
-        sets:     document.getElementById("setsGroup")     || document.querySelector(".form-group:nth-child(5)"),
-        weight:   document.getElementById("weightGroup")   || document.querySelector(".form-group:nth-child(6)"),
-        intensity:document.getElementById("intensityGroup")|| document.querySelector(".form-group:nth-child(7)"),
-        duration: document.getElementById("durationGroup") || document.querySelector(".form-group:nth-child(8)"),
-        date:     document.getElementById("dateGroup")     || document.querySelector(".form-group:nth-child(9)")
+        distance:  document.getElementById("distanceGroup")  || document.querySelector(".form-group:nth-child(2)"),
+        name:      document.getElementById("nameGroup")      || document.querySelector(".form-group:nth-child(3)"),
+        reps:      document.getElementById("repsGroup")      || document.querySelector(".form-group:nth-child(4)"),
+        sets:      document.getElementById("setsGroup")      || document.querySelector(".form-group:nth-child(5)"),
+        weight:    document.getElementById("weightGroup")    || document.querySelector(".form-group:nth-child(6)"),
+        intensity: document.getElementById("intensityGroup") || document.querySelector(".form-group:nth-child(7)"),
+        duration:  document.getElementById("durationGroup")  || document.querySelector(".form-group:nth-child(8)"),
+        date:      document.getElementById("dateGroup")      || document.querySelector(".form-group:nth-child(9)")
     };
 
     exerciseTypeSelect.addEventListener("change", () => {
         const selectedType = exerciseTypeSelect.value;
 
-        // Reset state configuration layers defaults cleanly
         Object.values(fieldGroups).forEach(group => { if (group) group.hidden = true; });
         if (fieldGroups.duration) fieldGroups.duration.hidden = false;
         if (fieldGroups.date) fieldGroups.date.hidden = false;
 
-        // Toggle rulesets
-        if (["Running", "Cycling", "Swimming"].includes(selectedType)) {
+        if (["RUNNING", "CYCLING", "SWIMMING"].includes(selectedType)) {
             if (fieldGroups.distance) fieldGroups.distance.hidden = false;
-        } else if (selectedType === "Weightlifting") {
+        } else if (selectedType === "WEIGHTLIFTING") {
             ['name', 'reps', 'sets', 'weight', 'intensity'].forEach(k => { if (fieldGroups[k]) fieldGroups[k].hidden = false; });
         } else if (selectedType === "HIIT") {
             if (fieldGroups.intensity) fieldGroups.intensity.hidden = false;
@@ -138,12 +124,84 @@ function setupFormToggling() {
     }
 }
 
-/**
- * Handles dual-stage API pipeline relational persistence transactions
- */
+// ==========================================
+// 3. WORKOUT STAGING & MODAL UI
+// ==========================================
+function stageWorkoutEntry(selectedType, fieldGroups) {
+    const userSession = sessionStorage.getItem("user");
+    if (!userSession) return;
+    const userObj = JSON.parse(userSession);
+    const userWeight = userObj.weight && userObj.weight > 0 ? parseFloat(userObj.weight) : 70.0;
 
+    const elName = document.getElementById("name");
+    const elIntensity = document.getElementById("intensity");
+    const elDistance = document.getElementById("distance");
+    const elReps = document.getElementById("reps");
+    const elSets = document.getElementById("sets");
+    const elWeight = document.getElementById("weight");
+    const elDuration = document.getElementById("workoutDuration");
 
-async function submitFoodEntry(event){
+    const durationValue = elDuration ? parseInt(elDuration.value, 10) || 0 : 0;
+    const distanceValue = elDistance ? parseFloat(elDistance.value) || 0 : 0;
+    const inputName = (elName && fieldGroups.name && !fieldGroups.name.hidden) ? elName.value.trim() : selectedType;
+    let intensityValue = elIntensity ? elIntensity.value : "MODERATE";
+    intensityValue = calculateCardioIntensity(selectedType, distanceValue, durationValue, intensityValue);
+
+    const met = getMetValue(selectedType, intensityValue);
+    const calculatedCalories = Math.round(met * userWeight * (durationValue / 60));
+
+    const entry = {
+        exerciseName: inputName,
+        exerciseType: selectedType,
+        met: met,
+        durationMinutes: durationValue,
+        caloriesBurned: calculatedCalories,
+        intensity: intensityValue,
+        distanceKm: (fieldGroups.distance && !fieldGroups.distance.hidden) ? distanceValue : null,
+        reps: (fieldGroups.reps && !fieldGroups.reps.hidden) ? parseInt(elReps.value, 10) || 0 : null,
+        sets: (fieldGroups.sets && !fieldGroups.sets.hidden) ? parseInt(elSets.value, 10) || 0 : null,
+        weight: (fieldGroups.weight && !fieldGroups.weight.hidden) ? parseFloat(elWeight.value) || 0 : null
+    };
+
+    currentWorkoutEntries.push(entry);
+    const listElement = document.getElementById("exerciseList");
+    renderExerciseList(listElement, currentWorkoutEntries);
+}
+
+function renderExerciseList(listElement, entries) {
+    if (!listElement) return;
+
+    listElement.innerHTML = "";
+    if (entries.length === 0) {
+        listElement.innerHTML = "<li style='color: #888;'>No exercises added to this session yet.</li>";
+        return;
+    }
+
+    entries.forEach((entry, index) => {
+        const li = document.createElement("li");
+        li.style.cssText = "padding: 8px 0; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;";
+        li.innerHTML = `
+            <div>
+                <strong>${entry.exerciseName}</strong> (${entry.exerciseType})<br>
+                <small>${entry.sets ? `${entry.sets} sets x ${entry.reps} reps | ` : ""}${entry.durationMinutes} mins | 🔥 ${entry.caloriesBurned} kcal</small>
+            </div>
+            <button type="button" style="background:#e74c3c;color:#fff;border:none;border-radius:4px;padding:4px 8px;cursor:pointer;" 
+                onclick="removeStagedExercise(${index})">✕</button>
+        `;
+        listElement.appendChild(li);
+    });
+}
+
+window.removeStagedExercise = function(index) {
+    currentWorkoutEntries.splice(index, 1);
+    const listElement = document.getElementById("exerciseList");
+    renderExerciseList(listElement, currentWorkoutEntries);
+};
+
+// ==========================================
+// 4. API PERSISTENCE / FORM SUBMISSIONS
+// ==========================================
+async function submitFoodEntry(event) {
     event.preventDefault();
     const userSession = sessionStorage.getItem("user");
     if (!userSession) {
@@ -151,10 +209,7 @@ async function submitFoodEntry(event){
         return;
     }
 
-    
     const foodForm = document.getElementById("foodForm");
-
-    
     if (foodForm && !foodForm.checkValidity()) {
         foodForm.reportValidity(); 
         return; 
@@ -172,13 +227,11 @@ async function submitFoodEntry(event){
         const elCarb = document.getElementById("carb");
         const elFat = document.getElementById("fat");   
 
-        // Parse numerical strings safely to match your backend data types
         const caloriesValue = elFoodCalories ? parseInt(elFoodCalories.value) || 0 : 0;
         const proteinValue = elProtein ? parseFloat(elProtein.value) || 0 : 0;
         const carbValue = elCarb ? parseFloat(elCarb.value) || 0 : 0;
         const fatValue = elFat ? parseFloat(elFat.value) || 0 : 0;
 
-        // Construct payload matching your singular Java Entity fields
         const foodEntryPayLoad = {
             user: { id: userId },
             mealType: elMealType ? elMealType.value.toUpperCase() : "BREAKFAST",
@@ -190,14 +243,12 @@ async function submitFoodEntry(event){
             date: todayStr
         };
 
-        
         const response = await fetch(FOOD_API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(foodEntryPayLoad)
         });
 
-        // 🌟 HIGH-PRECISION ERROR HANDLER
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             const serverErrorMessage = errorData.errors 
@@ -209,169 +260,19 @@ async function submitFoodEntry(event){
         alert("Meal logged successfully!");
 
         const netDisplay = document.getElementById("netCaloriesDisplay");
-        //Dynamically update data models without page reloads
         if (netDisplay) {
             const existingCalories = parseInt(netDisplay.innerText) || 0;
             netDisplay.setAttribute("data-target", existingCalories + foodEntryPayLoad.calories);
         }
 
-        // --- TRIGGER ANIMATION LAYER WITHOUT RESETTING PAGE ---
         displayRing();
-        loadTodayCaloriesRing();
-        loadTodayHistory();
+        await loadTodayCaloriesRing();
+        await loadTodayHistory();
     } catch (error) {
         console.error("Meal pipeline failure:", error);
         alert(error.message);
     }
 }
-
-
-
-// async function submitWorkout(selectedType, fieldGroups) {
-//     const userSession = sessionStorage.getItem("user");
-//     if (!userSession) {
-//         alert("User session not found. Please log in again.");
-//         return;
-//     }
-
-//     const userObj = JSON.parse(userSession);
-//     const userId = userObj.id;
-//     const userWeight = userObj.weight && userObj.weight > 0 ? parseFloat(userObj.weight) : 70.0;
-
-//     // Extract DOM values cleanly into descriptive local references
-//     const elName = document.getElementById("name");
-//     const elIntensity = document.getElementById("intensity");
-//     const elDistance = document.getElementById("distance");
-//     const elReps = document.getElementById("reps");
-//     const elSets = document.getElementById("sets");
-//     const elWeight = document.getElementById("weight");
-//     const elDuration = document.getElementById("workoutDuration");
-//     const elDate = document.getElementById("workoutDate");
-
-//     const durationValue = elDuration ? parseInt(elDuration.value) || 0 : 0;
-//     const dateValue = elDate && elDate.value ? elDate.value : new Date().toISOString().split('T')[0];
-//     const distanceValue = elDistance ? parseFloat(elDistance.value) || 0 : 0;
-//     const inputName = (elName && !fieldGroups.name.hidden ? elName.value.trim() : "");
-//     let intensityValue = elIntensity ? elIntensity.value : "Moderate";
-
-//     // FIXED: Safe pace parsing order of operation constraints (highest benchmark evaluated first)
-//     // --- AUTOMATIC INTENSITY CALCULATOR BASED ON VELOCITY ---
-//     if (distanceValue > 0 && durationValue > 0) {
-//         // Calculate velocity in kilometers per hour (km/h)
-//         const paceKmh = distanceValue / (durationValue / 60);
-
-//         switch (selectedType) {
-//             case "Running":
-//                 if (paceKmh >= 11.3) {
-//                     intensityValue = "Heavy";      // ~7+ mph pace
-//                 } else if (paceKmh >= 9.6) {
-//                     intensityValue = "Moderate";   // ~6 mph pace
-//                 } else {
-//                     intensityValue = "Light";      // ~5 mph or slower
-//                 }
-//                 break;
-
-//             case "Cycling":
-//                 if (paceKmh >= 22.5) {
-//                     intensityValue = "Heavy";      // Strenuous fitness/racing
-//                 } else if (paceKmh >= 19.3) {
-//                     intensityValue = "Moderate";   // Steady moderate effort
-//                 } else {
-//                     intensityValue = "Light";      // Leisurely pace
-//                 }
-//                 break;
-
-//             case "Swimming":
-//                 if (paceKmh >= 3.0) {
-//                     intensityValue = "Heavy";      // Fast interval training laps
-//                 } else if (paceKmh >= 2.0) {
-//                     intensityValue = "Moderate";   // Continuous lap swimming
-//                 } else {
-//                     intensityValue = "Light";      // Casual/relaxing pacing
-//                 }
-//                 break;
-
-//             default:
-//                 // Fall back to the manual dropdown select choice if it's not a distance sport
-//                 break;
-//         }
-//         console.log(`Calculated metric velocity for ${selectedType}: ${paceKmh.toFixed(2)} km/h. Intensity assigned: ${intensityValue}`);
-//     }
-
-//     const met = getMetValue(selectedType, intensityValue);
-//     const calculatedCalories = Math.round(met * userWeight * (durationValue / 60));
-
-//     // Phase 1 Payload Mapping
-//     const exercisePayload = {
-//         user: { id: userId },
-//         name:   inputName || selectedType,
-//         workoutType: selectedType,
-//         met: met
-//     };
-
-//     try {
-//         // --- PHASE 1: CHRONOLOGICAL EXERCISE LOG ---
-//         const exerciseResponse = await fetch(EXERCISE_API_URL, {
-//             method: "POST",
-//             headers: { "Content-Type": "application/json" },
-//             body: JSON.stringify(exercisePayload)
-//         });
-
-//         if (!exerciseResponse.ok) {
-//             const errorData = await exerciseResponse.json().catch(() => ({}));
-//             throw new Error(errorData.message || "Failed to register exercise blueprint configuration.");
-//         }
-
-//         const savedExercise = await exerciseResponse.json();
-
-//         // Phase 2 Payload Mapping: Conditional validation reads clean cache variables
-//         const workoutPayload = {
-//             user: { id: userId },
-//             exercise: { id: savedExercise.id },
-//             date: dateValue,
-//             duration: durationValue,
-//             calories: calculatedCalories,
-//             intensity: intensityValue,
-//             distance: fieldGroups.distance && !fieldGroups.distance.hidden ? distanceValue : null,
-//             reps: fieldGroups.reps && !fieldGroups.reps.hidden ? parseInt(elReps.value) || 0 : null,
-//             sets: fieldGroups.sets && !fieldGroups.sets.hidden ? parseInt(elSets.value) || 0 : null,
-//             weight: fieldGroups.weight && !fieldGroups.weight.hidden ? parseFloat(elWeight.value) || 0 : null
-//         };
-
-//         // --- PHASE 2: DEPENDENT WORKOUT ENTRY PERPETUATION ---
-//         const workoutResponse = await fetch(WORKOUT_API_URL, {
-//             method: "POST",
-//             headers: { "Content-Type": "application/json" },
-//             body: JSON.stringify(workoutPayload)
-//         });
-
-//         if (!workoutResponse.ok) {
-//             const errorData = await workoutResponse.json().catch(() => ({}));
-//             const serverErrorMessage = errorData.errors 
-//                 ? Object.values(errorData.errors).join("\n") 
-//                 : (errorData.message || "Failed to finalize workout logging transaction.");
-//             throw new Error(serverErrorMessage);
-//         }
-            
-//         const netDisplay = document.getElementById("netCaloriesDisplay");
-//         if (netDisplay) {
-//             // Grab the current visible calories on screen (e.g., if they already had 200 kcal logged today)
-//             const existingCalories = parseInt(netDisplay.innerText) || 0;
-//             const updatedTotalTarget = existingCalories - calculatedCalories;
-
-//             // Update the data-target data boundary attribute link directly
-//             netDisplay.setAttribute("data-target", updatedTotalTarget);
-//         }
-
-//         // --- TRIGGER ANIMATION LAYER WITHOUT RESETTING PAGE ---
-//         displayRing();
-//         loadTodayCaloriesRing();
-
-//     } catch (error) {
-//         console.error("Pipeline failure:", error);
-//         alert(error.message);
-//     }
-// }
 
 async function submitWorkoutSession() {
     const userSession = sessionStorage.getItem("user");
@@ -393,55 +294,27 @@ async function submitWorkoutSession() {
     const totalCalories = currentWorkoutEntries.reduce((sum, item) => sum + item.caloriesBurned, 0);
     const totalDuration = currentWorkoutEntries.reduce((sum, item) => sum + item.durationMinutes, 0);
 
-    const sessionPayload = {
-        user: { id: userId },
-        title: sessionTitle,
-        date: sessionDate,
-        totalCaloriesBurned: totalCalories,
-        totalDurationMinutes: totalDuration,
-
-        entries: currentWorkoutEntries.map(entry => ({
-            exercise: {
+    try {
+        const savedEntries = await Promise.all(currentWorkoutEntries.map(async (entry) => {
+            const exercisePayload = {
                 user: { id: userId },
                 name: entry.exerciseName,
                 workoutType: entry.workoutType,
                 met: entry.met
-            },
-            sets: entry.sets,
-            reps: entry.reps,
-            weight: entry.weight,
-            durationMinutes: entry.durationMinutes,
-            distanceKm: entry.distanceKm,
-            intensity: entry.intensity
-        }))
-    };
+            };
 
-    const exercisePayloads = sessionPayload.entries.map(entry => entry.exercise);
+            const exResponse = await fetch(EXERCISE_API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(exercisePayload)
+            });
 
-    try {
-        // --- PHASE 1: CREATE EXERCISES FIRST AND RETRIEVE IDS ---
-        const savedEntries = await Promise.all(currentWorkoutEntries.map(async (entry) => {
-        const exercisePayload = {
-            user: { id: userId },
-            name: entry.exerciseName,
-            workoutType: entry.workoutType,
-            met: entry.met
-        };
+            if (!exResponse.ok) {
+                const errData = await exResponse.json().catch(() => ({}));
+                throw new Error(errData.message || "Failed to create exercise entry.");
+            }
 
-        const exResponse = await fetch(EXERCISE_API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(exercisePayload)
-        });
-
-        if (!exResponse.ok) {
-            const errData = await exResponse.json().catch(() => ({}));
-            throw new Error(errData.message || "Failed to create exercise entry.");
-        }
-
-        const savedEx = await exResponse.json();
-            
-        // Return entry linked to the newly generated exercise ID
+            const savedEx = await exResponse.json();
             return {
                 exercise: { id: savedEx.id },
                 sets: entry.sets,
@@ -453,7 +326,6 @@ async function submitWorkoutSession() {
             };
         }));
 
-        // --- PHASE 2: SAVE WORKOUT SESSION WITH LINKED ENTRIES ---
         const sessionPayload = {
             user: { id: userId },
             title: sessionTitle,
@@ -488,113 +360,57 @@ async function submitWorkoutSession() {
     }
 }
 
-function stageWorkoutEntry(selectedType, fieldGroups) {
+// ==========================================
+// 5. DASHBOARD HYDRATION & ANIMATIONS
+// ==========================================
+async function loadTodayCaloriesRing() {
     const userSession = sessionStorage.getItem("user");
     if (!userSession) return;
+
     const userObj = JSON.parse(userSession);
-    const userWeight = userObj.weight && userObj.weight > 0 ? parseFloat(userObj.weight) : 70.0;
+    const userId = userObj.id;
+    const todayStr = new Date().toISOString().split('T')[0];
 
-    const elName = document.getElementById("name");
-    const elIntensity = document.getElementById("intensity");
-    const elDistance = document.getElementById("distance");
-    const elReps = document.getElementById("reps");
-    const elSets = document.getElementById("sets");
-    const elWeight = document.getElementById("weight");
-    const elDuration = document.getElementById("workoutDuration");
+    try {
+        const userCaloriesInput = userObj.fitnessGoal ? Math.round(userObj.tdee - getTargetCaloriesBurned(userObj.fitnessGoal)) : 2000;
+        const targetDisplay = document.getElementById("targetCaloriesDisplay");
+        if (targetDisplay) {
+            targetDisplay.textContent = userCaloriesInput;
+            targetDisplay.setAttribute("data-target", userCaloriesInput);
+        }
 
-    const durationValue = elDuration ? parseInt(elDuration.value, 10) || 0 : 0;
-    const distanceValue = elDistance ? parseFloat(elDistance.value) || 0 : 0;
-    const inputName = (elName && fieldGroups.name && !fieldGroups.name.hidden) ? elName.value.trim() : selectedType;
-    let intensityValue = elIntensity ? elIntensity.value : "MODERATE";
+        const [workoutResponse, foodResponse] = await Promise.all([
+            fetch(`${WORKOUT_SESSION_API_URL}/today-calories?userId=${userId}&date=${todayStr}`),
+            fetch(`${FOOD_API_URL}/today-calories?userId=${userId}&date=${todayStr}`)
+        ]);
 
-    if (distanceValue > 0 && durationValue > 0) {
-        const paceKmh = distanceValue / (durationValue / 60);
-        if (selectedType === "Running") {
-            intensityValue = paceKmh >= 11.3 ? "HEAVY" : paceKmh >= 9.6 ? "MODERATE" : "LIGHT";
-        } else if (selectedType === "Cycling") {
-            intensityValue = paceKmh >= 22.5 ? "HEAVY" : paceKmh >= 19.3 ? "MODERATE" : "LIGHT";
-        } else if (selectedType === "Swimming") {
-            intensityValue = paceKmh >= 3.0 ? "HEAVY" : paceKmh >= 2.0 ? "MODERATE" : "LIGHT";
+        if (!workoutResponse.ok || !foodResponse.ok) throw new Error("Could not load current tracking metrics.");
+
+        const totalBurned = await workoutResponse.json();
+        const totalEaten = await foodResponse.json();
+
+        const netCalories = totalEaten - totalBurned;
+        const netDisplay = document.getElementById("netCaloriesDisplay");
+        if (netDisplay) {
+            netDisplay.setAttribute("data-target", netCalories);
+            displayRing();
+        }
+    } catch (error) {
+        console.error("Dashboard hydration error:", error);
+        const netDisplay = document.getElementById("netCaloriesDisplay");
+        if (netDisplay) {
+            netDisplay.setAttribute("data-target", "0");
+            displayRing();
         }
     }
-
-    const met = getMetValue(selectedType, intensityValue);
-    const calculatedCalories = Math.round(met * userWeight * (durationValue / 60));
-
-    // Staged entry item
-    const entry = {
-        exerciseName: inputName,
-        workoutType: selectedType,
-        met: met,
-        durationMinutes: durationValue,
-        caloriesBurned: calculatedCalories,
-        intensity: intensityValue,
-        distanceKm: (fieldGroups.distance && !fieldGroups.distance.hidden) ? distanceValue : null,
-        reps: (fieldGroups.reps && !fieldGroups.reps.hidden) ? parseInt(elReps.value, 10) || 0 : null,
-        sets: (fieldGroups.sets && !fieldGroups.sets.hidden) ? parseInt(elSets.value, 10) || 0 : null,
-        weight: (fieldGroups.weight && !fieldGroups.weight.hidden) ? parseFloat(elWeight.value) || 0 : null
-    };
-
-    currentWorkoutEntries.push(entry);
-    renderExerciseList();
 }
-
-
-function renderExerciseList() {
-    const exerciseList = document.getElementById("exerciseList");
-    if (!exerciseList) return;
-
-    exerciseList.innerHTML = "";
-    if (currentWorkoutEntries.length === 0) {
-        exerciseList.innerHTML = "<li style='color: #888;'>No exercises added to this session yet.</li>";
-        return;
-    }
-
-    currentWorkoutEntries.forEach((entry, index) => {
-        const li = document.createElement("li");
-        li.style.cssText = "padding: 8px 0; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;";
-        li.innerHTML = `
-            <div>
-                <strong>${entry.exerciseName}</strong> (${entry.workoutType})<br>
-                <small>${entry.sets ? `${entry.sets} sets x ${entry.reps} reps | ` : ""}${entry.durationMinutes} mins | 🔥 ${entry.caloriesBurned} kcal</small>
-            </div>
-            <button type="button" style="background:#e74c3c;color:#fff;border:none;border-radius:4px;padding:4px 8px;cursor:pointer;" onclick="removeStagedExercise(${index})">✕</button>
-        `;
-        exerciseList.appendChild(li);
-    });
-}
-
-
-// Global hook to delete a staged exercise before saving
-window.removeStagedExercise = function(index) {
-    currentWorkoutEntries.splice(index, 1);
-    renderExerciseList();
-};
-
-/**
- * Safely aggregates multidimensional array maps using fallback boundaries
- */
-function getMetValue(workoutType, intensity) {
-    if (!MET_MATRIX[workoutType] || !MET_MATRIX[workoutType][intensity]) {
-        console.warn(`MET value not found for Type: ${workoutType}, Intensity: ${intensity}`);
-        return 3.5;
-    }
-    return MET_MATRIX[workoutType][intensity];
-}
-
-function getTargetCaloriesBurned(goal){
-    if(!TARGET_BURN_MATRIX[goal.trim()]){
-        console.warn(`Target Burned Calories not found for Goal: ${goal}`);
-        return 0;
-    }
-    return TARGET_BURN_MATRIX[goal];
-}
-
 
 function displayRing() {
     const netDisplay = document.getElementById("netCaloriesDisplay");
     const targetDisplay = document.getElementById("targetCaloriesDisplay");
     const circle = document.getElementById("calorieFillCircle");
+
+    if (!netDisplay || !targetDisplay || !circle) return;
 
     const targetCalories = parseInt(targetDisplay.innerText) || 2000;
     const rawCalories = parseInt(netDisplay.getAttribute("data-target")) || 0;
@@ -612,7 +428,6 @@ function displayRing() {
 
     const interval = setInterval(() => {
         if (finalCalories <= 0 || currentCalories >= finalCalories) {
-            // Display the true signed value (positive or negative) in the text center
             netDisplay.innerText = rawCalories; 
             clearInterval(interval);
             return;
@@ -622,88 +437,40 @@ function displayRing() {
         currentCalories += incrementStep;
         if (currentCalories > finalCalories) currentCalories = finalCalories;
 
-        // Display progress text matching sign
         netDisplay.innerText = isNegative ? -currentCalories : currentCalories;
 
-        // Calculate percentage using the absolute positive scale value
         const percentage = currentCalories / targetCalories;
         
         if (isNegative) {
-            //Animate COUNTER-CLOCKWISE for deficits
             circle.style.strokeDashoffset = circumference + (Math.min(percentage, 1) * circumference);
-            circle.style.stroke = "#e74c3c";// Change to blue to flag a calorie deficit
+            circle.style.stroke = "#e74c3c";
         } else {
-            //Animate CLOCKWISE for normal accumulation
             circle.style.strokeDashoffset = circumference - (Math.min(percentage, 1) * circumference);
-            circle.style.stroke = "#3498db";  // Your standard active color
+            circle.style.stroke = "#3498db";
         }
     }, stepTime);
 }
 
-
-/**
- * Fetches total daily logged calories from backend and animates the progress ring
- */
-async function loadTodayCaloriesRing() {
-    const userSession = sessionStorage.getItem("user");
-    if (!userSession) return;
-
-    const userObj = JSON.parse(userSession);
-    const userId = userObj.id;
-    // Generate current local system date in exact YYYY-MM-DD format
-    const todayStr = new Date().toISOString().split('T')[0];
-
-    try {
-
-        const userCaloriesInput = userObj.fitnessGoal ? Math.round(userObj.tdee - getTargetCaloriesBurned(userObj.fitnessGoal)) : 2000;
-        document.getElementById("targetCaloriesDisplay").textContent = userCaloriesInput;
-        document.getElementById("targetCaloriesDisplay").setAttribute("data-target", userCaloriesInput);
-        // Fetch only the compiled integer sum directly from the endpoint
-        const [workoutResponse, foodResponse] = await Promise.all([
-            fetch(`${WORKOUT_SESSION_API_URL}/today-calories?userId=${userId}&date=${todayStr}`),
-            fetch(`${FOOD_API_URL}/today-calories?userId=${userId}&date=${todayStr}`)
-        ]);
-
-        if (!workoutResponse.ok || !foodResponse.ok) throw new Error("Could not load current tracking metrics.");
-
-        const totalBurned = await workoutResponse.json();
-        const totalEaten = await foodResponse.json();
-
-        const netCalories = totalEaten - totalBurned;
-        const netDisplay = document.getElementById("netCaloriesDisplay");
-        if (netDisplay) {
-            netDisplay.setAttribute("data-target", netCalories);
-
-            displayRing();
-        }
-    } catch (error) {
-        console.error("Dashboard hydration error:", error);
-        const netDisplay = document.getElementById("netCaloriesDisplay");
-        if (netDisplay) {
-            netDisplay.setAttribute("data-target", "0");
-            displayRing();
-        }
-    }
-}
-
+// ==========================================
+// 6. HISTORY RENDERING & METRIC FORMATTING
+// ==========================================
 async function loadTodayHistory() {
     const userSession = sessionStorage.getItem("user");
     if (!userSession) return;
     const userObj = JSON.parse(userSession);
     const userId = userObj.id;
+
     try {
-        const [workoutResponse, foodResponse] = await Promise.all([
+        const [sessionsResponse, foodResponse] = await Promise.all([
             fetch(`${WORKOUT_SESSION_API_URL}/history?userId=${userId}`),
             fetch(`${FOOD_API_URL}/history?userId=${userId}`)
         ]);
 
-        if (!workoutResponse.ok || !foodResponse.ok) throw new Error("Could not synchronize activity log maps.");
+        if (!sessionsResponse.ok || !foodResponse.ok) throw new Error("Could not synchronize activity log maps.");
 
-
-        const workoutHistory = await workoutResponse.json();
+        const workoutHistory = await sessionsResponse.json();
         const foodHistory = await foodResponse.json();
 
-        // --- CLEAN SEPARATION OF CONCERNS ---
         renderHistory(workoutHistory);
         renderFoodHistory(foodHistory);
     } catch (error) {
@@ -728,12 +495,10 @@ function renderHistory(workoutHistory) {
     workoutHistory.forEach((workout, index) => {
         const displayString = formatWorkoutMetrics(workout);
 
-        // 1. Append to the master scrollable layout list
         const mainLi = document.createElement("li");
-        mainLi.innerHTML= displayString;
+        mainLi.innerHTML = displayString;
         dailyHistoryList.appendChild(mainLi);
 
-        // 2. Append only the 2 most recent rows to the dashboard summary preview container cards
         if (previewHistoryContainer && index < 2) {
             const previewLi = document.createElement("li");
             previewLi.innerHTML = displayString;
@@ -742,16 +507,12 @@ function renderHistory(workoutHistory) {
     });
 }
 
-/**
- * Iterates over food arrays and populates the nutrition dashboard card view areas
- */
 function renderFoodHistory(foodHistory) {
     const fullFoodHistoryList = document.getElementById("fullFoodHistoryList");
     const previewFoodHistoryContainer = document.getElementById("previewFoodHistoryList");
 
     if (!fullFoodHistoryList) return;
 
-    // Reset list contents cleanly
     fullFoodHistoryList.innerHTML = "";
     if (previewFoodHistoryContainer) previewFoodHistoryContainer.innerHTML = "";
 
@@ -765,12 +526,10 @@ function renderFoodHistory(foodHistory) {
     foodHistory.forEach((food, index) => {
         const displayHtml = formatFoodMetrics(food);
 
-        // 1. Append EVERYTHING to the master modal scrollable list
         const mainLi = document.createElement("li");
         mainLi.innerHTML = displayHtml;
         fullFoodHistoryList.appendChild(mainLi);
 
-        // 2. Append ONLY the 2 most recent rows to the dashboard summary card
         if (previewFoodHistoryContainer && index < 2) {
             const previewLi = document.createElement("li");
             previewLi.innerHTML = displayHtml;
@@ -779,18 +538,14 @@ function renderFoodHistory(foodHistory) {
     });
 }
 
-    /**
- * Formats a single food entry into a clean, structured HTML row block
- */
 function formatFoodMetrics(food) {
     const mealType = food.mealType || "Meal";
     const name = food.name || "Unknown Item";
     const calories = food.calories || 0;
     
-    // Parse macros with safe zero fallbacks if properties come back null
     const p = food.protein ? Math.round(food.protein) : 0;
-    const c = food.carbs   ? Math.round(food.carbs)   : 0;
-    const f = food.fats    ? Math.round(food.fats)    : 0;
+    const c = food.carbs ? Math.round(food.carbs) : (food.carb ? Math.round(food.carb) : 0);
+    const f = food.fats ? Math.round(food.fats) : (food.fat ? Math.round(food.fat) : 0);
 
     const dateObj = new Date(food.date + "T00:00:00");
     const formattedDate = dateObj.toLocaleDateString("en-US", {
@@ -820,64 +575,65 @@ function formatFoodMetrics(food) {
         </div>`;
 }
 
-function formatWorkoutMetrics(workout){
-    const type = workout.exercise.workoutType ? workout.exercise.workoutType : "";
-    const name = workout.exercise.name ? workout.exercise.name : "";
-    const date = new Date(workout.date +"T00:00:00");
-    const calories = workout.calories ? workout.calories : "";
-    const reps = workout.reps ? workout.reps : "";
-    const sets = workout.sets ? workout.sets : "";
-    const intensity = workout.intensity ? workout.intensity : "";
-    const weight = workout.weight ? workout.weight : "";
+function formatWorkoutMetrics(workout) {
+    const title = workout.title || "Workout";
+    const entries = workout.entries || [];
+    const calories = workout.totalCaloriesBurned || 0;
+    const date = new Date(workout.date);
     const formattedDate = date.toLocaleDateString("en-US", {
-        weekday: "long",  // "Monday", "Tuesday"
-        month: "short",   // "Jan", "Feb"
-        day: "numeric",   // "1", "2"
-        year: "numeric"   // "2026"
+        weekday: "long",
+        month: "short",
+        day: "numeric",
+        year: "numeric"
     });
-    
+
+    const exerciseList = document.createElement("ul");
+    exerciseList.style.cssText = "list-style: none; padding: 10px; margin: 0;";
+
+    for (const entry of entries) {
+        entry.exerciseType = entry.exercise?.exerciseType || "Unknown Type";
+        entry.exerciseType = entry.exerciseType.slice(0, 1).toUpperCase() + entry.exerciseType.slice(1).toLowerCase();
+        entry.name = entry.exercise?.name || entry.exerciseType;
+        entry.intensity = entry.intensity ? entry.intensity.slice(0, 1).toUpperCase() + entry.intensity.slice(1).toLowerCase() : "Moderate";
+        
+        const li = document.createElement("li");
+        li.style.cssText = "padding: 8px 0; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;";
+        li.innerHTML = `
+            <div>
+                <strong>(${entry.exerciseType})</strong> ${entry.name === entry.exerciseType ? '' : entry.name}<br>
+                ${formatExercise(entry.exerciseType, entry)}
+            </div>`;
+        exerciseList.appendChild(li);
+    }
+
     const headerRow = `
         <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 4px;">
             <span>${formattedDate}</span>
-            <span>${type}</span>
-        </div>`;
-        
-    const statsRow = `
-        <div style="display: flex; justify-content: space-between; color: #555; font-size: 0.95rem;">
-            <span>🔥 Calories Burned: ${calories ? `${calories}` : "N/A"} kcal</span>
-            <span>⏱️ ${workout.duration} mins ${intensity ? `(${intensity})` : ""}</span>
+            <span>${title}</span>
         </div>`;
 
-    switch (type) {
-        case "Weightlifting":
-            return `
-                <div style="padding: 12px 0; border-bottom: 1px solid #eee; width: 100%;">
-                    ${headerRow}
-                    ${statsRow}
-                    <div style="margin-top: 6px; font-size: 0.9rem; color: #222; background: #f9f9f9; padding: 6px 10px; border-radius: 4px;">
-                        <strong>Exercise:</strong> ${sets ? `${sets} x` : ""} ${name} ${weight ? `${weight}kg` : ""} ${reps ? `x ${reps}` : ""}
-                    </div>
-                </div>`;
-            
-        case "Running":
-        case "Cycling":
-        case "Swimming":
-            const distanceStr = workout.distance ? ` 🏃 ${workout.distance} km` : "";
-            return `
-                <div style="padding: 12px 0; border-bottom: 1px solid #eee; width: 100%;">
-                    ${headerRow}
-                    <div style="display: flex; justify-content: space-between; color: #555; font-size: 0.95rem;">
-                        <span>🔥 Calories Burned: ${calories} kcal</span>
-                        <span>⏱️ ${workout.duration} mins |${distanceStr}</span>
-                    </div>
-                </div>`;
-            
-        default:
-            return `
-                <div style="padding: 12px 0; border-bottom: 1px solid #eee; width: 100%;">
-                    ${headerRow}
-                    ${statsRow}
-                </div>`;
-    }
+    return `
+        <div style="padding: 12px 0; border-bottom: 1px solid #1c1a1a; width: 100%;">
+            ${headerRow}
+            ${exerciseList.outerHTML}
+            <div style="display: flex; justify-content: space-between; font-weight: bold; margin-top: 6px;">
+                <span>Total Calories Burned:</span>
+                <span style="color: #e74c3c;">🔥 ${calories} kcal</span>
+            </div>
+        </div>`;
 }
 
+function formatExercise(selectedType, entry) {
+    switch (selectedType.toUpperCase()) {
+        case "RUNNING":
+        case "CYCLING":
+        case "SWIMMING":
+            return `${entry.distanceKm ?? 0} km in ${entry.durationMinutes} mins <br> <strong>Intensity:</strong> ${entry.intensity}`;
+        case "WEIGHTLIFTING":
+            return `${entry.sets ?? 0} sets x ${entry.reps ?? 0} reps at ${entry.weight ?? 0} kg <br> <strong>Intensity:</strong> ${entry.intensity}`;
+        case "HIIT":
+            return `${entry.durationMinutes} mins <br> <strong>Intensity:</strong> ${entry.intensity}`;
+        default:
+            return `Duration: ${entry.durationMinutes} mins <br> <strong>Intensity:</strong> ${entry.intensity}`;
+    }
+}
