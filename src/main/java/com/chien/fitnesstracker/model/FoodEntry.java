@@ -8,6 +8,8 @@ import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
 import java.time.LocalDate;
 
+import com.chien.fitnesstracker.model.enums.MealType;
+
 @Entity
 @Data
 @NoArgsConstructor

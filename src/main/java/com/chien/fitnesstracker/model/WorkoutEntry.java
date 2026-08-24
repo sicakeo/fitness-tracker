@@ -1,5 +1,6 @@
 package com.chien.fitnesstracker.model;
 
+import com.chien.fitnesstracker.model.enums.IntensityType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;

@@ -1,7 +1,9 @@
-package com.chien.fitnesstracker.service;
+package com.chien.fitnesstracker.service.impl;
 
 import com.chien.fitnesstracker.model.Exercise;
 import com.chien.fitnesstracker.repository.ExerciseRepository;
+import com.chien.fitnesstracker.service.ExerciseService;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;

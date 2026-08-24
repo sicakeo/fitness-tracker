@@ -1,7 +1,9 @@
-package com.chien.fitnesstracker.service;
+package com.chien.fitnesstracker.service.impl;
 
 import com.chien.fitnesstracker.model.WorkoutSession;
 import com.chien.fitnesstracker.repository.WorkoutSessionRepository;
+import com.chien.fitnesstracker.service.WorkoutSessionService;
+
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,7 +27,7 @@ public class WorkoutSessionServiceImpl implements WorkoutSessionService {
 
     @Override
     public List<WorkoutSession> getSessionsByUserId(Long userId) {
-        return sessionRepository.findByUserId(userId);
+        return sessionRepository.findSessionsByUserIdOrderByDateDesc(userId);
     }
 
     @Override

@@ -1,7 +1,9 @@
-package com.chien.fitnesstracker.service;
+package com.chien.fitnesstracker.service.impl;
 
 import com.chien.fitnesstracker.model.FoodEntry;
 import com.chien.fitnesstracker.repository.FoodEntryRepository;
+import com.chien.fitnesstracker.service.FoodEntryService;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

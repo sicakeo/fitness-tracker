@@ -1,5 +1,6 @@
 package com.chien.fitnesstracker.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -25,8 +26,10 @@ public class WorkoutSession {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User user;
 
+    @Column(name = "title")
     private String title; // e.g., "Upper Body Strength"
 
     @NotNull(message = "Session date is required")

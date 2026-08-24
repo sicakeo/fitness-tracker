@@ -1,7 +1,8 @@
-package com.chien.fitnesstracker.service;
+package com.chien.fitnesstracker.service.impl;
 import com.chien.fitnesstracker.exception.ResourceNotFoundException;
 import com.chien.fitnesstracker.model.User;
 import com.chien.fitnesstracker.repository.UserRepository;
+import com.chien.fitnesstracker.service.UserService;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;

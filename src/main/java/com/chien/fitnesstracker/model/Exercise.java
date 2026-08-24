@@ -1,7 +1,10 @@
 package com.chien.fitnesstracker.model;
 
+import com.chien.fitnesstracker.model.enums.exerciseType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -23,11 +26,14 @@ public class Exercise {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore(value = true) // Prevent serialization of the user field
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User user;
 
-    @Column(name = "workout_type")
-    @NotNull(message = "Workout type is required")
-    private String workoutType;
+    @Column(name = "exercise_type")
+    @NotNull(message = "Exercise type is required")
+    @Enumerated(EnumType.STRING)
+    private exerciseType exerciseType;
 
     @Column(name = "met_value")
     private Double met;

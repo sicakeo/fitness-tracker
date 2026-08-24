@@ -19,7 +19,6 @@ public class SecurityConfig {
                 // Whitelist all your clean URLs and static files here
                 .requestMatchers(
                     "/",
-                    "/error", "/error.html",
                     "/index", "/index.html",
                     "/login", "/login.html",
                     "/register", "/register.html",
@@ -39,6 +38,7 @@ public class SecurityConfig {
                     "/api/auth/**",
                     "/api/exercises/**",
                     "/api/workout-sessions/**",
+                    "/api/workout-sessions/history/**",
                     "/api/workout-entries/**",
                     "/api/food-entries/**"
                 ).permitAll()
