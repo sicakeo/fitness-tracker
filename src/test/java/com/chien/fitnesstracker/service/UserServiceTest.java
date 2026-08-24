@@ -2,6 +2,10 @@ package com.chien.fitnesstracker.service;
 
 import com.chien.fitnesstracker.model.User;
 import com.chien.fitnesstracker.repository.UserRepository;
+
+
+import com.chien.fitnesstracker.service.impl.UserServiceImpl;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +25,8 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository; // Simulated DB dependency
+    @Mock
+    private PasswordEncoder passwordEncoder; // Simulated password encoder
 
     @InjectMocks
     private UserServiceImpl userService; // Injects the mock repo into your real service
@@ -31,6 +37,7 @@ class UserServiceTest {
     void setUp() {
         testUser = new User();
         testUser.setUsername("testuser");
+        testUser.setPassword("password");
         testUser.setEmail("test@example.com");
     }
 
@@ -154,14 +161,25 @@ class UserServiceTest {
     @Test
     @DisplayName("Should save user when username is unique")
     void shouldSaveUserWhenUsernameIsUnique() {
-        // GIVEN: The repository reports that the username does not exist
+         // GIVEN: Mock the password encoding behavior
+        when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
+
+        // GIVEN: The repository reports that the username and email do not exist
         when(userRepository.existsByUsername("testuser")).thenReturn(false);
+        when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+
+        // GIVEN: The repository returns the user when saving
+        when(userRepository.save(testUser)).thenReturn(testUser);
 
         // WHEN: Registering the user
-        userService.registerNewUser(testUser);
+        User result = userService.registerNewUser(testUser);
 
-        // THEN: The user should be saved
+        // THEN: The returned user should be the same as the testUser
+        assertEquals(testUser, result);
+        // VERIFY: Ensure userRepository.save() was called with the correct user
         verify(userRepository).save(testUser);
+        // VERIFY: Ensure the password was encoded
+        verify(passwordEncoder).encode("password");
     }
 
     @Test
