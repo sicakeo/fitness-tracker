@@ -11,6 +11,8 @@ import java.util.List;
 public interface WorkoutSessionRepository extends JpaRepository<WorkoutSession, Long> {
     @Query("SELECT COALESCE(SUM(w.totalCaloriesBurned), 0) FROM WorkoutSession w WHERE w.user.id = :userId AND w.date = :date")
     Double sumByCaloriesByUserIdAndDate(@Param("userId") Long userId, @Param("date") LocalDate date);
-    List<WorkoutSession> findByUserIdOrderByDateDesc(Long userId);
-    List<WorkoutSession> findByUserId(Long userId);
+    
+    @Query("SELECT w FROM WorkoutSession w WHERE w.user.id = :userId ORDER BY w.date DESC")
+    List<WorkoutSession> findSessionsByUserIdOrderByDateDesc(@Param("userId") Long userId);
+    WorkoutSession findByUserId(@Param("userId") Long userId);
 }
