@@ -2,11 +2,13 @@ package com.chien.fitnesstracker.controller;
 
 import com.chien.fitnesstracker.model.User;
 import com.chien.fitnesstracker.service.UserService;
+import com.chien.fitnesstracker.exception.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -48,30 +50,36 @@ class AuthControllerTest {
 	}
 
     @Test
-    @DisplayName("POST /register should return 400 when username already exists")
+    @DisplayName("POST /register should return 409 when username already exists")
     void register_existingUsername_return400BadRequest() throws Exception {
         // Simulate the service throwing the duplicate username exception
-        doThrow(new IllegalArgumentException("Username is already taken."))
-                .when(userService).registerNewUser(testUser);
+        doThrow(new UserAlreadyExistsException("Username is already taken."))
+                .when(userService).registerNewUser(any(User.class));
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(testUser)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("Username is already taken."));
     }
 
     @Test
-    @DisplayName("POST /register should return 400 when email already exists")
+    @DisplayName("POST /register should return 409 when email already exists")
     void register_existingEmail_return400BadRequest() throws Exception {
+
+        User newUser = new User();
+        newUser.setUsername("newuser");
+        newUser.setEmail("test@example.com");
         // Simulate the service throwing the duplicate email exception
-        doThrow(new IllegalArgumentException("Email is already taken."))
-                .when(userService).registerNewUser(testUser);
+
+        doThrow(new EmailAlreadyExistsException("Email is already taken."))
+                .when(userService).registerNewUser(newUser);
+
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testUser)))
-                .andExpect(status().isBadRequest())
+                .content(objectMapper.writeValueAsString(newUser)))
+                .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("Email is already taken."));
     }
 
@@ -85,7 +93,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(testUser)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("newuser"))
+                .andExpect(jsonPath("$.username").value("testuser"))
                 .andExpect(jsonPath("$.email").value("test@example.com"));
     }
 
