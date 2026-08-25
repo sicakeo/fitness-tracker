@@ -17,11 +17,6 @@ public class FoodEntryController {
         this.foodEntryService = foodEntryService;
     }
 
-    @GetMapping
-    public List<FoodEntry> getFoodEntries(){
-        return foodEntryService.getFoodEntries();
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<FoodEntry> getFoodEntryById(@PathVariable Long id){
         return  ResponseEntity.ok(foodEntryService.getFoodEntryById(id));

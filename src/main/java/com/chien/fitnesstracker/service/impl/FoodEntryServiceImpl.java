@@ -17,12 +17,7 @@ public class FoodEntryServiceImpl implements FoodEntryService {
     public FoodEntryServiceImpl(FoodEntryRepository foodEntryRepository) {
         this.foodEntryRepository = foodEntryRepository;
     }
-
-    @Override
-    public List<FoodEntry> getFoodEntries() {
-        return foodEntryRepository.findAll();
-    }
-
+    
     @Override
     public FoodEntry getFoodEntryById(Long id) {
         Optional<FoodEntry> optional = foodEntryRepository.findById(id);

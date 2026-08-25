@@ -3,6 +3,8 @@ package com.chien.fitnesstracker.service;
 import com.chien.fitnesstracker.model.FoodEntry;
 import com.chien.fitnesstracker.model.User;
 import com.chien.fitnesstracker.repository.FoodEntryRepository;
+import com.chien.fitnesstracker.service.impl.FoodEntryServiceImpl;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,21 +42,6 @@ public class FoodEntryServiceTest {
         testFoodEntry.setCarb(15.0);
         testFoodEntry.setUser(new User());  
     }
-
-    @DisplayName("Should return a list of food entries when getFoodEntries is called")
-    @Test
-    void shouldReturnAllFoodEntries() {
-        // Arrange
-        List<FoodEntry> mockFoodEntries = List.of(testFoodEntry);
-        when(foodEntryRepository.findAll()).thenReturn(mockFoodEntries);
-
-        // Act
-        List<FoodEntry> actualFoodEntries = foodEntryService.getFoodEntries();
-
-        // Assert
-        assertEquals(mockFoodEntries, actualFoodEntries);
-    }
-
 
     @DisplayName("Should throw RuntimeException when getFoodEntryById is called with non-existing id")
     @Test
