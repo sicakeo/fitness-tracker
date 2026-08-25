@@ -21,13 +21,17 @@ public class WorkoutSessionServiceImpl implements WorkoutSessionService {
         Optional<WorkoutSession> optional = sessionRepository.findById(id);
         WorkoutSession workoutSession;
         if (optional.isPresent()) workoutSession = optional.get();
-        else throw new RuntimeException("WorkoutSession not found for id: " + id);
+        else throw new RuntimeException("Workout session not found for id: " + id);
         return workoutSession;
     }
 
     @Override
     public List<WorkoutSession> getSessionsByUserId(Long userId) {
-        return sessionRepository.findSessionsByUserIdOrderByDateDesc(userId);
+        List<WorkoutSession> sessions = sessionRepository.findSessionsByUserIdOrderByDateDesc(userId);
+        if (sessions.isEmpty()) {
+            throw new RuntimeException("No workout sessions found for userId: " + userId);
+        }
+        return sessions;
     }
 
     @Override
@@ -62,6 +66,10 @@ public class WorkoutSessionServiceImpl implements WorkoutSessionService {
 
     @Override
     public Double getCaloriesToday(Long userId, LocalDate date) {
-        return sessionRepository.sumByCaloriesByUserIdAndDate(userId, date);
+        Double totalCalories = sessionRepository.sumByCaloriesByUserIdAndDate(userId, date);
+        if (totalCalories == null) {
+            throw new RuntimeException("No workout sessions found for userId: " + userId + " on date: " + date);
+        } 
+        return totalCalories;
     }
 }
