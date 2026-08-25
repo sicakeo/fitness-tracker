@@ -3,10 +3,7 @@ package com.chien.fitnesstracker.service.impl;
 import com.chien.fitnesstracker.model.Exercise;
 import com.chien.fitnesstracker.repository.ExerciseRepository;
 import com.chien.fitnesstracker.service.ExerciseService;
-
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,11 +12,6 @@ public class ExerciseServiceImpl implements ExerciseService {
 
     public ExerciseServiceImpl(ExerciseRepository ExerciseRepository) {
         this.exerciseRepository = ExerciseRepository;
-    }
-
-    @Override
-    public List<Exercise> getExercises() {
-        return this.exerciseRepository.findAll();
     }
 
     @Override
@@ -45,7 +37,7 @@ public class ExerciseServiceImpl implements ExerciseService {
     public Exercise updateExercise(Long id, Exercise exerciseDetails) {
         Exercise exercise = getExercise(id);
         exercise.setName(exerciseDetails.getName());
-        exercise.setWorkoutType(exerciseDetails.getWorkoutType());
+        exercise.setExerciseType(exerciseDetails.getExerciseType());
         exercise.setMet(exerciseDetails.getMet());
         return exerciseRepository.save(exercise);
     }
