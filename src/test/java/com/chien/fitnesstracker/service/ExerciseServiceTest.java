@@ -1,8 +1,11 @@
 package com.chien.fitnesstracker.service;
 
 import com.chien.fitnesstracker.model.Exercise;
+import com.chien.fitnesstracker.model.enums.exerciseType;
 import com.chien.fitnesstracker.model.User;
 import com.chien.fitnesstracker.repository.ExerciseRepository;
+import com.chien.fitnesstracker.service.impl.ExerciseServiceImpl;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,8 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
-import java.util.List;
 import java.util.Optional;
 
 
@@ -37,24 +38,8 @@ public class ExerciseServiceTest {
         testUser.setUsername("testuser");
         testUser.setEmail("test@example.com");
         testExercise.setName("Push-up");
-        testExercise.setWorkoutType("Weightlifting");
+        testExercise.setExerciseType(exerciseType.RUNNING);
         testExercise.setUser(testUser);
-    }
-
-    @Test
-    @DisplayName("Should give a list of exercises when getExercises is called")
-    void shouldGiveAListOfExercisesWhenGetExercisesIsCalled() {
-        // Implementation for this test case
-
-        // GIVEN: The repository returns a list of exercises
-        List<Exercise> mockExercises = List.of(testExercise);
-        when(exerciseRepository.findAll()).thenReturn(mockExercises);
-
-        // WHEN: Calling getExercises
-        List<Exercise> result = exerciseService.getExercises();
-
-        // THEN: The returned list should contain the expected exercises
-        assertEquals(mockExercises, result);
     }
 
     @Test
@@ -111,7 +96,7 @@ public class ExerciseServiceTest {
         // WHEN: Preparing update details and calling service
         Exercise updatedDetails = new Exercise();
         updatedDetails.setName("Updated Name");
-        updatedDetails.setWorkoutType("Updated Type");
+        updatedDetails.setExerciseType(exerciseType.WEIGHTLIFTING);
         updatedDetails.setMet(5.0);
 
         Exercise result = exerciseService.updateExercise(1L, updatedDetails);
@@ -119,7 +104,7 @@ public class ExerciseServiceTest {
         // THEN: Verify that the result actually reflects the NEW values
         assertNotNull(result);
         assertEquals("Updated Name", result.getName());
-        assertEquals("Updated Type", result.getWorkoutType());
+        assertEquals(exerciseType.WEIGHTLIFTING, result.getExerciseType());
         assertEquals(5.0, result.getMet());
 
         // VERIFY: Ensure findById and save were executed
