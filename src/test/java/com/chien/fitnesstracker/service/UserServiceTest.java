@@ -2,6 +2,7 @@ package com.chien.fitnesstracker.service;
 
 import com.chien.fitnesstracker.model.User;
 import com.chien.fitnesstracker.repository.UserRepository;
+import com.chien.fitnesstracker.exception.*;
 
 
 import com.chien.fitnesstracker.service.impl.UserServiceImpl;
@@ -123,14 +124,14 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw IllegalArgumentException when registering duplicate username")
+    @DisplayName("Should throw UserAlreadyExistsException when registering duplicate username")
     void shouldThrowExceptionWhenUsernameExists() {
         // GIVEN: The repository reports that the username already exists
         when(userRepository.existsByUsername("testuser")).thenReturn(true);
 
         // WHEN & THEN: Registering the user should throw an exception
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
+        UserAlreadyExistsException exception = assertThrows(
+            UserAlreadyExistsException.class,
             () -> userService.registerNewUser(testUser)
         );
 
@@ -141,14 +142,14 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw IllegalArgumentException when registering duplicate email")
+    @DisplayName("Should throw EmailAlreadyExistsException when registering duplicate email")
     void shouldThrowExceptionWhenEmailExists() {
         // GIVEN: The repository reports that the email already exists
         when(userRepository.existsByEmail("test@example.com")).thenReturn(true);
 
         // WHEN & THEN: Registering the user should throw an exception
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
+        EmailAlreadyExistsException exception = assertThrows(
+            EmailAlreadyExistsException.class,
             () -> userService.registerNewUser(testUser)
         );
 

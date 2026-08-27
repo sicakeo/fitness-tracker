@@ -3,7 +3,7 @@ package com.chien.fitnesstracker.service.impl;
 import com.chien.fitnesstracker.model.WorkoutSession;
 import com.chien.fitnesstracker.repository.WorkoutSessionRepository;
 import com.chien.fitnesstracker.service.WorkoutSessionService;
-
+import com.chien.fitnesstracker.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
@@ -21,7 +21,7 @@ public class WorkoutSessionServiceImpl implements WorkoutSessionService {
         Optional<WorkoutSession> optional = sessionRepository.findById(id);
         WorkoutSession workoutSession;
         if (optional.isPresent()) workoutSession = optional.get();
-        else throw new RuntimeException("Workout session not found for id: " + id);
+        else throw new ResourceNotFoundException("Workout session not found for id: " + id);
         return workoutSession;
     }
 
@@ -29,7 +29,7 @@ public class WorkoutSessionServiceImpl implements WorkoutSessionService {
     public List<WorkoutSession> getSessionsByUserId(Long userId) {
         List<WorkoutSession> sessions = sessionRepository.findSessionsByUserIdOrderByDateDesc(userId);
         if (sessions.isEmpty()) {
-            throw new RuntimeException("No workout sessions found for userId: " + userId);
+            throw new ResourceNotFoundException("No workout sessions found for userId: " + userId);
         }
         return sessions;
     }
@@ -68,7 +68,7 @@ public class WorkoutSessionServiceImpl implements WorkoutSessionService {
     public Double getCaloriesToday(Long userId, LocalDate date) {
         Double totalCalories = sessionRepository.sumByCaloriesByUserIdAndDate(userId, date);
         if (totalCalories == null) {
-            throw new RuntimeException("No workout sessions found for userId: " + userId + " on date: " + date);
+            throw new ResourceNotFoundException("No workout sessions found for userId: " + userId + " on date: " + date);
         } 
         return totalCalories;
     }

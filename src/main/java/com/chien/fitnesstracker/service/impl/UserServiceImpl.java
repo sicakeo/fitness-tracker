@@ -1,6 +1,9 @@
 package com.chien.fitnesstracker.service.impl;
+
 import com.chien.fitnesstracker.exception.ResourceNotFoundException;
 import com.chien.fitnesstracker.model.User;
+import com.chien.fitnesstracker.exception.UserAlreadyExistsException;
+import com.chien.fitnesstracker.exception.EmailAlreadyExistsException;
 import com.chien.fitnesstracker.repository.UserRepository;
 import com.chien.fitnesstracker.service.UserService;
 
@@ -71,11 +74,11 @@ public class UserServiceImpl implements UserService {
 
     public User registerNewUser(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new IllegalArgumentException("Username is already taken.");
+            throw new UserAlreadyExistsException("Username is already taken.");
         }
         
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("Email is already registered.");
+            throw new EmailAlreadyExistsException("Email is already registered.");
         }
         
         user.setPassword(passwordEncoder.encode(user.getPassword()));

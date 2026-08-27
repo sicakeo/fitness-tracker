@@ -23,7 +23,7 @@ public class ExerciseController{
 
     @PostMapping
     public ResponseEntity<Exercise> createExercise(@Valid @RequestBody Exercise exercise){
-        return ResponseEntity.ok(exerciseService.addExercise(exercise));
+        return ResponseEntity.status(201).body(exerciseService.addExercise(exercise));
     }
 
     @PutMapping("/{id}")
