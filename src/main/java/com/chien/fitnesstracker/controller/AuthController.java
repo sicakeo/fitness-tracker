@@ -1,6 +1,8 @@
 package com.chien.fitnesstracker.controller;
 
-import com.chien.fitnesstracker.model.User;
+import com.chien.fitnesstracker.dto.LoginRequestDto;
+import com.chien.fitnesstracker.dto.UserRegisterRequestDto;
+import com.chien.fitnesstracker.dto.UserResponseDto;
 import com.chien.fitnesstracker.service.UserService;
 
 
@@ -18,16 +20,13 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
+    public ResponseEntity<UserResponseDto> register(@RequestBody UserRegisterRequestDto user) {
         return ResponseEntity.ok(userService.registerNewUser(user));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody User loginRequest) {
-        User authenticatedUser = userService.authenticateUser(
-                loginRequest.getUsername(), 
-                loginRequest.getPassword()
-        );
+    public ResponseEntity<UserResponseDto> login(@RequestBody LoginRequestDto loginRequest) {
+        UserResponseDto authenticatedUser = userService.authenticateUser(loginRequest);
         return ResponseEntity.ok(authenticatedUser);
     }
 }

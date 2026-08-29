@@ -1,15 +1,16 @@
 package com.chien.fitnesstracker.service;
 
-import com.chien.fitnesstracker.model.User;
+import com.chien.fitnesstracker.dto.LoginRequestDto;
+import com.chien.fitnesstracker.dto.UserRegisterRequestDto;
+import com.chien.fitnesstracker.dto.UserResponseDto;
 import java.util.List;
 
 public interface UserService {
-    List<User> getUsers();
-    User getUserById(Long id);
+    List<UserResponseDto> getUsers();
+    UserResponseDto getUserById(Long id);
+    UserResponseDto updateUser(Long id, UserRegisterRequestDto user);
+    UserResponseDto findByUsername(String username);
+    UserResponseDto registerNewUser(UserRegisterRequestDto user);
+    UserResponseDto authenticateUser(LoginRequestDto user);
     void deleteUserById(Long id);
-    User saveUser(User user);
-    User updateUser(Long id, User user);
-    User findByUsername(String username);
-    User registerNewUser(User user);
-    User authenticateUser(String username, String password);
 }
