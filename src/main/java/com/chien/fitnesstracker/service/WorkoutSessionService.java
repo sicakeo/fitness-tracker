@@ -1,6 +1,8 @@
 package com.chien.fitnesstracker.service;
 
-import com.chien.fitnesstracker.dto.*;
+import com.chien.fitnesstracker.dto.WorkoutSession.WorkoutSessionRequestDto;
+import com.chien.fitnesstracker.dto.WorkoutSession.WorkoutSessionResponseDto;
+
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;

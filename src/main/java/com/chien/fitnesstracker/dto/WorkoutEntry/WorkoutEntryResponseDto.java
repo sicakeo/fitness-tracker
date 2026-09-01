@@ -1,4 +1,4 @@
-package com.chien.fitnesstracker.dto;
+package com.chien.fitnesstracker.dto.WorkoutEntry;
 
 import com.chien.fitnesstracker.model.enums.IntensityType;
 

@@ -1,11 +1,11 @@
 package com.chien.fitnesstracker.service.impl;
 
+import com.chien.fitnesstracker.dto.Exercise.ExerciseRequestDto;
+import com.chien.fitnesstracker.dto.Exercise.ExerciseResponseDto;
 import com.chien.fitnesstracker.model.Exercise;
 import com.chien.fitnesstracker.repository.ExerciseRepository;
 import com.chien.fitnesstracker.repository.UserRepository;
 import com.chien.fitnesstracker.service.ExerciseService;
-import com.chien.fitnesstracker.dto.ExerciseRequestDto;
-import com.chien.fitnesstracker.dto.ExerciseResponseDto;
 
 import org.springframework.stereotype.Service;
 import java.util.Optional;

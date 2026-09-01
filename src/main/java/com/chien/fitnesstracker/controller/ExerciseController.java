@@ -1,8 +1,8 @@
 package com.chien.fitnesstracker.controller;
 
 
-import com.chien.fitnesstracker.dto.ExerciseResponseDto;
-import com.chien.fitnesstracker.dto.ExerciseRequestDto;
+import com.chien.fitnesstracker.dto.Exercise.ExerciseRequestDto;
+import com.chien.fitnesstracker.dto.Exercise.ExerciseResponseDto;
 import com.chien.fitnesstracker.service.ExerciseService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

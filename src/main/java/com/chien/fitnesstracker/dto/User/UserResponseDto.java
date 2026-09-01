@@ -1,4 +1,4 @@
-package com.chien.fitnesstracker.dto;
+package com.chien.fitnesstracker.dto.User;
 
 public record UserResponseDto(
     Long id,

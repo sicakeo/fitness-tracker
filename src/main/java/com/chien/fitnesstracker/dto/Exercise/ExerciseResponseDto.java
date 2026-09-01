@@ -1,4 +1,4 @@
-package com.chien.fitnesstracker.dto;
+package com.chien.fitnesstracker.dto.Exercise;
 
 import com.chien.fitnesstracker.model.enums.exerciseType;
 

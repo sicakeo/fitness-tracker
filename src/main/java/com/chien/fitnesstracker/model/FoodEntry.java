@@ -39,7 +39,7 @@ public class FoodEntry {
     private Double fat;
 
     @Min(value = 0, message = "Carbs cannot be negative")
-    private Double carb;
+    private Double carbs;
 
     @NotNull(message = "Date is required")
     @PastOrPresent(message = "Date cannot be in the future")

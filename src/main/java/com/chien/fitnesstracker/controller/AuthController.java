@@ -1,8 +1,8 @@
 package com.chien.fitnesstracker.controller;
 
-import com.chien.fitnesstracker.dto.LoginRequestDto;
-import com.chien.fitnesstracker.dto.UserRegisterRequestDto;
-import com.chien.fitnesstracker.dto.UserResponseDto;
+import com.chien.fitnesstracker.dto.User.LoginRequestDto;
+import com.chien.fitnesstracker.dto.User.UserRegisterRequestDto;
+import com.chien.fitnesstracker.dto.User.UserResponseDto;
 import com.chien.fitnesstracker.service.UserService;
 
 

@@ -1,10 +1,10 @@
 package com.chien.fitnesstracker.controller;
 
+import com.chien.fitnesstracker.dto.User.UserRegisterRequestDto;
+import com.chien.fitnesstracker.dto.User.UserResponseDto;
 import com.chien.fitnesstracker.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.chien.fitnesstracker.dto.UserRegisterRequestDto;
-import com.chien.fitnesstracker.dto.UserResponseDto;
 
 import java.util.List;
 

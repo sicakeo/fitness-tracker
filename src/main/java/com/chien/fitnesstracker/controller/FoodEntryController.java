@@ -1,7 +1,7 @@
 package com.chien.fitnesstracker.controller;
 
-
-import com.chien.fitnesstracker.model.FoodEntry;
+import com.chien.fitnesstracker.dto.FoodEntry.FoodEntryRequestDto;
+import com.chien.fitnesstracker.dto.FoodEntry.FoodEntryResponseDto;
 import com.chien.fitnesstracker.service.FoodEntryService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +18,17 @@ public class FoodEntryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FoodEntry> getFoodEntryById(@PathVariable Long id){
+    public ResponseEntity<FoodEntryResponseDto> getFoodEntryById(@PathVariable Long id){
         return  ResponseEntity.ok(foodEntryService.getFoodEntryById(id));
     }
 
     @PostMapping
-    public ResponseEntity<FoodEntry> createFoodEntry(@Valid @RequestBody FoodEntry foodEntry){
+    public ResponseEntity<FoodEntryResponseDto> createFoodEntry(@Valid @RequestBody FoodEntryRequestDto foodEntry){
         return ResponseEntity.ok(foodEntryService.saveFoodEntry(foodEntry));
     }
 
     @PutMapping("/id")
-    public ResponseEntity<FoodEntry> updateFoodEntry(@Valid @RequestBody FoodEntry foodEntry,
+    public ResponseEntity<FoodEntryResponseDto> updateFoodEntry(@Valid @RequestBody FoodEntryRequestDto foodEntry,
                                                      @PathVariable Long id){
         return ResponseEntity.ok(foodEntryService.updateFoodEntry(id,foodEntry));
     }
@@ -47,8 +47,8 @@ public class FoodEntryController {
     }
 
     @GetMapping("/history")
-    public ResponseEntity<List<FoodEntry>> getFoodEntriesHistory(@RequestParam Long userId){
-        List<FoodEntry> foodEntries = foodEntryService.getFoodEntriesByUserId(userId);
+    public ResponseEntity<List<FoodEntryResponseDto>> getFoodEntriesHistory(@RequestParam Long userId){
+        List<FoodEntryResponseDto> foodEntries = foodEntryService.getFoodEntriesByUserId(userId);
         return ResponseEntity.ok(foodEntries);
     }
 }

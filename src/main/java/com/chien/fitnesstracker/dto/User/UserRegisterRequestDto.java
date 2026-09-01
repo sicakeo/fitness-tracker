@@ -1,4 +1,4 @@
-package com.chien.fitnesstracker.dto;
+package com.chien.fitnesstracker.dto.User;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

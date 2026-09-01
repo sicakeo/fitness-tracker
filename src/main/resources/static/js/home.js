@@ -234,12 +234,12 @@ async function submitFoodEntry(event) {
         const fatValue = elFat ? parseFloat(elFat.value) || 0 : 0;
 
         const foodEntryPayLoad = {
-            user: { id: userId },
+            userId: userId ,
             mealType: elMealType ? elMealType.value.toUpperCase() : "BREAKFAST",
             name: elFoodName ? elFoodName.value.trim() : "Unknown Meal",
             calories: caloriesValue,
             protein: proteinValue,
-            carb: carbValue,  
+            carbs: carbValue,
             fat: fatValue,   
             date: todayStr
         };

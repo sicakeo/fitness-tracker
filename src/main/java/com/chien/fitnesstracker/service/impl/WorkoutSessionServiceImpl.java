@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import com.chien.fitnesstracker.dto.*;
+import com.chien.fitnesstracker.dto.WorkoutSession.WorkoutSessionRequestDto;
+import com.chien.fitnesstracker.dto.WorkoutEntry.WorkoutEntryResponseDto;
+import com.chien.fitnesstracker.dto.WorkoutSession.WorkoutSessionResponseDto;
 
 @Service
 public class WorkoutSessionServiceImpl implements WorkoutSessionService {
@@ -130,28 +132,6 @@ public class WorkoutSessionServiceImpl implements WorkoutSessionService {
 
     // Helper mapper: Converts JPA Entity -> Safe Response DTO
     private WorkoutSessionResponseDto mapToResponseDto(WorkoutSession session) {
-        // return new WorkoutSessionResponseDto(
-        //         session.getId(),
-        //         session.getUser().getId(),
-        //         session.getTitle(),
-        //         session.getDate(),
-        //         session.getTotalDurationMinutes(),
-        //         session.getTotalCaloriesBurned(),
-        //         session.getEntries().stream()
-        //                 .map(entry -> new WorkoutEntryResponseDto(
-        //                         entry.getId(),
-        //                         session.getId(),
-        //                         entry.getExercise().getId(),
-        //                         entry.getSets(),
-        //                         entry.getReps(),
-        //                         entry.getWeight(),
-        //                         entry.getDurationMinutes(),
-        //                         entry.getDistanceKm(),
-        //                         entry.getIntensity()
-        //                 ))
-        //                 .toList()
-        // );
-
         List<WorkoutEntryResponseDto> entryDtos = session.getEntries() != null 
         ? session.getEntries().stream().map(entry -> new WorkoutEntryResponseDto(
             entry.getId(),

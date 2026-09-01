@@ -1,9 +1,10 @@
 package com.chien.fitnesstracker.service;
 
-import com.chien.fitnesstracker.dto.LoginRequestDto;
-import com.chien.fitnesstracker.dto.UserRegisterRequestDto;
-import com.chien.fitnesstracker.dto.UserResponseDto;
 import java.util.List;
+
+import com.chien.fitnesstracker.dto.User.LoginRequestDto;
+import com.chien.fitnesstracker.dto.User.UserRegisterRequestDto;
+import com.chien.fitnesstracker.dto.User.UserResponseDto;
 
 public interface UserService {
     List<UserResponseDto> getUsers();
