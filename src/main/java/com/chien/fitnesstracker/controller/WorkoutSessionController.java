@@ -1,8 +1,8 @@
 package com.chien.fitnesstracker.controller;
 
-
-import com.chien.fitnesstracker.model.WorkoutSession;
 import com.chien.fitnesstracker.service.WorkoutSessionService;
+import com.chien.fitnesstracker.dto.WorkoutSessionRequestDto;
+import com.chien.fitnesstracker.dto.WorkoutSessionResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +18,17 @@ public class WorkoutSessionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WorkoutSession> getSessionById(@PathVariable Long id){
+    public ResponseEntity<WorkoutSessionResponseDto> getSessionById(@PathVariable Long id){
         return ResponseEntity.ok(sessionService.getSessionById(id));
     }
     
     @PostMapping
-    public ResponseEntity<WorkoutSession> createSession(@Valid @RequestBody WorkoutSession session) {
+    public ResponseEntity<WorkoutSessionResponseDto> createSession(@Valid @RequestBody WorkoutSessionRequestDto session) {
         return ResponseEntity.status(HttpStatus.CREATED).body(sessionService.saveSession(session));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<WorkoutSession> updateSession(@PathVariable Long id, @Valid @RequestBody WorkoutSession workoutSession){
+    public ResponseEntity<WorkoutSessionResponseDto> updateSession(@PathVariable Long id, @Valid @RequestBody WorkoutSessionRequestDto workoutSession){
         return ResponseEntity.ok(sessionService.updateSession(id , workoutSession));
     }
 
@@ -46,8 +46,8 @@ public class WorkoutSessionController {
     }
 
     @GetMapping("/history")
-    public ResponseEntity<List<WorkoutSession>> getWorkoutHistory(@RequestParam Long userId){
-        List<WorkoutSession> workoutSessions = sessionService.getSessionsByUserId(userId);
+    public ResponseEntity<List<WorkoutSessionResponseDto>> getWorkoutHistory(@RequestParam Long userId){
+        List<WorkoutSessionResponseDto> workoutSessions = sessionService.getSessionsByUserId(userId);
         return ResponseEntity.ok(workoutSessions);
     }
 }

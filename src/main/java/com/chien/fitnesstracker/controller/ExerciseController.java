@@ -1,7 +1,8 @@
 package com.chien.fitnesstracker.controller;
 
 
-import com.chien.fitnesstracker.model.Exercise;
+import com.chien.fitnesstracker.dto.ExerciseResponseDto;
+import com.chien.fitnesstracker.dto.ExerciseRequestDto;
 import com.chien.fitnesstracker.service.ExerciseService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -17,17 +18,17 @@ public class ExerciseController{
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Exercise> getExercise(@PathVariable Long id){
+    public ResponseEntity<ExerciseResponseDto> getExercise(@PathVariable Long id){
         return ResponseEntity.ok(exerciseService.getExercise(id));
     }
 
     @PostMapping
-    public ResponseEntity<Exercise> createExercise(@Valid @RequestBody Exercise exercise){
+    public ResponseEntity<ExerciseResponseDto> createExercise(@Valid @RequestBody ExerciseRequestDto exercise){
         return ResponseEntity.status(201).body(exerciseService.addExercise(exercise));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Exercise> updateExercise(@Valid @RequestBody Exercise exercise, @PathVariable Long id){
+    public ResponseEntity<ExerciseResponseDto> updateExercise(@Valid @RequestBody ExerciseRequestDto exercise, @PathVariable Long id){
         return ResponseEntity.ok(exerciseService.updateExercise(id, exercise));
     }
 

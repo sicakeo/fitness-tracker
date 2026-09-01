@@ -4,7 +4,8 @@ import { checkAuth, logout } from "./auth.js";
 import { 
     getMetValue, 
     getTargetCaloriesBurned, 
-    calculateCaloriesBurned 
+    calculateCaloriesBurned,
+    calculateCardioIntensity,
 } from "./fitnessMath.js";
 
 // ==========================================
@@ -297,9 +298,9 @@ async function submitWorkoutSession() {
     try {
         const savedEntries = await Promise.all(currentWorkoutEntries.map(async (entry) => {
             const exercisePayload = {
-                user: { id: userId },
+                userId: userId,
                 name: entry.exerciseName,
-                workoutType: entry.workoutType,
+                exerciseType: entry.exerciseType,
                 met: entry.met
             };
 
@@ -316,7 +317,9 @@ async function submitWorkoutSession() {
 
             const savedEx = await exResponse.json();
             return {
-                exercise: { id: savedEx.id },
+                exerciseId: savedEx.id,
+                exerciseName: entry.exerciseName,
+                exerciseType: entry.exerciseType,
                 sets: entry.sets,
                 reps: entry.reps,
                 weight: entry.weight,
@@ -326,8 +329,9 @@ async function submitWorkoutSession() {
             };
         }));
 
+        console.log("Total duration:", totalDuration, "Total calories burned:", totalCalories);
         const sessionPayload = {
-            user: { id: userId },
+            userId: userId,
             title: sessionTitle,
             date: sessionDate,
             totalCaloriesBurned: totalCalories,
@@ -591,16 +595,19 @@ function formatWorkoutMetrics(workout) {
     exerciseList.style.cssText = "list-style: none; padding: 10px; margin: 0;";
 
     for (const entry of entries) {
-        entry.exerciseType = entry.exercise?.exerciseType || "Unknown Type";
+        console.log("Entry details:", entry);
+        if (entry.exerciseType == entry.exerciseName)
+            entry.exerciseName = "";
+        entry.exerciseType = entry.exerciseType || "Unknown";
         entry.exerciseType = entry.exerciseType.slice(0, 1).toUpperCase() + entry.exerciseType.slice(1).toLowerCase();
-        entry.name = entry.exercise?.name || entry.exerciseType;
+        entry.exerciseName = entry.exerciseName? entry.exerciseName : entry.exerciseType;
         entry.intensity = entry.intensity ? entry.intensity.slice(0, 1).toUpperCase() + entry.intensity.slice(1).toLowerCase() : "Moderate";
         
         const li = document.createElement("li");
-        li.style.cssText = "padding: 8px 0; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;";
+        li.style.cssText = "padding: 8px 0; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: left;";
         li.innerHTML = `
             <div>
-                <strong>(${entry.exerciseType})</strong> ${entry.name === entry.exerciseType ? '' : entry.name}<br>
+                <strong>(${entry.exerciseType})</strong> ${entry.exerciseName === entry.exerciseType ? '' : entry.exerciseName}
                 ${formatExercise(entry.exerciseType, entry)}
             </div>`;
         exerciseList.appendChild(li);
@@ -630,10 +637,10 @@ function formatExercise(selectedType, entry) {
         case "SWIMMING":
             return `${entry.distanceKm ?? 0} km in ${entry.durationMinutes} mins <br> <strong>Intensity:</strong> ${entry.intensity}`;
         case "WEIGHTLIFTING":
-            return `${entry.sets ?? 0} sets x ${entry.reps ?? 0} reps at ${entry.weight ?? 0} kg <br> <strong>Intensity:</strong> ${entry.intensity}`;
+            return `<br>${entry.sets ?? 0} sets x ${entry.reps ?? 0} reps at ${entry.weight ?? 0} kg <br> <strong>Intensity:</strong> ${entry.intensity}`;
         case "HIIT":
-            return `${entry.durationMinutes} mins <br> <strong>Intensity:</strong> ${entry.intensity}`;
+            return `<br>${entry.durationMinutes} mins <br> <strong>Intensity:</strong> ${entry.intensity}`;
         default:
-            return `Duration: ${entry.durationMinutes} mins <br> <strong>Intensity:</strong> ${entry.intensity}`;
+            return `<br>Duration: ${entry.durationMinutes} mins <br> <strong>Intensity:</strong> ${entry.intensity}`;
     }
 }

@@ -116,10 +116,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUserById(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new ResourceNotFoundException("User not found for id: " + id);
-        }
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found for id: " + id));
+        userRepository.delete(user);
     }
 
   // Helper mapper: Converts JPA Entity -> Safe Response DTO

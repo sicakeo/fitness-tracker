@@ -6,7 +6,8 @@ export const MET_MATRIX = {
     "RUNNING":       { "LIGHT": 8.3, "MODERATE": 9.8, "HEAVY": 11.8 },
     "CYCLING":       { "LIGHT": 5.8, "MODERATE": 7.5, "HEAVY": 10.0 },
     "HIIT":          { "LIGHT": 5.0, "MODERATE": 8.0, "HEAVY": 11.0 },
-    "YOGA":          { "LIGHT": 2.5, "MODERATE": 2.5, "HEAVY": 2.5 }
+    "YOGA":          { "LIGHT": 2.5, "MODERATE": 2.5, "HEAVY": 2.5 },
+    "SWIMMING":      { "LIGHT": 6.0, "MODERATE": 8.0, "HEAVY": 10.0 },
 };
 
 export const TARGET_BURN_MATRIX = {

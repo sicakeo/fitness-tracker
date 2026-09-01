@@ -83,7 +83,7 @@ small {
     margin-top: 0;
     padding-bottom: 10px;
     border-bottom: 2px solid var(--border-light);
-    text-align: center;
+    text-align: left;
 }
 
 .history-list {
@@ -94,11 +94,9 @@ small {
 }
 
 .history-list li {
-    padding: 12px 0;
-    color: #333;
-    display: flex;
-    flex-direction: column;
     text-align: left;
+    color: #333;
+    flex-direction: column;
 }
 
 /* Food Logging Core Input Panel styles module definitions */

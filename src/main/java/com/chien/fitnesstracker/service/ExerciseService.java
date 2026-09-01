@@ -1,11 +1,12 @@
 package com.chien.fitnesstracker.service;
 
-import com.chien.fitnesstracker.model.Exercise;
+import com.chien.fitnesstracker.dto.ExerciseRequestDto;
+import com.chien.fitnesstracker.dto.ExerciseResponseDto;
 
 
 public interface ExerciseService {
-    Exercise getExercise(Long id);
-    Exercise addExercise(Exercise exercise);
+    ExerciseResponseDto getExercise(Long id);
+    ExerciseResponseDto addExercise(ExerciseRequestDto exerciseRequestDto);
     void deleteExercise(Long id);
-    Exercise updateExercise(Long id, Exercise exerciseDetails);
+    ExerciseResponseDto updateExercise(Long id, ExerciseRequestDto exerciseDetails);
 }

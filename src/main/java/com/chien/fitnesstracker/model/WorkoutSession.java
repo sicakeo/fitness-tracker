@@ -33,7 +33,6 @@ public class WorkoutSession {
     private String title; // e.g., "Upper Body Strength"
 
     @NotNull(message = "Session date is required")
-    @PastOrPresent(message = "Date cannot be in the future")
     private LocalDate date;
 
     @Column(name = "duration_minutes")
