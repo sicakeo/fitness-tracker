@@ -2,6 +2,8 @@ package com.chien.fitnesstracker.service;
 
 import com.chien.fitnesstracker.model.User;
 import com.chien.fitnesstracker.repository.UserRepository;
+import com.chien.fitnesstracker.dto.User.UserRegisterRequestDto;
+import com.chien.fitnesstracker.dto.User.UserResponseDto;
 import com.chien.fitnesstracker.exception.*;
 
 
@@ -32,30 +34,53 @@ class UserServiceTest {
     @InjectMocks
     private UserServiceImpl userService; // Injects the mock repo into your real service
 
-    private User testUser;
+    private User createSampleUser(Long id) {
+        User user = new User();
+        user.setId(id);
+        user.setUsername("testuser");
+        user.setEmail("test@example.com");
+        user.setPassword("encoded_secret");
+        user.setWeight(70.0);
+        user.setHeight(175.0);
+        user.setAge(25);
+        user.setGender("MALE");
+        user.setActivityLevel(1.55);
+        user.setFitnessGoal("MAINTAIN");
+        user.setTdee(2300.0);
+        return user;
+    }
 
-    @BeforeEach
-    void setUp() {
-        testUser = new User();
-        testUser.setUsername("testuser");
-        testUser.setPassword("password");
-        testUser.setEmail("test@example.com");
+    private UserRegisterRequestDto createSampleRegisterRequest() {
+        return new UserRegisterRequestDto(
+            "testuser", "test@example.com", "password123",
+            70.0, 175.0, 25, "MALE", 1.55, "MAINTAIN", 2300.0
+        );
+    }
+
+    private UserResponseDto createSampleResponseDto(User user) {
+        return new UserResponseDto(
+            user.getId(), user.getUsername(), user.getEmail(),
+            user.getWeight(), user.getHeight(), user.getAge(),
+            user.getGender(), user.getActivityLevel(),
+            user.getFitnessGoal(), user.getTdee()
+        );
     }
 
     @Test
     @DisplayName("Should give a list of users when getUsers is called")
     void shouldGiveAListOfUsersWhenGetUsersIsCalled() {
         // Implementation for this test case
+        User testUser = createSampleUser(1L);
 
         // GIVEN: The repository returns a list of users
         List<User> mockUsers = List.of(testUser);
         when(userRepository.findAll()).thenReturn(mockUsers);
 
         // WHEN: Calling getUsers
-        List<User> result = userService.getUsers();
+        List<UserResponseDto> result = userService.getUsers();
 
         // THEN: The returned list should contain the expected users
-        assertEquals(mockUsers, result);
+        assertEquals(List.of(createSampleResponseDto(testUser)), result);
     }
 
     @Test
@@ -91,12 +116,15 @@ class UserServiceTest {
     @Test
     @DisplayName("Should save user when saveUser is called")
     void shouldSaveUserWhenSaveUserIsCalled() {
+        User testUser = createSampleUser(1L);
+        UserRegisterRequestDto testUserRequest = createSampleRegisterRequest();
+
         //GIVEN: The repository returns the user when saving
         when(userRepository.save(testUser)).thenReturn(testUser);
         //WHEN: Calling saveUser
-        User result = userService.saveUser(testUser);
+        UserResponseDto result = userService.saveUser(testUserRequest);
         //THEN: The returned user should be the same as the testUser
-        assertEquals(testUser, result);
+        assertEquals(createSampleResponseDto(testUser), result);
         //VERIFY: Ensure userRepository.save() was called with the correct user
         verify(userRepository).save(testUser);
     }

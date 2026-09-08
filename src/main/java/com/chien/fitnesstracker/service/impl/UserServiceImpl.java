@@ -55,6 +55,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponseDto saveUser(UserRegisterRequestDto userResponseDto) {
+        User user = new User();
+        user.setUsername(userResponseDto.username());
+        user.setEmail(userResponseDto.email());
+        user.setWeight(userResponseDto.weight());
+        user.setHeight(userResponseDto.height());
+        user.setAge(userResponseDto.age());
+        user.setGender(userResponseDto.gender());
+        user.setActivityLevel(userResponseDto.activityLevel());
+        user.setFitnessGoal(userResponseDto.fitnessGoal());
+        user.setTdee(userResponseDto.tdee());
+
+        return this.mapToResponseDto(userRepository.save(user));
+    }
+
+    @Override
     public UserResponseDto updateUser(Long id, UserRegisterRequestDto userDetails) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found for id: " + id));
