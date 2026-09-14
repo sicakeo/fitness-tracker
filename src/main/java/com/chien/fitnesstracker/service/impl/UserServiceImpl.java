@@ -71,15 +71,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto updateUser(Long id, UserRegisterRequestDto userDetails) {
+    public UserResponseDto updateUserProfile(Long id, UserRegisterRequestDto userDetails) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found for id: " + id));
 
-        existingUser.setUsername(userDetails.username());
-        existingUser.setEmail(userDetails.email());
         if (userDetails.password() != null && !userDetails.password().isBlank()) {
             existingUser.setPassword(passwordEncoder.encode(userDetails.password()));
         }
+        existingUser.setName(userDetails.name());
         existingUser.setHeight(userDetails.height());
         existingUser.setWeight(userDetails.weight());
         existingUser.setAge(userDetails.age());
@@ -142,7 +141,7 @@ public class UserServiceImpl implements UserService {
         return new UserResponseDto(
                 user.getId(),
                 user.getUsername(),
-                user.getEmail(),
+                user.getName(),
                 user.getWeight(),
                 user.getHeight(),
                 user.getAge(),

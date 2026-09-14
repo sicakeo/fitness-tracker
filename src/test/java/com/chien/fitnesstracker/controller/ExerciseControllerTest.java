@@ -2,13 +2,15 @@ package com.chien.fitnesstracker.controller;
 
 
 
+import com.chien.fitnesstracker.dto.Exercise.ExerciseRequestDto;
+import com.chien.fitnesstracker.dto.Exercise.ExerciseResponseDto;
 import com.chien.fitnesstracker.exception.ResourceNotFoundException;
 import com.chien.fitnesstracker.model.Exercise;
-import com.chien.fitnesstracker.model.enums.exerciseType;
+import com.chien.fitnesstracker.model.User;
+import com.chien.fitnesstracker.model.enums.ExerciseType;
 import com.chien.fitnesstracker.service.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,33 +42,62 @@ public class ExerciseControllerTest {
     @MockitoBean
     private ExerciseService exerciseService;
 
-
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockitoBean 
+    private UserService userService;
 
     private Exercise testExercise;
 
 
-    @BeforeEach
-    void setUp() {
-        testExercise = new Exercise();
-        testExercise.setId(1L);
-        testExercise.setName("Push Up");
-        testExercise.setExerciseType(exerciseType.WEIGHTLIFTING);
-        testExercise.setUser(null); // Assuming user is not needed for this test
+
+    private Exercise createSampleExercise() {
+        Exercise exercise = new Exercise();
+        exercise.setName("Test Exercise");
+        exercise.setExerciseType(ExerciseType.CARDIO);
+        exercise.setMet(8.0);
+        User user = new User();
+        user.setId(1L);
+        exercise.setUser(user);   
+        exercise.setId(1L); // Set an ID for the exercise
+        return exercise;
+    }
+
+    private ExerciseRequestDto createSampleExerciseRequest() {
+        return new ExerciseRequestDto(
+                1L, // userId
+                "Test Exercise",
+                ExerciseType.CARDIO,
+                8.0
+        );
+    }
+
+    private ExerciseResponseDto createSampleExerciseResponse(Exercise exercise) {
+        return new ExerciseResponseDto(
+                exercise.getId(),
+                exercise.getUser().getId(),
+                exercise.getName(),
+                exercise.getExerciseType(),
+                exercise.getMet()
+        );
     }
 
 
     @Test
     @DisplayName("GET /api/exercises/{id} should return 200 when exercise exists") 
     void getExercise_existingId_returns200OkAndExercise() throws Exception {
-        when(exerciseService.getExercise(1L)).thenReturn(testExercise);
+        testExercise = createSampleExercise();
+        ExerciseResponseDto testExerciseResponse = createSampleExerciseResponse(testExercise);
+        when(exerciseService.getExercise(1L)).thenReturn(testExerciseResponse);
 
         mockMvc.perform(get("/api/exercises/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.name").value("Push Up"))
-                .andExpect(jsonPath("$.exerciseType").value("WEIGHTLIFTING"));
+                .andExpect(jsonPath("$.userId").value(1))
+                .andExpect(jsonPath("$.name").value("Test Exercise"))
+                .andExpect(jsonPath("$.met").value(8.0))
+                .andExpect(jsonPath("$.exerciseType").value("CARDIO"));
     }   
 
     @Test
@@ -82,15 +113,19 @@ public class ExerciseControllerTest {
     @Test
     @DisplayName("POST /api/exercises should return 201 when creation is successful") 
     void createExercise_validPayload_returns201CreatedAndExercise() throws Exception {
-        when(exerciseService.addExercise(any(Exercise.class))).thenReturn(testExercise);
+        testExercise = createSampleExercise();
+        ExerciseResponseDto testExerciseResponse = createSampleExerciseResponse(testExercise);
+        ExerciseRequestDto testExerciseRequest = createSampleExerciseRequest();
+        when(exerciseService.addExercise(any(ExerciseRequestDto.class))).thenReturn(testExerciseResponse);
 
         mockMvc.perform(post("/api/exercises")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testExercise)))
+                .content(objectMapper.writeValueAsString(testExerciseRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.name").value("Push Up"))
-                .andExpect(jsonPath("$.exerciseType").value("WEIGHTLIFTING"));
+                .andExpect(jsonPath("$.userId").value(1))
+                .andExpect(jsonPath("$.name").value("Test Exercise"))
+                .andExpect(jsonPath("$.exerciseType").value("CARDIO"));
     }
 
     @Test
@@ -112,14 +147,19 @@ public class ExerciseControllerTest {
         Exercise updatedExercise = new Exercise();
         updatedExercise.setId(1L);
         updatedExercise.setName("Updated Push Up");
-        updatedExercise.setExerciseType(exerciseType.WEIGHTLIFTING);
-
-        when(exerciseService.updateExercise(eq(1L), any(Exercise.class))).thenReturn(updatedExercise);
+        updatedExercise.setUser(new User());
+        updatedExercise.getUser().setId(1L);
+        updatedExercise.setExerciseType(ExerciseType.WEIGHTLIFTING);
+        ExerciseResponseDto updatedExerciseResponse = createSampleExerciseResponse(updatedExercise);
+        when(exerciseService.updateExercise(eq(1L), any(ExerciseRequestDto.class))).thenReturn(updatedExerciseResponse);
+    
         
         mockMvc.perform(put("/api/exercises/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updatedExercise)))
+                .content(objectMapper.writeValueAsString(createSampleExerciseRequest())))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.userId").value(1))
                 .andExpect(jsonPath("$.name").value("Updated Push Up"))
                 .andExpect(jsonPath("$.exerciseType").value("WEIGHTLIFTING"));
     }
@@ -127,16 +167,16 @@ public class ExerciseControllerTest {
     @Test
     @DisplayName("PUT /api/exercises/{id} should return 404 when exercise does not exist")
     void updateExercise_nonExistingId_returns404NotFound() throws Exception {
-        when(exerciseService.updateExercise(eq(1L), any(Exercise.class))).thenThrow(new ResourceNotFoundException("Exercise not found for id: 1"));
+        when(exerciseService.updateExercise(eq(1L), any(ExerciseRequestDto.class))).thenThrow(new ResourceNotFoundException("Exercise not found for id: 1"));
 
         Exercise updatedExercise = new Exercise();
         updatedExercise.setId(1L);
         updatedExercise.setName("Updated Push Up");
-        updatedExercise.setExerciseType(exerciseType.WEIGHTLIFTING);
+        updatedExercise.setExerciseType(ExerciseType.WEIGHTLIFTING);
 
         mockMvc.perform(put("/api/exercises/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updatedExercise)))
+                .content(objectMapper.writeValueAsString(createSampleExerciseRequest())))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Exercise not found for id: 1"));
     }

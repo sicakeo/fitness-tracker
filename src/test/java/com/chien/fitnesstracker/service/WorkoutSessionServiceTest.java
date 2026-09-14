@@ -1,10 +1,11 @@
 package com.chien.fitnesstracker.service;
 
+import com.chien.fitnesstracker.dto.WorkoutSession.WorkoutSessionRequestDto;
+import com.chien.fitnesstracker.dto.WorkoutSession.WorkoutSessionResponseDto;
 import com.chien.fitnesstracker.model.WorkoutSession;
+import com.chien.fitnesstracker.repository.UserRepository;
 import com.chien.fitnesstracker.repository.WorkoutSessionRepository;
 import com.chien.fitnesstracker.service.impl.WorkoutSessionServiceImpl;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,29 +26,67 @@ public class WorkoutSessionServiceTest {
     @Mock
     private WorkoutSessionRepository workoutSessionRepository; // Simulated DB dependency
 
+    @Mock
+    private UserRepository userRepository; // Simulated DB dependency
+
     @InjectMocks
     private WorkoutSessionServiceImpl workoutService; // Injects the mock repo into your real service
 
     private WorkoutSession testWorkoutSession;
 
-    @BeforeEach
-    void setUp() {
-        testWorkoutSession = new WorkoutSession();
-        testWorkoutSession.setTitle("Test workout session");
-        testWorkoutSession.setDate(java.time.LocalDate.now());
+
+    private WorkoutSession createSampleWorkoutSession() {
+        WorkoutSession workoutSession = new WorkoutSession();
+        workoutSession.setTotalDurationMinutes(60);
+        workoutSession.setTotalCaloriesBurned(500.0);
+        workoutSession.setTitle("Test workout session");
+        workoutSession.setDate(java.time.LocalDate.now());
+        return workoutSession;
+    }
+
+
+    private WorkoutSessionRequestDto createSampleWorkoutSessionRequest() {
+        return new WorkoutSessionRequestDto(
+                1L, // userId
+                "Test workout session",
+                java.time.LocalDate.now(),
+                60, // totalDurationMinutes
+                500.0, // totalCaloriesBurned
+                List.of() // entries
+        );
+    }
+
+    private WorkoutSessionResponseDto createSampleWorkoutSessionResponse(WorkoutSession workoutSession) {
+        return new WorkoutSessionResponseDto(
+                workoutSession.getId(),
+                workoutSession.getUser().getId(),
+                workoutSession.getTitle(),
+                workoutSession.getDate(),
+                workoutSession.getTotalDurationMinutes(),
+                workoutSession.getTotalCaloriesBurned(),
+                List.of() // entries
+        );
     }
 
     @DisplayName("Should save a session when saveSession is called")
     @Test
     void shouldSaveASessionWhenSaveSessionIsCalled() {
-        // GIVEN: The repository return a workout
-        when(workoutSessionRepository.save(testWorkoutSession)).thenReturn(testWorkoutSession);
+
+        // GIVEN: A sample workout session and request
+        testWorkoutSession = createSampleWorkoutSession();
+        testWorkoutSession.setUser(new com.chien.fitnesstracker.model.User()); // Set a user for the session
+        WorkoutSessionResponseDto testWorkoutSessionExpected = createSampleWorkoutSessionResponse(testWorkoutSession);
+        WorkoutSessionRequestDto testWorkoutSessionRequest = createSampleWorkoutSessionRequest();
+
+        // GIVEN: The repository return a workout when saving
+        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(new com.chien.fitnesstracker.model.User()));
+        when(workoutSessionRepository.save(any(WorkoutSession.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         //THEN: Calling saveWorkout
-        WorkoutSession result = workoutService.saveSession(testWorkoutSession);
+        WorkoutSessionResponseDto result = workoutService.saveSession(testWorkoutSessionRequest);
 
         //THEN: The returned workout should be the same as testWorkout
-        assertEquals(testWorkoutSession, result);
+        assertEquals(testWorkoutSessionExpected, result);
 
         //VERIFY: : Ensure workoutRepository.save() was called with the correct workout
         verify(workoutSessionRepository).save(testWorkoutSession);
@@ -69,6 +108,7 @@ public class WorkoutSessionServiceTest {
     @DisplayName("Should update session when updateSession is called with existing id")
     @Test
     void shouldUpdateSessionWhenUpdateSessionIsCalledWithExistingId() {
+        testWorkoutSession = createSampleWorkoutSession();
         // GIVEN: The repository returns a session for the given id
         when(workoutSessionRepository.findById(1L)).thenReturn(java.util.Optional.of(testWorkoutSession));
 
@@ -76,19 +116,25 @@ public class WorkoutSessionServiceTest {
         when(workoutSessionRepository.save(any(WorkoutSession.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // WHEN: Calling updateSession
-       WorkoutSession updatedSession = new WorkoutSession();
-       updatedSession.setId(1L); // Ensure the ID matches the existing workout
-       updatedSession.setTitle("Updated workout session");
-       updatedSession.setDate(java.time.LocalDate.now());
-       WorkoutSession result = workoutService.updateSession(1L, updatedSession);
+       WorkoutSessionRequestDto updatedSessionRequest = createSampleWorkoutSessionRequest();
+       updatedSessionRequest = new WorkoutSessionRequestDto(
+                updatedSessionRequest.userId(),
+                "Updated Title",
+                updatedSessionRequest.date(),
+                updatedSessionRequest.totalDurationMinutes(),
+                updatedSessionRequest.totalCaloriesBurned(),
+                updatedSessionRequest.entries()
+        );
+       WorkoutSessionResponseDto result = workoutService.updateSession(1L, updatedSessionRequest);
 
-       // THEN: The returned workout should have the updated intensity
-       assertEquals(updatedSession.getTitle(), result.getTitle());
+        // THEN: The returned session should have the updated title
+        assertEquals(updatedSessionRequest.title(), result.title());
 
         // VERIFY: Ensure workoutSessionRepository.save() was called with the updated session
         verify(workoutSessionRepository, times(1)).save(any(WorkoutSession.class));
         verify(workoutSessionRepository, times(1)).findById(1L);
-    }
+    }       
+
 
     @DisplayName("Should return the sum of calories burned today for a user when getCaloriesToday is called")
     @Test
@@ -97,6 +143,8 @@ public class WorkoutSessionServiceTest {
         Long userId = 1L;
         java.time.LocalDate date = java.time.LocalDate.now();
         Double expectedCalories = 500.0;
+
+        //GIVEN: The repository returns the expected sum of calories
         when(workoutSessionRepository.sumByCaloriesByUserIdAndDate(userId, date)).thenReturn(expectedCalories);
 
         // WHEN: Calling getCaloriesToday
@@ -110,12 +158,17 @@ public class WorkoutSessionServiceTest {
     @Test
     void shouldReturnListOfSessionsForUserWhenGetSessionsByUserIdIsCalled() {
         // GIVEN: The repository returns a list of workouts for the given user
+        testWorkoutSession = createSampleWorkoutSession();
+        testWorkoutSession.setUser(new com.chien.fitnesstracker.model.User()); // Set a user for the session
         Long userId = 1L;
-        List<WorkoutSession> mockWorkoutSessions = List.of(testWorkoutSession);
-        when(workoutSessionRepository.findSessionsByUserIdOrderByDateDesc(userId)).thenReturn(mockWorkoutSessions);
+        WorkoutSessionResponseDto testWorkoutSession = createSampleWorkoutSessionResponse(this.testWorkoutSession);
+        List<WorkoutSessionResponseDto> mockWorkoutSessions = List.of(testWorkoutSession);
+
+        //GIVEN: The repository returns the expected list of workouts
+        when(workoutSessionRepository.findSessionsByUserIdOrderByDateDesc(userId)).thenReturn(List.of(this.testWorkoutSession));
 
         // WHEN: Calling getSessionsByUserId
-        List<WorkoutSession> result = workoutService.getSessionsByUserId(userId);
+        List<WorkoutSessionResponseDto> result = workoutService.getSessionsByUserId(userId);
 
         // THEN: The returned list should contain the expected workouts
         assertEquals(mockWorkoutSessions, result);

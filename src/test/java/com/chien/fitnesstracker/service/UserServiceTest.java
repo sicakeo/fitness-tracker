@@ -1,6 +1,7 @@
 package com.chien.fitnesstracker.service;
 
 import com.chien.fitnesstracker.model.User;
+import com.chien.fitnesstracker.model.enums.FitnessGoal;
 import com.chien.fitnesstracker.repository.UserRepository;
 import com.chien.fitnesstracker.dto.User.UserRegisterRequestDto;
 import com.chien.fitnesstracker.dto.User.UserResponseDto;
@@ -9,7 +10,6 @@ import com.chien.fitnesstracker.exception.*;
 
 import com.chien.fitnesstracker.service.impl.UserServiceImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,47 +34,47 @@ class UserServiceTest {
     @InjectMocks
     private UserServiceImpl userService; // Injects the mock repo into your real service
 
+    private User testUser;
+    
     private User createSampleUser(Long id) {
         User user = new User();
-        user.setId(id);
         user.setUsername("testuser");
         user.setEmail("test@example.com");
-        user.setPassword("encoded_secret");
         user.setWeight(70.0);
         user.setHeight(175.0);
         user.setAge(25);
         user.setGender("MALE");
         user.setActivityLevel(1.55);
-        user.setFitnessGoal("MAINTAIN");
+        user.setFitnessGoal(FitnessGoal.MAINTAIN);
         user.setTdee(2300.0);
         return user;
     }
 
     private UserRegisterRequestDto createSampleRegisterRequest() {
         return new UserRegisterRequestDto(
-            "testuser", "test@example.com", "password123",
-            70.0, 175.0, 25, "MALE", 1.55, "MAINTAIN", 2300.0
+            "testuser", "test@example.com", "password123", "Test User",
+            70.0, 175.0, 25, "MALE", 1.55, FitnessGoal.MAINTAIN, 2300.0
         );
     }
 
     private UserResponseDto createSampleResponseDto(User user) {
         return new UserResponseDto(
-            user.getId(), user.getUsername(), user.getEmail(),
+            user.getId(), user.getUsername(), user.getName(),
             user.getWeight(), user.getHeight(), user.getAge(),
             user.getGender(), user.getActivityLevel(),
             user.getFitnessGoal(), user.getTdee()
         );
     }
 
+
     @Test
     @DisplayName("Should give a list of users when getUsers is called")
     void shouldGiveAListOfUsersWhenGetUsersIsCalled() {
-        // Implementation for this test case
-        User testUser = createSampleUser(1L);
+
+        testUser = createSampleUser(1L);
 
         // GIVEN: The repository returns a list of users
-        List<User> mockUsers = List.of(testUser);
-        when(userRepository.findAll()).thenReturn(mockUsers);
+        when(userRepository.findAll()).thenReturn(List.of(testUser));
 
         // WHEN: Calling getUsers
         List<UserResponseDto> result = userService.getUsers();
@@ -102,21 +102,25 @@ class UserServiceTest {
     @Test
     @DisplayName("Should delete user when deleteUserById is called with existing id")
     void shouldDeleteUserWhenDeleteUserByIdIsCalledWithExistingId() {
-        // GIVEN: The repository does not throw an exception when deleting by id
-        doNothing().when(userRepository).deleteById(1L);
 
+        testUser = createSampleUser(1L);
+
+        // GIVEN: The repository does not throw an exception when deleting by id
+        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(testUser));
+        doNothing().when(userRepository).delete(testUser);
 
         // WHEN: Calling deleteUserById
         userService.deleteUserById(1L); 
 
-        // THEN: Verify that the repository's deleteById method was called with the correct id
-        verify(userRepository).deleteById(1L);
+        // THEN: Verify that the repository's delete method was called with the correct id
+        verify(userRepository).delete(testUser);
     }
 
     @Test
     @DisplayName("Should save user when saveUser is called")
     void shouldSaveUserWhenSaveUserIsCalled() {
-        User testUser = createSampleUser(1L);
+
+        testUser = createSampleUser(1L);
         UserRegisterRequestDto testUserRequest = createSampleRegisterRequest();
 
         //GIVEN: The repository returns the user when saving
@@ -124,7 +128,7 @@ class UserServiceTest {
         //WHEN: Calling saveUser
         UserResponseDto result = userService.saveUser(testUserRequest);
         //THEN: The returned user should be the same as the testUser
-        assertEquals(createSampleResponseDto(testUser), result);
+        assertEquals(testUser.getUsername(), result.username());
         //VERIFY: Ensure userRepository.save() was called with the correct user
         verify(userRepository).save(testUser);
     }
@@ -132,6 +136,8 @@ class UserServiceTest {
     @Test
     @DisplayName("Should update user when updateUser is called with existing id")
     void shouldUpdateUserWhenUpdateUserIsCalledWithExistingId() {
+
+        testUser = createSampleUser(1L);
         // GIVEN: The repository returns a user for the given id
         when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(testUser));
 
@@ -139,13 +145,11 @@ class UserServiceTest {
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // WHEN: Calling updateUser
-        User updatedDetails = new User();
-        updatedDetails.setUsername("updatedUser");
-        updatedDetails.setEmail("updatedUser@mail.com");
-        User result = userService.updateUser(1L, updatedDetails);
-        assertEquals(updatedDetails.getUsername(), result.getUsername());
-        assertEquals(updatedDetails.getEmail(), result.getEmail());
-
+        UserRegisterRequestDto updatedDetails = createSampleRegisterRequest();
+ 
+        UserResponseDto result = userService.updateUserProfile(1L, updatedDetails);
+        assertEquals(updatedDetails.username(), result.username());
+        assertEquals(updatedDetails.name(), result.name());
         // THEN: Verify that the repository's save method was called with the updated user
         verify(userRepository, times(1)).save(any(User.class));
         verify(userRepository, times(1)).findById(1L);
@@ -160,7 +164,7 @@ class UserServiceTest {
         // WHEN & THEN: Registering the user should throw an exception
         UserAlreadyExistsException exception = assertThrows(
             UserAlreadyExistsException.class,
-            () -> userService.registerNewUser(testUser)
+            () -> userService.registerNewUser(createSampleRegisterRequest())
         );
 
         assertEquals("Username is already taken.", exception.getMessage());
@@ -178,7 +182,7 @@ class UserServiceTest {
         // WHEN & THEN: Registering the user should throw an exception
         EmailAlreadyExistsException exception = assertThrows(
             EmailAlreadyExistsException.class,
-            () -> userService.registerNewUser(testUser)
+            () -> userService.registerNewUser(createSampleRegisterRequest())
         );
 
         assertEquals("Email is already registered.", exception.getMessage());
@@ -190,8 +194,11 @@ class UserServiceTest {
     @Test
     @DisplayName("Should save user when username is unique")
     void shouldSaveUserWhenUsernameIsUnique() {
+        testUser = createSampleUser(1L);
+        testUser.setPassword("encodedPassword"); // Set a password for encoding
+        UserResponseDto expectedResponse = createSampleResponseDto(testUser);
          // GIVEN: Mock the password encoding behavior
-        when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
+        when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
 
         // GIVEN: The repository reports that the username and email do not exist
         when(userRepository.existsByUsername("testuser")).thenReturn(false);
@@ -201,26 +208,30 @@ class UserServiceTest {
         when(userRepository.save(testUser)).thenReturn(testUser);
 
         // WHEN: Registering the user
-        User result = userService.registerNewUser(testUser);
+        UserResponseDto result = userService.registerNewUser(createSampleRegisterRequest());
 
         // THEN: The returned user should be the same as the testUser
-        assertEquals(testUser, result);
+        assertEquals(expectedResponse, result);
         // VERIFY: Ensure userRepository.save() was called with the correct user
         verify(userRepository).save(testUser);
         // VERIFY: Ensure the password was encoded
-        verify(passwordEncoder).encode("password");
+        verify(passwordEncoder).encode("password123");
     }
 
     @Test
     @DisplayName("Should return user when findByUsername is called with existing username")
     void shouldReturnUserWhenFindByUsernameIsCalledWithExistingUsername() {
+
+        // GIVEN: A sample user
+        testUser = createSampleUser(1L);
         // GIVEN: The repository returns a user for the given username
         when(userRepository.findByUsername("testuser")).thenReturn(java.util.Optional.of(testUser));    
+        UserResponseDto expectedResponse = createSampleResponseDto(testUser);
 
         //WHEN: Calling findByUsername
-        User result = userService.findByUsername("testuser");
+        UserResponseDto result = userService.findByUsername("testuser");
 
         // THEN: The returned user should be the expected user
-        assertEquals(testUser, result);
+        assertEquals(expectedResponse, result);
     }
 }

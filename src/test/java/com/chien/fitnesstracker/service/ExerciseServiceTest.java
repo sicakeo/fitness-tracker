@@ -1,12 +1,14 @@
 package com.chien.fitnesstracker.service;
 
+import com.chien.fitnesstracker.dto.Exercise.ExerciseRequestDto;
+import com.chien.fitnesstracker.dto.Exercise.ExerciseResponseDto;
 import com.chien.fitnesstracker.model.Exercise;
-import com.chien.fitnesstracker.model.enums.exerciseType;
+import com.chien.fitnesstracker.model.enums.ExerciseType;
 import com.chien.fitnesstracker.model.User;
 import com.chien.fitnesstracker.repository.ExerciseRepository;
+import com.chien.fitnesstracker.repository.UserRepository;
 import com.chien.fitnesstracker.service.impl.ExerciseServiceImpl;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,20 +28,42 @@ public class ExerciseServiceTest {
     @Mock
     private ExerciseRepository exerciseRepository; // Simulated DB dependency
 
+    @Mock 
+    private UserRepository userRepository; // Simulated DB dependency
+
     @InjectMocks
     private ExerciseServiceImpl exerciseService; // Injects the mock repo into your real service
 
     private Exercise testExercise;
 
-    @BeforeEach
-    void setUp() {
-        testExercise = new Exercise();
-        User testUser = new User();
-        testUser.setUsername("testuser");
-        testUser.setEmail("test@example.com");
-        testExercise.setName("Push-up");
-        testExercise.setExerciseType(exerciseType.RUNNING);
-        testExercise.setUser(testUser);
+    
+
+    private Exercise createSampleExercise() {
+        Exercise exercise = new Exercise();
+        exercise.setName("Test Exercise");
+        exercise.setExerciseType(ExerciseType.CARDIO);
+        exercise.setMet(8.0);
+        exercise.setUser(new User());   
+        return exercise;
+    }
+
+    private ExerciseRequestDto createSampleExerciseRequest() {
+        return new ExerciseRequestDto(
+                1L, // userId
+                "Test Exercise",
+                ExerciseType.CARDIO,
+                8.0
+        );
+    }
+
+    private ExerciseResponseDto createSampleExerciseResponse(Exercise exercise) {
+        return new ExerciseResponseDto(
+                exercise.getId(),
+                exercise.getUser().getId(),
+                exercise.getName(),
+                exercise.getExerciseType(),
+                exercise.getMet()
+        );
     }
 
     @Test
@@ -58,14 +82,18 @@ public class ExerciseServiceTest {
     @Test
     @DisplayName("Should save Exercise when addExercise is called")
     void shouldSaveExerciseWhenSaveExerciseIsCalled() {
-        //GIVEN: The repository returns exercise when saving
-        when(exerciseRepository.save(testExercise)).thenReturn(testExercise);
 
+        testExercise = createSampleExercise();
+
+        ExerciseRequestDto testExerciseRequest = createSampleExerciseRequest();
+        //GIVEN: The repository returns exercise when saving
+        when(userRepository.findById(1L)).thenReturn(Optional.of(new User())); // Mock user retrieval
+        when(exerciseRepository.save(testExercise)).thenReturn(testExercise);
         //WHEN: Calling addExercise
-        Exercise result = exerciseService.addExercise(testExercise);
+        ExerciseResponseDto result = exerciseService.addExercise(testExerciseRequest);
 
         //THEN: The returned exercise should be the same as test exercise
-        assertEquals(testExercise, result);
+        assertEquals(createSampleExerciseResponse(testExercise), result);
 
         //VERIFY: Ensure exerciseRepository.save() was called with the correct Exercise
         verify(exerciseRepository).save(testExercise);
@@ -87,6 +115,8 @@ public class ExerciseServiceTest {
     @Test
     @DisplayName("Should update Exercise when updateExercise is called with existing id")
     void shouldUpdateExerciseWhenUpdateExerciseIsCalledWithExistingId() {
+
+        testExercise = createSampleExercise();
         // GIVEN: The repository returns the original exercise
         when(exerciseRepository.findById(1L)).thenReturn(Optional.of(testExercise));
 
@@ -94,21 +124,23 @@ public class ExerciseServiceTest {
         when(exerciseRepository.save(any(Exercise.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // WHEN: Preparing update details and calling service
-        Exercise updatedDetails = new Exercise();
-        updatedDetails.setName("Updated Name");
-        updatedDetails.setExerciseType(exerciseType.WEIGHTLIFTING);
-        updatedDetails.setMet(5.0);
-
-        Exercise result = exerciseService.updateExercise(1L, updatedDetails);
+        ExerciseRequestDto testExerciseRequest = createSampleExerciseRequest();
+        testExerciseRequest = new ExerciseRequestDto(
+                testExerciseRequest.userId(),
+                "Updated Name",
+                ExerciseType.WEIGHTLIFTING,
+                5.0
+        );
+        ExerciseResponseDto result = exerciseService.updateExercise(1L, testExerciseRequest);
 
         // THEN: Verify that the result actually reflects the NEW values
         assertNotNull(result);
-        assertEquals("Updated Name", result.getName());
-        assertEquals(exerciseType.WEIGHTLIFTING, result.getExerciseType());
-        assertEquals(5.0, result.getMet());
+        assertEquals("Updated Name", result.name());
+        assertEquals(ExerciseType.WEIGHTLIFTING, result.exerciseType());
+        assertEquals(5.0, result.met());
 
         // VERIFY: Ensure findById and save were executed
-        verify(exerciseRepository, times(1)).findById(1L);
+        verify(exerciseRepository, times(1)).findById(1L); 
         verify(exerciseRepository, times(1)).save(testExercise);
     }
 }
