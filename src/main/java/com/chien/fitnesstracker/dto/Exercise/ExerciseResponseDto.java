@@ -1,11 +1,11 @@
 package com.chien.fitnesstracker.dto.Exercise;
 
-import com.chien.fitnesstracker.model.enums.exerciseType;
+import com.chien.fitnesstracker.model.enums.ExerciseType;
 
 public record ExerciseResponseDto (
     Long id,
     Long userId,
     String name,
-    exerciseType exerciseType,
+    ExerciseType exerciseType,
     Double met
 ) {}

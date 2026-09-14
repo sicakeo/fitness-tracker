@@ -1,7 +1,7 @@
 package com.chien.fitnesstracker.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import com.chien.fitnesstracker.model.enums.FitnessGoal;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -26,6 +26,7 @@ public class User {
 
     @Size(min = 8, message = "Password has at least 8 characters.")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @NotNull(message = "Password is required")
     private String password;
 
     @Column(name = "height")
@@ -41,7 +42,7 @@ public class User {
     private String gender;
 
     @Column(name = "fitness_goal")
-    private String fitnessGoal; 
+    private FitnessGoal fitnessGoal; 
 
     @Column(name = "tdee")
     private Double tdee;
@@ -50,7 +51,7 @@ public class User {
     @Min(value = 0, message = "Age must be a positive number.")
     private Integer age;
 
-    @NotNull(message = "Email is required")
+    @NotNull (message = "Email is required")
     @Column(name = "email")
     private String email;
 

@@ -1,5 +1,6 @@
 package com.chien.fitnesstracker.dto.User;
 
+import com.chien.fitnesstracker.model.enums.FitnessGoal;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,6 +16,9 @@ public record UserRegisterRequestDto (
 
     @NotBlank(message = "Password is required")
     String password,
+
+    @NotBlank (message = "Name is required")
+    String name,
 
     @NotNull(message = "Weight is required")
     @Positive(message = "Weight must be positive")
@@ -35,7 +39,7 @@ public record UserRegisterRequestDto (
     Double activityLevel,
     
     @NotNull(message = "Fitness goal is required")
-    String fitnessGoal,
+    FitnessGoal fitnessGoal,
 
     @NotNull(message = "TDEE is required")
     Double tdee

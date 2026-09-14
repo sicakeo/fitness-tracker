@@ -1,10 +1,13 @@
 package com.chien.fitnesstracker.model.enums;
 
-public enum exerciseType {
+public enum ExerciseType {
     RUNNING,
     CYCLING,
     SWIMMING,
     WEIGHTLIFTING,
     YOGA,
-    HIIT
+    HIIT,
+    CARDIO,
+    PILATES,
+    OTHER
 }

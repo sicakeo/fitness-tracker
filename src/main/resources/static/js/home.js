@@ -3,8 +3,7 @@
 import { checkAuth, logout } from "./auth.js";
 import { 
     getMetValue, 
-    getTargetCaloriesBurned, 
-    calculateCaloriesBurned,
+    getTargetCaloriesInput, 
     calculateCardioIntensity,
 } from "./fitnessMath.js";
 
@@ -234,14 +233,14 @@ async function submitFoodEntry(event) {
         const fatValue = elFat ? parseFloat(elFat.value) || 0 : 0;
 
         const foodEntryPayLoad = {
-            userId: userId ,
-            mealType: elMealType ? elMealType.value.toUpperCase() : "BREAKFAST",
+            userId: userId, 
             name: elFoodName ? elFoodName.value.trim() : "Unknown Meal",
             calories: caloriesValue,
             protein: proteinValue,
             carbs: carbValue,
             fat: fatValue,   
-            date: todayStr
+            date: todayStr,
+            mealType: elMealType ? elMealType.value.toUpperCase() : "BREAKFAST",
         };
 
         const response = await fetch(FOOD_API_URL, {
@@ -376,7 +375,7 @@ async function loadTodayCaloriesRing() {
     const todayStr = new Date().toISOString().split('T')[0];
 
     try {
-        const userCaloriesInput = userObj.fitnessGoal ? Math.round(userObj.tdee - getTargetCaloriesBurned(userObj.fitnessGoal)) : 2000;
+        const userCaloriesInput = userObj.fitnessGoal ? Math.round(userObj.tdee + getTargetCaloriesInput(userObj.fitnessGoal)) : 2000;
         const targetDisplay = document.getElementById("targetCaloriesDisplay");
         if (targetDisplay) {
             targetDisplay.textContent = userCaloriesInput;

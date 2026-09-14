@@ -28,8 +28,8 @@ public class UserController{
     }
 
    @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @RequestBody UserRegisterRequestDto incomingData) {
-        UserResponseDto existingUser = userService.updateUser(id, incomingData);
+    public ResponseEntity<UserResponseDto> updateUserProfile(@PathVariable Long id, @RequestBody UserRegisterRequestDto incomingData) {
+        UserResponseDto existingUser = userService.updateUserProfile(id, incomingData);
         return ResponseEntity.ok(existingUser);
     }
 

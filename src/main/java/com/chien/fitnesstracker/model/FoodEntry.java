@@ -9,6 +9,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 import com.chien.fitnesstracker.model.enums.MealType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Data
@@ -24,6 +25,8 @@ public class FoodEntry {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false) // Added nullable=false to ensure every entry has an owner
+    @NotNull (message = "User is required")
+    @JsonBackReference
     private User user;
 
     @NotBlank(message = "Food name cannot be empty")
@@ -42,7 +45,6 @@ public class FoodEntry {
     private Double carbs;
 
     @NotNull(message = "Date is required")
-    @PastOrPresent(message = "Date cannot be in the future")
     private LocalDate date;
 
     @Enumerated(EnumType.STRING)

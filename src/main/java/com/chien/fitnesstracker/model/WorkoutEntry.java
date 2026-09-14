@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -21,11 +22,14 @@ public class WorkoutEntry {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "session_id", nullable = false)
+    @NotNull (message = "Workout session is required")
     @JsonBackReference
     private WorkoutSession workoutSession;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "exercise_id", nullable = false)
+    @NotNull (message = "Exercise is required")
+    @JsonBackReference
     private Exercise exercise;
 
     @Column(name = "nums_sets")

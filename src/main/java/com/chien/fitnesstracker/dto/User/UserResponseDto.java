@@ -1,14 +1,16 @@
 package com.chien.fitnesstracker.dto.User;
 
+import com.chien.fitnesstracker.model.enums.FitnessGoal;
+
 public record UserResponseDto(
     Long id,
     String username,
-    String email,
+    String name,
     Double weight,
     Double height,
     Integer age,
     String gender,
     Double activityLevel,
-    String fitnessGoal,
+    FitnessGoal fitnessGoal,
     Double tdee
 ) {}

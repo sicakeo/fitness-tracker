@@ -11,11 +11,11 @@ export const MET_MATRIX = {
 };
 
 export const TARGET_BURN_MATRIX = {
-    "MILD_LOSS": 300,
-    "WEIGHT_LOSS": 500,
-    "MAINTAIN": 400,
-    "WEIGHT_GAIN": 200,
-    "HEAVY_GAIN": 150
+    "MILD_LOSS": -300,
+    "WEIGHT_LOSS": -500,
+    "MAINTAIN": 0,
+    "WEIGHT_GAIN": 400,
+    "HEAVY_GAIN": 600
 };
 
 // ==========================================
@@ -34,9 +34,9 @@ export function getMetValue(workoutType, intensity) {
 }
 
 /**
- * Looks up the targeted calorie burn offset based on user fitness goal
+ * Looks up the targeted calorie input based on user fitness goal
  */
-export function getTargetCaloriesBurned(goal) {
+export function getTargetCaloriesInput(goal) {
     if (!goal || !TARGET_BURN_MATRIX[goal.trim()]) {
         console.warn(`Target Burned Calories not found for Goal: ${goal}`);
         return 0;

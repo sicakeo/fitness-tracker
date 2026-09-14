@@ -1,6 +1,7 @@
 package com.chien.fitnesstracker.model;
 
-import com.chien.fitnesstracker.model.enums.exerciseType;
+import com.chien.fitnesstracker.model.enums.ExerciseType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -28,12 +29,14 @@ public class Exercise {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore(value = true) // Prevent serialization of the user field
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @NotNull (message = "User is required")
+    @JsonBackReference
     private User user;
 
     @Column(name = "exercise_type")
     @NotNull(message = "Exercise type is required")
     @Enumerated(EnumType.STRING)
-    private exerciseType exerciseType;
+    private ExerciseType exerciseType;
 
     @Column(name = "met_value")
     private Double met;

@@ -1,6 +1,6 @@
 package com.chien.fitnesstracker.dto.Exercise;
 
-import com.chien.fitnesstracker.model.enums.exerciseType;
+import com.chien.fitnesstracker.model.enums.ExerciseType;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +14,7 @@ public record ExerciseRequestDto(
     String name,
 
     @NotNull(message = "Exercise type is required")
-    exerciseType exerciseType,
+    ExerciseType exerciseType,
     
     @NotNull(message = "MET value is required")
     @Positive(message = "MET value must be positive")

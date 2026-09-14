@@ -58,12 +58,12 @@ function hydrateFieldsFromSession() {
         setInputValues({
             name: user.name || "",
             age: user.age || "",
-            gender: (user.gender === 'M' ? 'Male' : 'Female') || "",
-            height: heightCms > 0 ? heightCms.toFixed(1) : "",
-            weight: weightKgs > 0 ? weightKgs.toFixed(1) : "",
-            activityLevel: getReadableActivityLevelText(user.activityLevel || ""),
+            gender: (user.gender || "").toUpperCase(),
+            height: heightCms > 0 ? parseFloat(heightCms).toFixed(1) : "",
+            weight: weightKgs > 0 ? parseFloat(weightKgs).toFixed(1) : "",
+            activityLevel: user.activityLevel || "",
             tdee: user.tdee || "",
-            fitnessGoal: getReadableGoalText( user.fitnessGoal || "")
+            fitnessGoal: user.fitnessGoal || ""
         });
     }
 }
@@ -99,8 +99,9 @@ function setUpFormSubmission(){
         const height = parseFloat(document.getElementById("height").value).toFixed(2) || 0;
         const activityLevel = document.getElementById("activityLevel").value || "";
         const tdee = document.getElementById("tdee").value || 0;
+        const fitnessGoal = document.getElementById("fitnessGoal").value || "";
         
-        await syncUpdatedUserData(name, age, gender, weight, height, activityLevel, tdee);
+        await syncUpdatedUserData(name, age, gender, weight, height, activityLevel, tdee, fitnessGoal);
         setLabelText({
             displayName: `Name: ${name}`,
             displayAge: `Age: ${age} years`,
@@ -119,7 +120,7 @@ function setUpFormSubmission(){
 /**
  * Normalizes input scales to metric standards and updates data buffers across backend clusters
  */
-async function syncUpdatedUserData(name , age, gender, weight, height, activityLevel, tdee) {
+async function syncUpdatedUserData(name , age, gender, weight, height, activityLevel, tdee, fitnessGoal) {
     const userSession = sessionStorage.getItem("user");
     if (!userSession) return;
 
@@ -129,10 +130,12 @@ async function syncUpdatedUserData(name , age, gender, weight, height, activityL
         name: name,
         weight: weight,
         height: height,
+        gender: gender.toUpperCase(), // Keep consistency
         age: age,
         gender: gender.toUpperCase(), // Keep consistency with backend enum standards
-        activityLevel: activityLevel,
-        tdee: tdee
+        activityLevel: activityLevel.toUpperCase(), // Keep consistency with backend enum standards
+        tdee: tdee,
+        fitnessGoal: fitnessGoal.toUpperCase() // Keep consistency with backend enum standards
     };
 
     // Update local storage buffer immediately for snappy client navigation updates
