@@ -1,4 +1,4 @@
-import { checkAuth, logout } from "./auth.js";
+import { checkAuth, logout, fetchWithAuth } from "./auth.js";
 import { calculateBMR, calculateTDEE, getReadableActivityLevelText, getReadableGoalText } from "./fitnessMath.js";
 
 const USER_API_URL = "http://localhost:8080/api/users";
@@ -142,7 +142,7 @@ async function syncUpdatedUserData(name , age, gender, weight, height, activityL
     sessionStorage.setItem("user", JSON.stringify(updatedUser));
 
     try {
-        const response = await fetch(`${USER_API_URL}/${user.id}`, {
+        const response = await fetchWithAuth(`${USER_API_URL}/${user.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updatedUser)

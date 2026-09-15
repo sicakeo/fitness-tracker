@@ -1,4 +1,4 @@
-import { isLoggedIn, logout } from "./auth.js";
+import { isLoggedIn, fetchWithAuth } from "./auth.js";
 import { calculateBMI} from "./fitnessMath.js";
 
 const USER_API_URL = "http://localhost:8080/api/users";
@@ -168,9 +168,10 @@ async function syncUpdatedUserData(weight, height) {
 
     // Update local storage buffer immediately for snappy client navigation updates
     sessionStorage.setItem("user", JSON.stringify(updatedUser));
+    sessionStorage.setItem("jwt_token", JSON.stringify(responseData.token));
 
     try {
-        const response = await fetch(`${USER_API_URL}/${user.id}`, {
+        const response = await fetchWithAuth(`${USER_API_URL}/${user.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updatedUser)
@@ -186,7 +187,8 @@ async function syncUpdatedUserData(weight, height) {
         }
 
             const responseData = await response.json();
-            sessionStorage.setItem("user", JSON.stringify(responseData));
+            sessionStorage.setItem("user", JSON.stringify(responseData.user));
+
             alert("Metrics updated successfully!");
     } catch (error) {
         console.error("Network sync pipeline failure details:", error);

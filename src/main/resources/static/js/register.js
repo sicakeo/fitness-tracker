@@ -80,7 +80,9 @@ async function handleRegistration(event) {
 
         const responseData = await response.json();
         // Save the safe, password-free user metadata model into session space
-        sessionStorage.setItem("user", JSON.stringify(responseData));
+        sessionStorage.setItem("user", JSON.stringify(responseData.user));
+        sessionStorage.setItem("jwt_token", responseData.token);
+
         
         alert("Registration successful!");
         window.location.href = "/home";

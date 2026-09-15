@@ -1,5 +1,5 @@
 const LOGIN_API_URL = "/api/auth/login";
-
+    
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm"); 
     if (loginForm) {
@@ -39,7 +39,9 @@ async function login(event) {
         }
 
         const responseData = await response.json();
-        sessionStorage.setItem("user", JSON.stringify(responseData));
+
+        sessionStorage.setItem("user", JSON.stringify(responseData.user));
+        sessionStorage.setItem("jwt_token", responseData.token);
         
         alert("Login successful!");
         window.location.href = "/home";

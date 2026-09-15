@@ -1,6 +1,7 @@
 
 
-import { checkAuth, logout } from "./auth.js";
+import { checkAuth, fetchWithAuth } from "./auth.js";
+
 import { 
     getMetValue, 
     getTargetCaloriesInput, 
@@ -243,7 +244,7 @@ async function submitFoodEntry(event) {
             mealType: elMealType ? elMealType.value.toUpperCase() : "BREAKFAST",
         };
 
-        const response = await fetch(FOOD_API_URL, {
+        const response = await fetchWithAuth(FOOD_API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(foodEntryPayLoad)
@@ -303,7 +304,7 @@ async function submitWorkoutSession() {
                 met: entry.met
             };
 
-            const exResponse = await fetch(EXERCISE_API_URL, {
+            const exResponse = await fetchWithAuth(EXERCISE_API_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(exercisePayload)
@@ -338,7 +339,7 @@ async function submitWorkoutSession() {
             entries: savedEntries
         };
 
-        const sessionResponse = await fetch(WORKOUT_SESSION_API_URL, {
+        const sessionResponse = await fetchWithAuth(WORKOUT_SESSION_API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(sessionPayload)
@@ -383,8 +384,8 @@ async function loadTodayCaloriesRing() {
         }
 
         const [workoutResponse, foodResponse] = await Promise.all([
-            fetch(`${WORKOUT_SESSION_API_URL}/today-calories?userId=${userId}&date=${todayStr}`),
-            fetch(`${FOOD_API_URL}/today-calories?userId=${userId}&date=${todayStr}`)
+            fetchWithAuth(`${WORKOUT_SESSION_API_URL}/today-calories?userId=${userId}&date=${todayStr}`),
+            fetchWithAuth(`${FOOD_API_URL}/today-calories?userId=${userId}&date=${todayStr}`)
         ]);
 
         if (!workoutResponse.ok || !foodResponse.ok) throw new Error("Could not load current tracking metrics.");
@@ -465,8 +466,8 @@ async function loadTodayHistory() {
 
     try {
         const [sessionsResponse, foodResponse] = await Promise.all([
-            fetch(`${WORKOUT_SESSION_API_URL}/history?userId=${userId}`),
-            fetch(`${FOOD_API_URL}/history?userId=${userId}`)
+            fetchWithAuth(`${WORKOUT_SESSION_API_URL}/history?userId=${userId}`),
+            fetchWithAuth(`${FOOD_API_URL}/history?userId=${userId}`)
         ]);
 
         if (!sessionsResponse.ok || !foodResponse.ok) throw new Error("Could not synchronize activity log maps.");
