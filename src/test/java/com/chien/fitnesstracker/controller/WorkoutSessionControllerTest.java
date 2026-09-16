@@ -4,6 +4,7 @@ import com.chien.fitnesstracker.dto.WorkoutSession.WorkoutSessionRequestDto;
 import com.chien.fitnesstracker.dto.WorkoutSession.WorkoutSessionResponseDto;
 import com.chien.fitnesstracker.exception.ResourceNotFoundException;
 import com.chien.fitnesstracker.model.WorkoutSession;
+import com.chien.fitnesstracker.security.JwtService;
 import com.chien.fitnesstracker.service.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -39,6 +40,9 @@ public class WorkoutSessionControllerTest {
 
     @MockitoBean
     private WorkoutSessionService sessionService;
+
+    @MockitoBean 
+    private JwtService jwtService;
 
     @Autowired
     private ObjectMapper objectMapper;

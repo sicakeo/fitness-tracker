@@ -5,6 +5,7 @@ import com.chien.fitnesstracker.dto.User.UserResponseDto;
 import com.chien.fitnesstracker.exception.ResourceNotFoundException;
 import com.chien.fitnesstracker.model.User;
 import com.chien.fitnesstracker.model.enums.FitnessGoal;
+import com.chien.fitnesstracker.security.JwtService;
 import com.chien.fitnesstracker.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -37,6 +38,9 @@ public class UserControllerTest {
     @MockitoBean
     private UserService userService;
 
+    @MockitoBean 
+    private JwtService jwtService;
+    
     @Autowired
     private ObjectMapper objectMapper;
 

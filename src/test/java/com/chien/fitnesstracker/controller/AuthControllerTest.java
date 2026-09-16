@@ -2,6 +2,7 @@ package com.chien.fitnesstracker.controller;
 
 import com.chien.fitnesstracker.model.User;
 import com.chien.fitnesstracker.model.enums.FitnessGoal;
+import com.chien.fitnesstracker.security.JwtService;
 import com.chien.fitnesstracker.service.UserService;
 import com.chien.fitnesstracker.dto.User.LoginRequestDto;
 import com.chien.fitnesstracker.dto.User.UserRegisterRequestDto;
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,11 +34,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false) // Disable security filters for testing
 class AuthControllerTest {
 
+
+
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
     private UserService userService;
+
+    @MockitoBean 
+    private JwtService jwtService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -92,8 +99,11 @@ class AuthControllerTest {
         // Simulate the service throwing the duplicate username exception
         doThrow(new UserAlreadyExistsException("Username is already taken."))
                 .when(userService).registerNewUser(any(UserRegisterRequestDto.class));
+        
+        when(jwtService.generateToken(anyString())).thenReturn("null"); // Mock the JWT token generation to return a dummy token
 
         mockMvc.perform(post("/api/auth/register")
+                 // Add JWT token to the request
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(testUser)))
                 .andExpect(status().isConflict())
@@ -112,6 +122,7 @@ class AuthControllerTest {
         doThrow(new EmailAlreadyExistsException("Email is already taken."))
                 .when(userService).registerNewUser(any(UserRegisterRequestDto.class));
 
+        when(jwtService.generateToken(anyString())).thenReturn("null"); // Mock the JWT token generation to return a dummy token
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -130,13 +141,15 @@ class AuthControllerTest {
         // Simulate the service returning the registered user
         when(userService.registerNewUser(any(UserRegisterRequestDto.class))).thenReturn(testUserResponse);
 
+        when(jwtService.generateToken(anyString())).thenReturn("mocked-jwt-token"); // Mock the JWT token generation to return a dummy token
+
         mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testUserRegisterRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("testuser"))
-                .andExpect(jsonPath("$.name").value("Test User"));
-                
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(testUserRegisterRequest)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.user.username").value("testuser")) // <-- Note the $.user prefix
+            .andExpect(jsonPath("$.user.name").value("Test User"))
+            .andExpect(jsonPath("$.token").value("mocked-jwt-token"));  // <-- Verify the token
     }
 
     @Test
@@ -147,6 +160,8 @@ class AuthControllerTest {
         // Guarantee the exception is thrown on any login attempt
         doThrow(new BadCredentialsException("Invalid username."))
                 .when(userService).authenticateUser(any(LoginRequestDto.class));
+
+        when(jwtService.generateToken(anyString())).thenReturn("null"); // Mock the JWT token generation to return a dummy token
 
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -165,6 +180,8 @@ class AuthControllerTest {
 		doThrow(new BadCredentialsException("Invalid password."))
 				.when(userService).authenticateUser(any(LoginRequestDto.class));
 
+		when(jwtService.generateToken(anyString())).thenReturn("null"); // Mock the JWT token generation to return a dummy token
+
 		mockMvc.perform(post("/api/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(loginRequestDto)))
@@ -181,11 +198,14 @@ class AuthControllerTest {
         // Simulate the service returning the user for correct credentials
         when(userService.authenticateUser(any(LoginRequestDto.class))).thenReturn(new UserResponseDto(1L, "testuser", "Test User", 70.0, 175.0, 25, "Male", 1.2, null, null));
 
+        when(jwtService.generateToken(anyString())).thenReturn("mocked-jwt-token"); // Mock the JWT token generation to return a dummy token
         mockMvc.perform(post("/api/auth/login")
                 .with(csrf())  // Add CSRF token to the request
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequestDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("testuser"));
+                .andExpect(jsonPath("$.user.username").value("testuser"))
+                .andExpect(jsonPath("$.user.name").value("Test User"))
+                .andExpect(jsonPath("$.token").value("mocked-jwt-token"));  // Verify the token
     }
 }

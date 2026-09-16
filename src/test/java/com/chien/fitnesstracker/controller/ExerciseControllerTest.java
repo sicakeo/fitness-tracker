@@ -8,6 +8,7 @@ import com.chien.fitnesstracker.exception.ResourceNotFoundException;
 import com.chien.fitnesstracker.model.Exercise;
 import com.chien.fitnesstracker.model.User;
 import com.chien.fitnesstracker.model.enums.ExerciseType;
+import com.chien.fitnesstracker.security.JwtService;
 import com.chien.fitnesstracker.service.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,6 +42,9 @@ public class ExerciseControllerTest {
 
     @MockitoBean
     private ExerciseService exerciseService;
+
+    @MockitoBean 
+    private JwtService jwtService;
 
     @Autowired
     private ObjectMapper objectMapper;
