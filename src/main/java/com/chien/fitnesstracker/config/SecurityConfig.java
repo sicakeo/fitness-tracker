@@ -51,7 +51,8 @@ public class SecurityConfig {
                     "/api/workout-sessions/**",
                     "/api/workout-sessions/history/**",
                     "/api/workout-entries/**",
-                    "/api/food-entries/**"
+                    "/api/food-entries/**",
+                    "/error", "/error.html"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
