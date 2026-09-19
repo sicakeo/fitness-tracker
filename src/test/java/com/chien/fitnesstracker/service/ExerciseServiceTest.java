@@ -41,7 +41,7 @@ public class ExerciseServiceTest {
     private Exercise createSampleExercise() {
         Exercise exercise = new Exercise();
         exercise.setName("Test Exercise");
-        exercise.setExerciseType(ExerciseType.CARDIO);
+        exercise.setExerciseType(ExerciseType.HIIT_CARDIO);
         exercise.setMet(8.0);
         exercise.setUser(new User());   
         return exercise;
@@ -51,7 +51,7 @@ public class ExerciseServiceTest {
         return new ExerciseRequestDto(
                 1L, // userId
                 "Test Exercise",
-                ExerciseType.CARDIO,
+                ExerciseType.HIIT_CARDIO,
                 8.0
         );
     }
@@ -128,7 +128,7 @@ public class ExerciseServiceTest {
         testExerciseRequest = new ExerciseRequestDto(
                 testExerciseRequest.userId(),
                 "Updated Name",
-                ExerciseType.WEIGHTLIFTING,
+                ExerciseType.CORE_STRENGTH,
                 5.0
         );
         ExerciseResponseDto result = exerciseService.updateExercise(1L, testExerciseRequest);
@@ -136,7 +136,7 @@ public class ExerciseServiceTest {
         // THEN: Verify that the result actually reflects the NEW values
         assertNotNull(result);
         assertEquals("Updated Name", result.name());
-        assertEquals(ExerciseType.WEIGHTLIFTING, result.exerciseType());
+        assertEquals(ExerciseType.CORE_STRENGTH, result.exerciseType());
         assertEquals(5.0, result.met());
 
         // VERIFY: Ensure findById and save were executed

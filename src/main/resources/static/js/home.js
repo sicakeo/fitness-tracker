@@ -1,5 +1,3 @@
-
-
 import { checkAuth, fetchWithAuth } from "./auth.js";
 
 import { 
@@ -14,15 +12,21 @@ import {
 const WORKOUT_SESSION_API_URL = "http://localhost:8080/api/workout-sessions";
 const EXERCISE_API_URL = "http://localhost:8080/api/exercises";
 const FOOD_API_URL = "http://localhost:8080/api/food-entries";
+const FOOD_SEARCH_API_URL = "http://localhost:8080/api/food-search";
+const EXERCISE_SEARCH_API_URL = "http://localhost:8080/api/exercise-search";
 let currentWorkoutEntries = []; // Staged workout items for active session
+let searchTimeout = null; // For debouncing food search input
 
 // ==========================================   
 // 2. INITIALIZATION & LIFECYCLE
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
+    // Check if the user is authenticated
     if (!checkAuth()) return;
     setupNavigation();
     setupFormToggling();
+    setupFoodAutocomplete();
+    setupExerciseAutocomplete();
     loadTodayCaloriesRing();
     loadTodayHistory();
 });
@@ -106,12 +110,15 @@ function setupFormToggling() {
         if (fieldGroups.duration) fieldGroups.duration.hidden = false;
         if (fieldGroups.date) fieldGroups.date.hidden = false;
 
-        if (["RUNNING", "CYCLING", "SWIMMING"].includes(selectedType)) {
-            if (fieldGroups.distance) fieldGroups.distance.hidden = false;
-        } else if (selectedType === "WEIGHTLIFTING") {
+        // Map the new categories to the UI form displays
+        if (selectedType === "HIIT_CARDIO") {
+        if (fieldGroups.distance) fieldGroups.distance.hidden = false;
+        if (fieldGroups.intensity) fieldGroups.intensity.hidden = false;
+        if (fieldGroups.name) fieldGroups.name.hidden = false;
+        } else if (selectedType === "CORE_STRENGTH") {
             ['name', 'reps', 'sets', 'weight', 'intensity'].forEach(k => { if (fieldGroups[k]) fieldGroups[k].hidden = false; });
-        } else if (selectedType === "HIIT") {
-            if (fieldGroups.intensity) fieldGroups.intensity.hidden = false;
+        } else if (["MIND_BODY", "DANCE"].includes(selectedType)) {
+            ['name', 'intensity'].forEach(k => { if (fieldGroups[k]) fieldGroups[k].hidden = false; });
         }
     });
 
@@ -123,6 +130,57 @@ function setupFormToggling() {
             exerciseForm.reset();
         });
     }
+}
+
+function setupFoodAutocomplete() {
+    const foodNameInput = document.getElementById("foodName");
+    const autocompleteResults = document.getElementById("foodAutocompleteResults");
+
+    if (!foodNameInput || !autocompleteResults) return;
+
+    // Listen for keystrokes
+    foodNameInput.addEventListener("input", (e) => {
+        clearTimeout(searchTimeout); // Reset the timer on every keystroke
+        const query = e.target.value.trim();
+
+        // If the user clears the box or types < 2 chars, hide the dropdown
+        if (query.length < 2) {
+            autocompleteResults.innerHTML = "";
+            autocompleteResults.classList.add("hidden");
+            return;
+        }
+
+        // Wait 400ms after they stop typing before hitting the backend
+        searchTimeout = setTimeout(() => fetchFoodData(query), 400);
+    });
+
+    // Close the dropdown if the user clicks anywhere else on the screen
+    document.addEventListener("click", (e) => {
+        if (!foodNameInput.contains(e.target) && !autocompleteResults.contains(e.target)) {
+            autocompleteResults.classList.add("hidden");
+        }
+    });
+}
+
+function setupExerciseAutocomplete() {
+    const exerciseNameInput = document.getElementById("name");
+    const autocompleteResults = document.getElementById("exerciseAutocompleteResults");
+    exerciseNameInput.addEventListener("input", (e) => {
+        clearTimeout(searchTimeout); 
+        const query = e.target.value.trim();
+        
+        // Grab the currently selected category from the dropdown to filter the API
+        const category = document.getElementById("exerciseType").value;
+
+        if (query.length < 2 || !category) {
+            autocompleteResults.innerHTML = "";
+            autocompleteResults.classList.add("hidden");
+            return;
+        }
+
+        searchTimeout = setTimeout(() => fetchExerciseData(query, category), 400);
+    });
+
 }
 
 // ==========================================
@@ -363,6 +421,49 @@ async function submitWorkoutSession() {
         alert(error.message);
     }
 }
+
+async function fetchFoodData(query) {
+    const autocompleteResults = document.getElementById("foodAutocompleteResults");
+    
+    try {
+        // Show a temporary loading state
+        autocompleteResults.innerHTML = "<li style='color:#777; text-align:center;'>Searching USDA database...</li>";
+        autocompleteResults.classList.remove("hidden");
+
+        const response = await fetchWithAuth(`${FOOD_SEARCH_API_URL}?query=${encodeURIComponent(query)}`);
+        
+        if (!response.ok) throw new Error("Search failed");
+        
+        const results = await response.json();
+        renderFoodSearch(results);
+    } catch (error) {
+        console.error("USDA API Search Error:", error);
+        autocompleteResults.innerHTML = "<li style='color:#e74c3c; text-align:center;'>Search failed. Try again.</li>";
+    }
+}
+
+async function fetchExerciseData(query, category) {
+    const autocompleteResults = document.getElementById("exerciseAutocompleteResults"); 
+
+    try {
+        autocompleteResults.innerHTML = "<li style='color:#777; text-align:center;'>Searching exercise database...</li>";
+        autocompleteResults.classList.remove("hidden");
+
+        // Pass both the query and the selected enum category
+        const url = `${EXERCISE_SEARCH_API_URL}?query=${encodeURIComponent(query)}&category=${encodeURIComponent(category)}`;
+        const response = await fetchWithAuth(url);
+
+        if (!response.ok) throw new Error("Search failed");
+
+        const results = await response.json();
+        renderExerciseSearch(results);
+    } catch (error) {
+        console.error("Exercise API Search Error:", error);
+        autocompleteResults.innerHTML = "<li style='color:#e74c3c; text-align:center;'>Search failed. Try again.</li>";
+    }
+}
+
+
 
 // ==========================================
 // 5. DASHBOARD HYDRATION & ANIMATIONS
@@ -643,4 +744,70 @@ function formatExercise(selectedType, entry) {
         default:
             return `<br>Duration: ${entry.durationMinutes} mins <br> <strong>Intensity:</strong> ${entry.intensity}`;
     }
+}
+
+function renderFoodSearch(results) {
+    const autocompleteResults = document.getElementById("foodAutocompleteResults");
+    
+    if (results.length === 0) {
+        autocompleteResults.innerHTML = "<li style='color:#777; text-align:center;'>No foods found</li>";
+        return;
+    }
+
+    autocompleteResults.innerHTML = "";
+    
+    results.forEach(food => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+            <strong>${food.description}</strong>
+            <small>${Math.round(food.calories)} kcal | P: ${food.protein.toFixed(1)}g | C: ${food.carbs.toFixed(1)}g | F: ${food.fat.toFixed(1)}g</small>
+        `;
+        
+        // When a user clicks a list item, auto-fill the entire food form
+        li.addEventListener("click", () => {
+            document.getElementById("foodName").value = food.description;
+            document.getElementById("foodCalories").value = Math.round(food.calories);
+            document.getElementById("protein").value = food.protein.toFixed(1);
+            document.getElementById("carb").value = food.carbs.toFixed(1);
+            document.getElementById("fat").value = food.fat.toFixed(1);
+            
+            autocompleteResults.classList.add("hidden"); // Hide the dropdown
+        });
+        
+        autocompleteResults.appendChild(li);
+    });
+}
+
+function renderExerciseSearch(results) {
+    const autocompleteResults = document.getElementById("exerciseAutocompleteResults");
+    
+    if (results.length === 0) {
+        autocompleteResults.innerHTML = "<li style='color:#777; text-align:center;'>No exercises found</li>";
+        return;
+    }
+
+    autocompleteResults.innerHTML = "";
+    
+   results.forEach(exercise => {
+        const li = document.createElement("li");
+        // FIX 2: Map exercise data (Name, Type, MET) instead of Food Macros
+        li.innerHTML = `
+            <strong>${exercise.name}</strong>
+            <small>${exercise.type}</small>
+        `;
+
+        console.log("Exercise search result:", exercise.name, exercise.type);
+        
+        // When a user clicks a list item, auto-fill the entire exercise form
+        li.addEventListener("click", () => {
+            document.getElementById("name").value = exercise.name;
+            document.getElementById("exerciseType").value = exercise.type;
+            // Trigger the change event so your setupFormToggling() un-hides the right fields
+            document.getElementById("exerciseType").dispatchEvent(new Event("change"));
+
+            autocompleteResults.classList.add("hidden"); 
+        });
+
+        autocompleteResults.appendChild(li);
+    });
 }

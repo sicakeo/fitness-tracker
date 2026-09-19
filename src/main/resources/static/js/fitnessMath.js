@@ -2,12 +2,11 @@
 // FITNESS MATRICES & LOOKUP CONSTANTS
 // ==========================================
 export const MET_MATRIX = {
-    "WEIGHTLIFTING": { "LIGHT": 3.0, "MODERATE": 3.5, "HEAVY": 6.0 },
-    "RUNNING":       { "LIGHT": 8.3, "MODERATE": 9.8, "HEAVY": 11.8 },
-    "CYCLING":       { "LIGHT": 5.8, "MODERATE": 7.5, "HEAVY": 10.0 },
-    "HIIT":          { "LIGHT": 5.0, "MODERATE": 8.0, "HEAVY": 11.0 },
-    "YOGA":          { "LIGHT": 2.5, "MODERATE": 2.5, "HEAVY": 2.5 },
-    "SWIMMING":      { "LIGHT": 6.0, "MODERATE": 8.0, "HEAVY": 10.0 },
+    "CORE_STRENGTH": { "LIGHT": 3.0, "MODERATE": 4.5, "HEAVY": 6.0 },
+    "HIIT_CARDIO":   { "LIGHT": 6.0, "MODERATE": 8.5, "HEAVY": 11.5 },
+    "MIND_BODY":     { "LIGHT": 2.5, "MODERATE": 3.0, "HEAVY": 4.0 },
+    "DANCE":         { "LIGHT": 3.0, "MODERATE": 5.0, "HEAVY": 7.0 },
+    "OTHER":         { "LIGHT": 3.0, "MODERATE": 5.0, "HEAVY": 7.0 }
 };
 
 export const TARGET_BURN_MATRIX = {
@@ -50,13 +49,9 @@ export function getTargetCaloriesInput(goal) {
 export function calculateCardioIntensity(selectedType, distanceKm, durationMinutes, fallback = "MODERATE") {
     if (distanceKm > 0 && durationMinutes > 0) {
         const paceKmh = distanceKm / (durationMinutes / 60);
-        if (selectedType === "RUNNING") {
+        if (selectedType === "HIIT_CARDIO") {
             return paceKmh >= 11.3 ? "HEAVY" : paceKmh >= 9.6 ? "MODERATE" : "LIGHT";
-        } else if (selectedType === "CYCLING") {
-            return paceKmh >= 22.5 ? "HEAVY" : paceKmh >= 19.3 ? "MODERATE" : "LIGHT";
-        } else if (selectedType === "SWIMMING") {
-            return paceKmh >= 3.0 ? "HEAVY" : paceKmh >= 2.0 ? "MODERATE" : "LIGHT";
-        }
+        } 
     }
     return fallback;
 }

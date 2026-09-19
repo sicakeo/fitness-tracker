@@ -59,7 +59,7 @@ public class ExerciseControllerTest {
     private Exercise createSampleExercise() {
         Exercise exercise = new Exercise();
         exercise.setName("Test Exercise");
-        exercise.setExerciseType(ExerciseType.CARDIO);
+        exercise.setExerciseType(ExerciseType.HIIT_CARDIO);
         exercise.setMet(8.0);
         User user = new User();
         user.setId(1L);
@@ -72,7 +72,7 @@ public class ExerciseControllerTest {
         return new ExerciseRequestDto(
                 1L, // userId
                 "Test Exercise",
-                ExerciseType.CARDIO,
+                ExerciseType.HIIT_CARDIO,
                 8.0
         );
     }
@@ -101,7 +101,7 @@ public class ExerciseControllerTest {
                 .andExpect(jsonPath("$.userId").value(1))
                 .andExpect(jsonPath("$.name").value("Test Exercise"))
                 .andExpect(jsonPath("$.met").value(8.0))
-                .andExpect(jsonPath("$.exerciseType").value("CARDIO"));
+                .andExpect(jsonPath("$.exerciseType").value("HIIT_CARDIO"));
     }   
 
     @Test
@@ -129,7 +129,8 @@ public class ExerciseControllerTest {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.userId").value(1))
                 .andExpect(jsonPath("$.name").value("Test Exercise"))
-                .andExpect(jsonPath("$.exerciseType").value("CARDIO"));
+                .andExpect(jsonPath("$.met").value(8.0))
+                .andExpect(jsonPath("$.exerciseType").value("HIIT_CARDIO"));
     }
 
     @Test
@@ -153,7 +154,7 @@ public class ExerciseControllerTest {
         updatedExercise.setName("Updated Push Up");
         updatedExercise.setUser(new User());
         updatedExercise.getUser().setId(1L);
-        updatedExercise.setExerciseType(ExerciseType.WEIGHTLIFTING);
+        updatedExercise.setExerciseType(ExerciseType.CORE_STRENGTH);
         ExerciseResponseDto updatedExerciseResponse = createSampleExerciseResponse(updatedExercise);
         when(exerciseService.updateExercise(eq(1L), any(ExerciseRequestDto.class))).thenReturn(updatedExerciseResponse);
     
@@ -165,7 +166,7 @@ public class ExerciseControllerTest {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.userId").value(1))
                 .andExpect(jsonPath("$.name").value("Updated Push Up"))
-                .andExpect(jsonPath("$.exerciseType").value("WEIGHTLIFTING"));
+                .andExpect(jsonPath("$.exerciseType").value("CORE_STRENGTH"));
     }
 
     @Test
@@ -176,7 +177,7 @@ public class ExerciseControllerTest {
         Exercise updatedExercise = new Exercise();
         updatedExercise.setId(1L);
         updatedExercise.setName("Updated Push Up");
-        updatedExercise.setExerciseType(ExerciseType.WEIGHTLIFTING);
+        updatedExercise.setExerciseType(ExerciseType.CORE_STRENGTH);
 
         mockMvc.perform(put("/api/exercises/1")
                 .contentType(MediaType.APPLICATION_JSON)

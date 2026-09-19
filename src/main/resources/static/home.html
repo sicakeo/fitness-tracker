@@ -133,12 +133,12 @@
                             <label for="exerciseType">Exercise Type:</label>
                             <select id="exerciseType" required>
                                 <option value="" disabled selected>Select an exercise</option>
-                                <option value="RUNNING">Running</option>
-                                <option value="CYCLING">Cycling</option>
-                                <option value="SWIMMING">Swimming</option>
-                                <option value="WEIGHTLIFTING">Weightlifting</option>
-                                <option value="YOGA">Yoga</option>
-                                <option value="HIIT">HIIT</option>
+                                <!-- Values MUST match the Java UPPER_SNAKE_CASE enums exactly -->
+                                <option value="CORE_STRENGTH">Core & Strength</option>
+                                <option value="HIIT_CARDIO">HIIT & Cardio</option>
+                                <option value="MIND_BODY">Mind & Body</option>
+                                <option value="DANCE">Dance</option>
+                                <option value="OTHER">Other</option>
                             </select>
                         </div>
 
@@ -147,10 +147,12 @@
                             <input type="number" id="distance" min="0" step="0.01">
                         </div>
 
-                        <div class="form-group" id="nameGroup" hidden>
+                        <div class="form-group" id="nameGroup">
                             <label for="name">Exercise Name:</label>
-                            <input type="text" id="name">
+                            <input type="text" id="name" placeholder="e.g., Bench Press" autocomplete="off" required>
+                            <ul id="exerciseAutocompleteResults" class="autocomplete-dropdown hidden"></ul>
                         </div>
+
                         <div class="form-group" id="repsGroup" hidden>
                             <label for="reps">Reps:</label>
                             <input type="number" id="reps" min="0">
@@ -212,10 +214,14 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <div class="form-group-item">
+                       <div class="form-group">
+                            <div class="form-group-item" style="position: relative;">
                                 <label for="foodName">Food Name</label>
-                                <input type="text" id="foodName" placeholder="e.g., Chicken Breast" required />
+                                <!-- ADD autocomplete="off" so the browser's default history doesn't cover your custom dropdown -->
+                                <input type="text" id="foodName" placeholder="e.g., Chicken Breast" autocomplete="off" required />
+                                
+                                <!-- ADD the hidden dropdown container -->
+                                <ul id="foodAutocompleteResults" class="autocomplete-dropdown hidden"></ul>
                             </div>
                         </div>
 
