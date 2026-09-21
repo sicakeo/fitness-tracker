@@ -47,6 +47,7 @@ function setupNavigation() {
     const seeMoreFoodBtn = document.getElementById("seeMoreFoodBtn");
     const cancelSessionBtn = document.getElementById("cancelSessionBtn");
     const saveSessionBtn = document.getElementById("saveSessionBtn");
+    const editSessionBtn = document.getElementById("editSessionBtn");
 
     if (closeExerciseModalBtn) closeExerciseModalBtn.addEventListener("click", () => exerciseModal?.classList.add("hidden"));
     if (closeHistoryBtn) closeHistoryBtn.addEventListener("click", () => historyModal?.classList.add("hidden"));
@@ -83,6 +84,28 @@ function setupNavigation() {
             foodHistoryModal?.classList.remove("hidden");
         });
     }
+
+    if (editSessionBtn) {
+        editSessionBtn.addEventListener("click", () => {
+            const sessionTitle = document.getElementById("sessionTitle");
+            if(document.getElementById("titleInput")) 
+                return; // Prevent multiple inputs
+            const titleInput = document.createElement("input");
+            sessionTitle.classList.add("hidden");
+            editSessionBtn.classList.add("hidden");
+            sessionTitle.parentNode.insertBefore(titleInput, sessionTitle.nextSibling);
+            titleInput.type = "text";
+            titleInput.value = sessionTitle.innerText;
+            titleInput.id = "titleInput";
+            titleInput.style.fontSize = "1em";
+            titleInput.addEventListener("blur", () => {
+                sessionTitle.innerText = titleInput.value.trim() || "Workout Session";
+                sessionTitle.classList.remove("hidden");
+                editSessionBtn.classList.remove("hidden");
+                titleInput.remove();
+            });
+         });
+    }
 }
 
 function setupFormToggling() {
@@ -118,6 +141,10 @@ function setupFormToggling() {
         } else if (selectedType === "CORE_STRENGTH") {
             ['name', 'reps', 'sets', 'weight', 'intensity'].forEach(k => { if (fieldGroups[k]) fieldGroups[k].hidden = false; });
         } else if (["MIND_BODY", "DANCE"].includes(selectedType)) {
+            ['name', 'intensity'].forEach(k => { if (fieldGroups[k]) fieldGroups[k].hidden = false; });
+        } else if (["CARDIO"].includes(selectedType)) {
+            ['name', 'intensity', 'distance'].forEach(k => { if (fieldGroups[k]) fieldGroups[k].hidden = false; });
+        } else if (selectedType === "OTHER") {
             ['name', 'intensity'].forEach(k => { if (fieldGroups[k]) fieldGroups[k].hidden = false; });
         }
     });
@@ -202,12 +229,35 @@ function stageWorkoutEntry(selectedType, fieldGroups) {
 
     const durationValue = elDuration ? parseInt(elDuration.value, 10) || 0 : 0;
     const distanceValue = elDistance ? parseFloat(elDistance.value) || 0 : 0;
+    const repsValue = elReps ? parseInt(elReps.value, 10) || 0 : 0;
+    const setsValue = elSets ? parseInt(elSets.value, 10) || 0 : 0;
+    
     const inputName = (elName && fieldGroups.name && !fieldGroups.name.hidden) ? elName.value.trim() : selectedType;
+    
     let intensityValue = elIntensity ? elIntensity.value : "MODERATE";
     intensityValue = calculateCardioIntensity(selectedType, distanceValue, durationValue, intensityValue);
 
     const met = getMetValue(selectedType, intensityValue);
-    const calculatedCalories = Math.round(met * userWeight * (durationValue / 60));
+    let calculatedCalories = 0;
+
+    // ALGORITHM SPLIT: Time Under Tension (Strength) vs Continuous Duration (Cardio/Dance)
+    if (selectedType === "CORE_STRENGTH" && setsValue > 0 && repsValue > 0) {
+        // Assume an average of 4 seconds per rep
+        const activeMinutes = (setsValue * repsValue * 4) / 60;
+        
+        // Clamp active minutes so it can't exceed the total logged duration
+        const actualActiveMinutes = Math.min(activeMinutes, durationValue);
+        const restingMinutes = Math.max(0, durationValue - actualActiveMinutes);
+        
+        // Active Burn (MET) + Resting Burn (1.5 MET for sitting/standing between sets)
+        const activeBurn = met * userWeight * (actualActiveMinutes / 60);
+        const restingBurn = 1.5 * userWeight * (restingMinutes / 60);
+        
+        calculatedCalories = Math.round(activeBurn + restingBurn);
+    } else {
+        // Standard continuous burn math
+        calculatedCalories = Math.round(met * userWeight * (durationValue / 60));
+    }
 
     const entry = {
         exerciseName: inputName,
@@ -217,8 +267,8 @@ function stageWorkoutEntry(selectedType, fieldGroups) {
         caloriesBurned: calculatedCalories,
         intensity: intensityValue,
         distanceKm: (fieldGroups.distance && !fieldGroups.distance.hidden) ? distanceValue : null,
-        reps: (fieldGroups.reps && !fieldGroups.reps.hidden) ? parseInt(elReps.value, 10) || 0 : null,
-        sets: (fieldGroups.sets && !fieldGroups.sets.hidden) ? parseInt(elSets.value, 10) || 0 : null,
+        reps: (fieldGroups.reps && !fieldGroups.reps.hidden) ? repsValue : null,
+        sets: (fieldGroups.sets && !fieldGroups.sets.hidden) ? setsValue : null,
         weight: (fieldGroups.weight && !fieldGroups.weight.hidden) ? parseFloat(elWeight.value) || 0 : null
     };
 
@@ -697,18 +747,19 @@ function formatWorkoutMetrics(workout) {
 
     for (const entry of entries) {
         console.log("Entry details:", entry);
-        if (entry.exerciseType == entry.exerciseName)
-            entry.exerciseName = "";
-        entry.exerciseType = entry.exerciseType || "Unknown";
-        entry.exerciseType = entry.exerciseType.slice(0, 1).toUpperCase() + entry.exerciseType.slice(1).toLowerCase();
-        entry.exerciseName = entry.exerciseName? entry.exerciseName : entry.exerciseType;
+       
+        // Capitalize the first letter of each word in exerciseName and exerciseType for better display
+        entry.exerciseName = entry.exerciseName.split(/[\s,,_]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+        if (entry.exerciseType !== 'Other') {
+            entry.exerciseType = entry.exerciseType.split(/[\s,,_]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+        }
         entry.intensity = entry.intensity ? entry.intensity.slice(0, 1).toUpperCase() + entry.intensity.slice(1).toLowerCase() : "Moderate";
         
         const li = document.createElement("li");
         li.style.cssText = "padding: 8px 0; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: left;";
         li.innerHTML = `
             <div>
-                <strong>(${entry.exerciseType})</strong> ${entry.exerciseName === entry.exerciseType ? '' : entry.exerciseName}
+                <strong> ${entry.exerciseType !== 'Other' ? `(${entry.exerciseType})` : ''}</strong> ${entry.exerciseName === entry.exerciseType ? '' : entry.exerciseName}
                 ${formatExercise(entry.exerciseType, entry)}
             </div>`;
         exerciseList.appendChild(li);
@@ -763,7 +814,7 @@ function renderFoodSearch(results) {
             <small>${Math.round(food.calories)} kcal | P: ${food.protein.toFixed(1)}g | C: ${food.carbs.toFixed(1)}g | F: ${food.fat.toFixed(1)}g</small>
         `;
         
-        // When a user clicks a list item, auto-fill the entire food form
+        // When a user clicks a list item, autofill the entire food form
         li.addEventListener("click", () => {
             document.getElementById("foodName").value = food.description;
             document.getElementById("foodCalories").value = Math.round(food.calories);
@@ -773,7 +824,7 @@ function renderFoodSearch(results) {
             
             autocompleteResults.classList.add("hidden"); // Hide the dropdown
         });
-        
+    
         autocompleteResults.appendChild(li);
     });
 }
@@ -801,13 +852,23 @@ function renderExerciseSearch(results) {
         // When a user clicks a list item, auto-fill the entire exercise form
         li.addEventListener("click", () => {
             document.getElementById("name").value = exercise.name;
-            document.getElementById("exerciseType").value = exercise.type;
-            // Trigger the change event so your setupFormToggling() un-hides the right fields
-            document.getElementById("exerciseType").dispatchEvent(new Event("change"));
-
             autocompleteResults.classList.add("hidden"); 
         });
 
+        li.addEventListener("mouseover", () => {
+            li.style.backgroundColor = "#f0f0f0";
+        });
+
+        li.addEventListener("mouseout", () => {
+            li.style.backgroundColor = "";
+        });
         autocompleteResults.appendChild(li);
+    });
+
+    // Close the dropdown if the user clicks anywhere else on the screen
+    document.addEventListener("click", (e) => {
+        if (!document.getElementById("name").contains(e.target) && !autocompleteResults.contains(e.target)) {
+            autocompleteResults.classList.add("hidden");
+        }
     });
 }

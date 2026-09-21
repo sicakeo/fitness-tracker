@@ -29,7 +29,8 @@ export function getMetValue(workoutType, intensity) {
         console.warn(`MET value not found for Type: ${workoutType}, Intensity: ${intensity}`);
         return 3.5;
     }
-    return MET_MATRIX[workoutType][intensity];
+    // Extract the numerical value from the new object structure
+    return MET_MATRIX[workoutType][intensity].met;
 }
 
 /**
