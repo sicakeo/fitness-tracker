@@ -1,6 +1,17 @@
 /* ==========================================
    1. GLOBAL RESET & NAVIGATION CONTAINERS
    ========================================== */
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
 :root {
     --card-bg: #ffffff;
     --primary-blue: #1083ea;
