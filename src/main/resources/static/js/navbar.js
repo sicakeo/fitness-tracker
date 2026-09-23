@@ -19,9 +19,14 @@ document.querySelectorAll('a').forEach(link => {
 
         // If it passes the checks, it's a real page navigation. Show the loader!
         const loader = document.getElementById('loader');
+        const mainSection = document.querySelector('main');
         if (loader) {
             loader.classList.remove('hidden'); // Tailwind class removal
             loader.style.display = 'flex';     // Fallback for your custom CSS
+            if (mainSection) {
+                mainSection.classList.remove('visible'); // Tailwind class removal
+                mainSection.style.display = 'none';      // Fallback for your custom CSS
+            }
         }
     });
 });

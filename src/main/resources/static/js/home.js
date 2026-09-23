@@ -88,19 +88,23 @@ function setupNavigation() {
     if (editSessionBtn) {
         editSessionBtn.addEventListener("click", () => {
             const sessionTitle = document.getElementById("sessionTitle");
+            const sessionDescription = document.getElementById("sessionDescription");
             if(document.getElementById("titleInput")) 
                 return; // Prevent multiple inputs
             const titleInput = document.createElement("input");
             sessionTitle.classList.add("hidden");
             editSessionBtn.classList.add("hidden");
+            sessionDescription.classList.add("hidden");
             sessionTitle.parentNode.insertBefore(titleInput, sessionTitle.nextSibling);
             titleInput.type = "text";
             titleInput.value = sessionTitle.innerText;
             titleInput.id = "titleInput";
+            titleInput.classList.add("text-primaryBlack", "font-medium");
             titleInput.style.fontSize = "1em";
             titleInput.addEventListener("blur", () => {
                 sessionTitle.innerText = titleInput.value.trim() || "Workout Session";
                 sessionTitle.classList.remove("hidden");
+                sessionDescription.classList.remove("hidden");
                 editSessionBtn.classList.remove("hidden");
                 titleInput.remove();
             });
