@@ -6,69 +6,103 @@
     <title>Fitness Tracker</title>
     <link rel="stylesheet" href="css/global.css">
     <script src="https://kit.fontawesome.com/36a7b8a438.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+            extend: {
+                colors: {
+                primaryBlue: '#1083ea',
+                activeRed: '#e74c3c',
+                healthyGreen: '#2ecc71',
+                cardBg: '#ffffff',
+                bodyBg: '#f8f9fa'
+                },
+                // Add this new animation block
+                animation: {
+                'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
+                },
+                keyframes: {
+                fadeInUp: {
+                    '0%': { opacity: '0', transform: 'translateY(15px)' },
+                    '100%': { opacity: '1', transform: 'translateY(0)' },
+                }
+                }
+            }
+            }
+        }
+    </script>
 </head>
-<body>
-    <header class="nav-container">
-        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Menu">
-            <span></span>
-            <span></span>
-            <span></span>
+<body class="bg-bodyBg text-gray-800 font-sans antialiased min-h-screen flex flex-col">
+<!-- Navigation Bar (Lightly refactored to flexbox & shadow) -->
+<header class="bg-white shadow-sm flex items-center justify-between px-6 py-4 relative z-50">
+    <!-- LEFT WING -->
+    <div class="flex-1 flex justify-start">
+        <button class="text-gray-600 hover:text-primaryBlue focus:outline-none md:hidden" id="hamburgerBtn" aria-label="Toggle Menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
-
-        <div class="nav-spacer"></div>
-
-        <div class="nav-skeleton-wrapper nav-menu" id ="navSkeletonWrapper">
-            <div class="skeleton-element nav-skeleton-item"></div>
-            <div class="skeleton-element nav-skeleton-item"></div>
-            <div class="skeleton-element nav-skeleton-item"></div>
-            <div class="skeleton-element nav-skeleton-item"></div>
-            <div class="skeleton-element nav-skeleton-item"></div>
-        </div>
-
-        <div class="profile-skeleton-wrapper dropdown-parent" id="profileSkeletonWrapper">
-            <div class="skeleton-element nav-skeleton-circle"></div>
-        </div>
-
-        <nav class="nav-menu hidden" id="navMenu">     
-            <ul class="nav-list" id="navList">
-                <li><a href="/">Home</a></li>
-                <li><a href="/about">About Us</a></li>
-                <li id="toolDropdown" class="dropdown-parent">
-                    <a href="#">Tools</a>
-                    <ul id="toolDropdownMenu">
-                        <li><a href="/bmi-calculator" class="transition-link">BMI Calculator</a></li>
-                        <li><a href="/bmr-calculator" class="transition-link">BMR Calculator</a></li>
-                        <li><a href="/tdee-calculator" class="transition-link">TDEE Calculator</a></li>
-                    </ul>
-                </li>
-
-                <li id="authLinksLi">
-                    <div class="nav-right">
-                        <a href="/login" id="loginBtn">Login</a>
-                        <a href="/register" id="registerBtn">Register</a>
-                    </div>
-                </li>
-            </ul>
-        </nav>
-    </header>
-
-    <div id="loader" class="loader-overlay">
-        <div class="spinner"></div>
     </div>
-    
-    <main class="page-content">
-        <section id = "welcomeSection" class = "welcome-section">
-            <div class = "welcome-text-container">
-                <div class = "heading-title">
-                    <h1>Gym & Fitness Log</h1>
-                    <h1>Stay Strong</h1>
-                    <h1>Stay Fit</h1>
+
+    <!-- CENTER: Navigation & Nav Skeletons -->
+    <div class="flex justify-center items-center">
+
+        <!-- Skeleton Loader (Toggled by JS while checking Auth) -->
+        <div id="navSkeletonWrapper" class="hidden md:flex space-x-8">
+            <div class="h-5 w-16 bg-gray-200 rounded animate-pulse"></div>
+            <div class="h-5 w-20 bg-gray-200 rounded animate-pulse"></div>
+            <div class="h-5 w-16 bg-gray-200 rounded animate-pulse"></div>
+        </div>
+
+        <!-- Actual Navigation -->
+        <nav class="hidden md:flex justify-center space-x-8 font-medium" id="navMenu">
+            <a href="/" class="hover:text-primaryBlue transition-colors">Home</a>
+            <a href="/about" class="hover:text-primaryBlue transition-colors">About Us</a>
+
+            <div id="toolDropdown" class="relative group cursor-pointer">
+                <span class="hover:text-primaryBlue transition-colors flex items-center gap-1">
+                    Tools
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </span>
+                <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-100 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col overflow-hidden">
+                    <a href="/bmi-calculator" class="px-4 py-2 hover:bg-gray-50 hover:text-primaryBlue">BMI Calculator</a>
+                    <a href="/bmr-calculator" class="px-4 py-2 hover:bg-gray-50 hover:text-primaryBlue">BMR Calculator</a>
+                    <a href="/tdee-calculator" class="px-4 py-2 hover:bg-gray-50 hover:text-primaryBlue">TDEE Calculator</a>
                 </div>
-                <p>Track your calories, build routine, calculate BMI or BMR</p>
             </div>
-        </section>
-    </main>
-    <script type="module" src = "js/navbar.js"></script>
-    <script type="module" src="js/index.js"></script>
+        </nav>
+    </div>
+
+    <!-- Spacer -->
+    <div class="flex-1 flex justify-end items-center space-x-4">
+    </div>
+</header>
+
+<!-- Full Screen Loader Overlay -->
+<div id="loader" class="hidden fixed inset-0 bg-white/75 backdrop-blur-sm z-[100] flex justify-center items-center">
+    <!-- A smooth spinning ring loader using border styles -->
+    <div class="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-primaryBlue"></div>
+</div>
+
+<main class="animate-fade-in-up flex-grow flex flex-col justify-center items-center px-4 py-20 text-center bg-gradient-to-b from-white to-gray-50">
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight mb-6 leading-tight">
+            <span class="block">Gym & Fitness Log</span>
+            <span class="block text-primaryBlue mt-2">Stay Strong. Stay Fit.</span>
+        </h1>
+        <p class="mt-6 text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+            Track your calories, build your routine, and calculate your core health metrics with precision.
+        </p>
+        <div class="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
+            <a href="/register" class="w-full sm:w-auto bg-primaryBlue hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-200 transform hover:-translate-y-1 text-lg">
+                Start Tracking
+            </a>
+            <a href="/login" class="w-full sm:w-auto bg-white hover:bg-gray-50 text-gray-800 font-bold py-3 px-8 rounded-full shadow border border-gray-200 transition duration-200 transform hover:-translate-y-1 text-lg">
+                Login
+            </a>
+        </div>
+    </div>
+</main>
+<script type="module" src = "js/navbar.js"></script>
+<script type="module" src="js/index.js"></script>
 </body>
 </html>

@@ -5,71 +5,113 @@
     <title>Login</title>
     <link rel="stylesheet" href="css/global.css">
     <script src="https://kit.fontawesome.com/36a7b8a438.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+            extend: {
+                colors: {
+                primaryBlue: '#1083ea',
+                activeRed: '#e74c3c',
+                healthyGreen: '#2ecc71',
+                cardBg: '#ffffff',
+                bodyBg: '#f8f9fa'
+                },
+                // Add this new animation block
+                animation: {
+                'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
+                },
+                keyframes: {
+                fadeInUp: {
+                    '0%': { opacity: '0', transform: 'translateY(15px)' },
+                    '100%': { opacity: '1', transform: 'translateY(0)' },
+                }
+                }
+            }
+            }
+        }
+    </script>
 </head>
-    
-    <body>
-    <header class="nav-container">
-        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Menu">
-            <span></span>
-            <span></span>
-            <span></span>
+
+<body class="bg-bodyBg text-gray-800 font-sans antialiased min-h-screen flex flex-col">
+<!-- Navigation Bar (Lightly refactored to flexbox & shadow) -->
+<!-- Navigation Bar (Lightly refactored to flexbox & shadow) -->
+<header class="bg-white shadow-sm flex items-center justify-between px-6 py-4 relative z-50">
+    <!-- LEFT WING -->
+    <div class="flex-1 flex justify-start">
+        <button class="text-gray-600 hover:text-primaryBlue focus:outline-none md:hidden" id="hamburgerBtn" aria-label="Toggle Menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
+    </div>
 
-        <div class="nav-spacer"></div>
+    <!-- CENTER: Navigation & Nav Skeletons -->
+    <div class="flex justify-center items-center">
 
-        <div class="nav-skeleton-wrapper nav-menu" id ="navSkeletonWrapper">
-            <div class="skeleton-element nav-skeleton-item"></div>
-            <div class="skeleton-element nav-skeleton-item"></div>
-            <div class="skeleton-element nav-skeleton-item"></div>
-            <div class="skeleton-element nav-skeleton-item"></div>
-            <div class="skeleton-element nav-skeleton-item"></div>
+        <!-- Skeleton Loader (Toggled by JS while checking Auth) -->
+        <div id="navSkeletonWrapper" class="hidden md:flex space-x-8">
+            <div class="h-5 w-16 bg-gray-200 rounded animate-pulse"></div>
+            <div class="h-5 w-20 bg-gray-200 rounded animate-pulse"></div>
+            <div class="h-5 w-16 bg-gray-200 rounded animate-pulse"></div>
         </div>
 
-        <div class="profile-skeleton-wrapper dropdown-parent" id="profileSkeletonWrapper">
-            <div class="skeleton-element nav-skeleton-circle"></div>
-        </div>
+        <!-- Actual Navigation -->
+        <nav class="hidden md:flex justify-center space-x-8 font-medium" id="navMenu">
+            <a href="/" class="hover:text-primaryBlue transition-colors">Home</a>
+            <a href="/about" class="hover:text-primaryBlue transition-colors">About Us</a>
 
-        <nav class="nav-menu hidden" id="navMenu">     
-            <ul class="nav-list" id="navList">
-                <li><a href="/">Home</a></li>
-                <li><a href="/about">About Us</a></li>
-                <li id="toolDropdown" class="dropdown-parent">
-                    <a href="#">Tools</a>
-                    <ul id="toolDropdownMenu">
-                        <li><a href="/bmi-calculator">BMI Calculator</a></li>
-                        <li><a href="/bmr-calculator">BMR Calculator</a></li>
-                        <li><a href="/tdee-calculator">TDEE Calculator</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
-    </header>
-
-    <main class = "login-container" style = "display: flex; justify-content: center; margin-top: 40px; padding: 0 20px">
-        <div class="login-card" style="max-width: 400px; width: 100%;">
-            <div class="card-header" style="text-align: center; margin-bottom: 20px;">
-                <h2 style="margin: 0; color: #2c3e50;">Login</h2>
+            <div id="toolDropdown" class="relative group cursor-pointer">
+                    <span class="hover:text-primaryBlue transition-colors flex items-center gap-1">
+                        Tools
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </span>
+                <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-100 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col overflow-hidden">
+                    <a href="/bmi-calculator" class="px-4 py-2 hover:bg-gray-50 hover:text-primaryBlue">BMI Calculator</a>
+                    <a href="/bmr-calculator" class="px-4 py-2 hover:bg-gray-50 hover:text-primaryBlue">BMR Calculator</a>
+                    <a href="/tdee-calculator" class="px-4 py-2 hover:bg-gray-50 hover:text-primaryBlue">TDEE Calculator</a>
+                </div>
             </div>
-            
-            <form id = "loginForm" novalidate>
-                <div class = "form-group">
-                    <label for = "username">Username</label>
-                    <input type = "text" name = "username" id = "username" placeholder = "username" required>
-                </div>
+        </nav>
+    </div>
 
-                <div class = "form-group">
-                    <label for = "password">Password</label>
-                    <input type = "password" name = "password" id = "password" placeholder = "password" required>
-                </div>
+    <!-- Spacer -->
+    <div class="flex-1 flex justify-end items-center space-x-4">
+    </div>
+</header>
 
-                <div class = "form-group">
-                    <button type = "submit" id = "loginBtn">Login</button>
-                </div>
-                <p>New User? Register <a href="/register" style = "color: #007bff">here</a></p>
-            </form>
+<!-- Full Screen Loader Overlay -->
+<div id="loader" class="hidden fixed inset-0 bg-white/75 backdrop-blur-sm z-[100] flex justify-center items-center">
+    <!-- A smooth spinning ring loader using border styles -->
+    <div class="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-primaryBlue"></div>
+</div>
+
+<main class="animate-fade-in-up flex-grow flex justify-center items-center px-4 py-12">
+    <div class="bg-white shadow-xl rounded-2xl max-w-sm w-full p-8">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">Login</h2>
         </div>
-    </main>
-    <script type="module" src = "js/navbar.js"></script>
-    <script type ="module" src="js/login.js"></script>
+
+        <form id="loginForm" novalidate class="space-y-5">
+            <div>
+                <label for="username" class="block text-sm font-semibold text-gray-700 mb-1">Username</label>
+                <input type="text" name="username" id="username" placeholder="Enter username" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primaryBlue outline-none transition-all">
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
+                <input type="password" name="password" id="password" placeholder="Enter password" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primaryBlue outline-none transition-all">
+            </div>
+
+            <button type="submit" id="loginBtn" class="w-full bg-primaryBlue hover:bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md transition duration-200 transform hover:-translate-y-0.5 mt-2">
+                Login
+            </button>
+
+            <p class="text-center text-sm text-gray-600 mt-4">
+                New User? <a href="/register" class="text-primaryBlue hover:underline font-semibold">Register here</a>
+            </p>
+        </form>
+    </div>
+</main>
+<script type="module" src = "js/navbar.js"></script>
+<script type ="module" src="js/login.js"></script>
 </body>
 </html>
