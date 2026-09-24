@@ -5,159 +5,264 @@
     <title>User Profile</title>
     <link rel="stylesheet" href="css/global.css">
     <script src="https://kit.fontawesome.com/36a7b8a438.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+            extend: {
+                colors: {
+                primaryBlue: '#1083ea',
+                activeRed: '#e74c3c',
+                healthyGreen: '#2ecc71',
+                cardBg: '#ffffff',
+                bodyBg: '#f8f9fa'
+                },
+                // Add this new animation block
+                animation: {
+                'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
+                },
+                keyframes: {
+                fadeInUp: {
+                    '0%': { opacity: '0', transform: 'translateY(15px)' },
+                    '100%': { opacity: '1', transform: 'translateY(0)' },
+                }
+                }
+            }
+            }
+        }
+    </script>
 </head>
-<body>
-    <header class="nav-container">
-        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Menu">
-            <span></span>
-            <span></span>
-            <span></span>
+<body class="bg-bodyBg text-gray-800 font-sans antialiased min-h-screen flex flex-col">
+<!-- Navigation Bar (Lightly refactored to flexbox & shadow) -->
+<header class="bg-white shadow-sm flex items-center justify-between px-6 py-4 relative z-50">
+    <!-- LEFT WING -->
+    <div class="flex-1 flex justify-start">
+        <button class="text-gray-600 hover:text-primaryBlue focus:outline-none md:hidden" id="hamburgerBtn" aria-label="Toggle Menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
-
-        <div class="nav-spacer"></div>
-
-        <div class="nav-skeleton-wrapper nav-menu" id ="navSkeletonWrapper">
-            <div class="skeleton-element nav-skeleton-item"></div>
-            <div class="skeleton-element nav-skeleton-item"></div>
-            <div class="skeleton-element nav-skeleton-item"></div>
-            <div class="skeleton-element nav-skeleton-item"></div>
-            <div class="skeleton-element nav-skeleton-item"></div>
-        </div>
-
-        <div class="profile-skeleton-wrapper dropdown-parent" id="profileSkeletonWrapper">
-            <div class="skeleton-element nav-skeleton-circle"></div>
-        </div>
-
-        <nav class="nav-menu hidden" id="navMenu">     
-            <ul class="nav-list" id="navList">
-                <li><a href="/home" class="transition-link">Home</a></li>
-                <li><a href="/about" class="transition-link">About Us</a></li>
-                <li id="toolDropdown" class="dropdown-parent">
-                    <a href="#">Tools</a>
-                    <ul id="toolDropdownMenu">
-                        <li><a href="/bmi-calculator" class="transition-link">BMI Calculator</a></li>
-                        <li><a href="/bmr-calculator" class="transition-link">BMR Calculator</a></li>
-                        <li><a href="/tdee-calculator" class="transition-link">TDEE Calculator</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
-    </header>
-    
-     <div id="loader" class="loader-overlay">
-        <div class="spinner"></div>
     </div>
 
-    <main class="page-content">
-        <div class="profile-container" id = "profileContainer">
-            <div class="profile-card" style="max-width: 600px; width: 100%; height: 100%">
-                <div class="card-header" style="text-align: center; margin-bottom: 20px;">
-                    <h2 style="margin: 0; color: #2c3e50;">User Profile</h2>
-                </div>
+    <!-- CENTER: Navigation & Nav Skeletons -->
+    <div class="flex justify-center items-center">
 
-                <p id = "displayName"> Name: </h2>
-                <p id = "displayAge"> Age: </p>
-                <p id = "displayGender"> Gender: </p>
-                <p id = "displayHeight"> Height: </p>
-                <p id = "displayWeight"> Weight: </p>
-                <p id = "displayActivityLevel"> Activity Level: </p>
-                <p id = "displayTDEE"> TDEE: </p>
-                <p id = "displayFitnessGoal"> Fitness Goal: </p>
-                <div class = "form-group">
-                    <button id = "editBtn" type = "button"> Edit Profile </button>   
+        <!-- Skeleton Loader (Toggled by JS while checking Auth) -->
+        <div id="navSkeletonWrapper" class="hidden md:flex space-x-8">
+            <div class="h-5 w-16 bg-gray-200 rounded animate-pulse"></div>
+            <div class="h-5 w-20 bg-gray-200 rounded animate-pulse"></div>
+            <div class="h-5 w-16 bg-gray-200 rounded animate-pulse"></div>
+        </div>
+
+        <!-- Actual Navigation -->
+        <nav class="hidden md:flex justify-center space-x-8 font-medium" id="navMenu">
+            <a href="/" class="hover:text-primaryBlue transition-colors">Home</a>
+            <a href="/about" class="hover:text-primaryBlue transition-colors">About Us</a>
+
+            <div id="toolDropdown" class="relative group cursor-pointer">
+                    <span class="hover:text-primaryBlue transition-colors flex items-center gap-1">
+                        Tools
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </span>
+                <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-100 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col overflow-hidden">
+                    <a href="/bmi-calculator" class="px-4 py-2 hover:bg-gray-50 hover:text-primaryBlue">BMI Calculator</a>
+                    <a href="/bmr-calculator" class="px-4 py-2 hover:bg-gray-50 hover:text-primaryBlue">BMR Calculator</a>
+                    <a href="/tdee-calculator" class="px-4 py-2 hover:bg-gray-50 hover:text-primaryBlue">TDEE Calculator</a>
                 </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- RIGHT WING: Auth, Profile Skeletons, Dropdowns -->
+    <div class="flex-1 flex justify-end items-center space-x-4">
+
+        <!-- Auth Links (Shown if NOT logged in) -->
+        <div id="authLinksLi" class="flex items-center space-x-4">
+            <a href="/login" id="loginBtn" class="text-gray-600 hover:text-primaryBlue font-medium">Login</a>
+            <a href="/register" id="registerBtn" class="bg-primaryBlue hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium transition-colors shadow-sm">Register</a>
+        </div>
+
+        <!-- Profile Skeleton Loader -->
+        <div id="profileSkeletonWrapper" class="hidden">
+            <div class="h-8 w-8 bg-gray-200 rounded-full animate-pulse"></div>
+        </div>
+
+        <!-- User Profile Dropdown (Shown if LOGGED IN) -->
+        <div id="profileDropdown" class="relative group cursor-pointer hidden">
+            <a href="#" id="userProfileLink" class="text-gray-600 hover:text-primaryBlue">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 448 512"><path d="M224 248a120 120 0 1 0 0-240 120 120 0 1 0 0 240zm-29.7 56C95.8 304 16 383.8 16 482.3 16 498.7 29.3 512 45.7 512l356.6 0c16.4 0 29.7-13.3 29.7-29.7 0-98.5-79.8-178.3-178.3-178.3l-59.4 0z"></path></svg>
+            </a>
+
+            <ul id="profileDropdownMenu" class="absolute right-0 mt-2 w-56 bg-white border border-gray-100 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col py-2 z-50">
+                <div class="px-4 py-3 border-b border-gray-100 flex items-center space-x-3">
+                    <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 448 512"><path d="M224 248a120 120 0 1 0 0-240 120 120 0 1 0 0 240zm-29.7 56C95.8 304 16 383.8 16 482.3 16 498.7 29.3 512 45.7 512l356.6 0c16.4 0 29.7-13.3 29.7-29.7 0-98.5-79.8-178.3-178.3-178.3l-59.4 0z"></path></svg>
+                    <span class="font-bold text-gray-800 truncate" id="profileName">Username</span>
+                </div>
+                <li><a href="/profile" class="flex justify-between items-center px-4 py-2 hover:bg-gray-50 hover:text-primaryBlue text-sm">
+                    <span class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                       <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+                    Profile
+                    </span>
+                </a></li>
+                <li><a href="/settings" class="flex justify-between items-center px-4 py-2 hover:bg-gray-50 hover:text-primaryBlue text-sm">
+                    <span class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        </svg>
+                        Settings
+                    </span> 
+                    <span class="text-gray-400 text-xs">❯</span>
+                    </a>
+                </li>
+                <li><a href="#" class="flex justify-between items-center px-4 py-2 hover:bg-gray-50 hover:text-primaryBlue text-sm">
+                    <span id="signOutLink" class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
+                        </svg>
+                        Sign Out
+                    </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<!-- Full Screen Loader Overlay -->
+<div id="loader" class="hidden fixed inset-0 bg-white/75 backdrop-blur-sm z-[100] flex justify-center items-center">
+    <!-- A smooth spinning ring loader using border styles -->
+    <div class="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-primaryBlue"></div>
+</div>
+
+<main class="animate-fade-in-up flex-grow flex justify-center items-start px-4 py-12 relative">
+    <!-- Profile Display Card -->
+    <div class="bg-white shadow-xl rounded-2xl max-w-2xl w-full p-8" id="profileContainer">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">User Profile</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <span class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Name</span>
+                <span id="displayName" class="text-lg font-semibold">--</span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <span class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Age & Gender</span>
+                <span class="text-lg font-semibold"><span id="displayAge">--</span> / <span id="displayGender">--</span></span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <span class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Height</span>
+                <span id="displayHeight" class="text-lg font-semibold">--</span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <span class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Weight</span>
+                <span id="displayWeight" class="text-lg font-semibold">--</span>
+            </div>
+            <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <span class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Activity Level</span>
+                <span id="displayActivityLevel" class="text-lg font-semibold">--</span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-primaryBlue">
+                <span class="block text-xs font-bold text-gray-500 uppercase tracking-wide">TDEE</span>
+                <span id="displayTDEE" class="text-xl font-bold text-primaryBlue">--</span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-healthyGreen">
+                <span class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Fitness Goal</span>
+                <span id="displayFitnessGoal" class="text-xl font-bold text-healthyGreen">--</span>
             </div>
         </div>
 
-        <div id = "profileModal" class = "modal-overlay hidden">
-            <div class = "modal-card">
-                <div class="card-header" style="text-align: center; margin-bottom: 20px;">
-                    <h2 style="margin: 0; color: #2c3e50;">User Profile</h2>
+        <button id="editBtn" type="button" class="mt-8 w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 rounded-lg shadow-md transition duration-200">
+            Edit Profile
+        </button>
+    </div>
+
+    <!-- Edit Profile Modal Overlay -->
+    <div id="profileModal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex justify-center items-center overflow-y-auto py-10">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 mx-4 my-auto">
+            <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Edit Profile</h2>
+
+            <form id="profileForm" class="space-y-4">
+                <div>
+                    <label for="name" class="block text-sm font-semibold text-gray-700 mb-1">Name</label>
+                    <input id="name" type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primaryBlue outline-none">
                 </div>
-                <form id = "profileForm">
-                    <div class = "form-group">
-                        <label for = "name"> Name </label>
-                        <input id = "name" type = "text">
-                    </div>
 
-                    <div class = "form-group">
-                        <label for = "age"> Age</label>
-                        <input id = "age" type = "number">
+                <div class="flex space-x-4">
+                    <div class="flex-1">
+                        <label for="age" class="block text-sm font-semibold text-gray-700 mb-1">Age</label>
+                        <input id="age" type="number" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primaryBlue outline-none">
                     </div>
-
-                    <div class = "form-group">
-                        <label for = "gender"> Gender </label>
-                        <select name = "gender" id = "gender">
-                            <option value = "M">Male</option>
-                            <option value = "F">Female</option>
+                    <div class="flex-1">
+                        <label for="gender" class="block text-sm font-semibold text-gray-700 mb-1">Gender</label>
+                        <select name="gender" id="gender" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primaryBlue outline-none bg-white">
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
                         </select>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="height">Height </label>
-                        <input type="number" id="height" step="any" inputmode="decimal">
-                        <span id="heightUnit">cm</span> 
+                <div class="flex space-x-4">
+                    <div class="flex-1">
+                        <label for="height" class="block text-sm font-semibold text-gray-700 mb-1">Height (cm)</label>
+                        <input type="number" id="height" step="any" inputmode="decimal" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primaryBlue outline-none">
                     </div>
-
-                    <div class="form-group">
-                        <label for="weight">Weight </label>
-                        <input type="number" id="weight" step="any" inputmode="decimal">
-                        <span id="weightUnit">kg</span>
+                    <div class="flex-1">
+                        <label for="weight" class="block text-sm font-semibold text-gray-700 mb-1">Weight (kg)</label>
+                        <input type="number" id="weight" step="any" inputmode="decimal" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primaryBlue outline-none">
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="bmr">BMR </label>
-                        <input id="bmr" type="number" readonly>
-                        <span id="bmrUnit">kcal/day</span>
+                <div class="flex items-end space-x-2">
+                    <div class="flex-1">
+                        <label for="bmr" class="block text-sm font-semibold text-gray-700 mb-1">BMR (kcal/day)</label>
+                        <input id="bmr" type="number" readonly class="w-full bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 text-gray-500 cursor-not-allowed">
                     </div>
+                    <button id="calculateBMRBtn" type="button" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg transition-colors">Calc</button>
+                </div>
 
-                    <div class="form-group">
-                        <button id="calculateBMRBtn" type="button">Calculate BMR</button>
+                <div>
+                    <label for="activityLevel" class="block text-sm font-semibold text-gray-700 mb-1">Activity Level</label>
+                    <select id="activityLevel" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primaryBlue outline-none bg-white text-sm">
+                        <option value="" disabled selected>Select activity level</option>
+                        <option value="1.2">Sedentary</option>
+                        <option value="1.375">Lightly active</option>
+                        <option value="1.55">Moderately active</option>
+                        <option value="1.725">Active</option>
+                        <option value="1.9">Very active</option>
+                    </select>
+                </div>
+
+                <div class="flex items-end space-x-2">
+                    <div class="flex-1">
+                        <label for="tdee" class="block text-sm font-semibold text-gray-700 mb-1">TDEE (kcal/day)</label>
+                        <input id="tdee" type="number" readonly class="w-full bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 text-gray-500 cursor-not-allowed">
                     </div>
+                    <button id="calculateTDEEBtn" type="button" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg transition-colors">Calc</button>
+                </div>
 
-                    <div class="form-group">
-                        <label for="activityLevel">Activity Level </label>
-                        <select id="activityLevel">
-                            <option value="" disabled selected>Select your activity level</option>
-                            <option value="1.2">Sedentary (little or no exercise)</option>
-                            <option value="1.375">Lightly active (light exercise/sports 1-3 days/week)</option>
-                            <option value="1.55">Moderately active (moderate exercise/sports 3-5 days/week)</option>
-                            <option value="1.725">Active (hard exercise/sports 6-7 days a week)</option>
-                            <option value="1.9">Very active (very hard exercise/sports & physical job or 2x training)</option>
-                        </select>
-                    </div>
+                <div>
+                    <label for="fitnessGoal" class="block text-sm font-semibold text-gray-700 mb-1">Fitness Goal</label>
+                    <select id="fitnessGoal" name="fitnessGoal" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primaryBlue outline-none bg-white text-sm">
+                        <option value="" disabled selected>-- Select Your Goal --</option>
+                        <option value="MILD_LOSS">Mild Weight Loss (~0.25 kg/week)</option>
+                        <option value="WEIGHT_LOSS">Weight Loss (~0.5 kg/week)</option>
+                        <option value="MAINTAIN">Maintain Current Weight</option>
+                        <option value="WEIGHT_GAIN">Muscle Building (~0.25 kg/week)</option>
+                        <option value="HEAVY_GAIN">Aggressive Weight Gain (~0.5 kg/week)</option>
+                    </select>
+                </div>
 
-                    <div class="form-group">
-                        <label for="tdee">TDEE </label>
-                        <input id="tdee" type="number" readonly>
-                        <span id="tdeeUnit">kcal/day</span>
-                    </div>
-
-                    <div class="form-group">
-                        <button id="calculateTDEEBtn" type="button">Calculate TDEE</button>
-                    </div> 
-
-                    <div class="form-group">
-                        <label for="fitnessGoal">Fitness Goal </label>
-                        <select id="fitnessGoal" name="fitnessGoal" required>
-                            <option value="" disabled selected>-- Select Your Goal --</option>
-                            <option value="MILD_LOSS">Mild Weight Loss (~0.25 kg/week)</option>
-                            <option value="WEIGHT_LOSS">Weight Loss (~0.5 kg/week)</option>
-                            <option value="MAINTAIN">Maintain Current Weight</option>
-                            <option value="WEIGHT_GAIN">Muscle Building / Weight Gain (~0.25 kg/week)</option>
-                            <option value="HEAVY_GAIN">Aggressive Weight Gain (~0.5 kg/week)</option>
-                        </select>
-                    </div>
-
-                    <div class="modal-actions">
-                        <button type="button" id="closeBtn" class="btn-secondary">Cancel</button>
-                        <button type="submit" class="btn-primary">Save</button>
-                    </div>
-                </form>
-            </div>
+                <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-100">
+                    <button type="button" id="closeBtn" class="px-6 py-2 rounded-lg font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">Cancel</button>
+                    <button type="submit" class="px-6 py-2 rounded-lg font-bold text-white bg-primaryBlue hover:bg-blue-600 shadow-md transition-colors">Save Changes</button>
+                </div>
+            </form>
         </div>
-    </main>
-    <script type="module" src = "js/navbar.js"></script>
-    <script type="module" src="js/profile.js"></script>
+    </div>
+</main>
+<script type="module" src = "js/navbar.js"></script>
+<script type="module" src="js/profile.js"></script>
 </body>
 </html>

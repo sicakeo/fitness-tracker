@@ -30,7 +30,7 @@ export function getMetValue(workoutType, intensity) {
         return 3.5;
     }
     // Extract the numerical value from the new object structure
-    return MET_MATRIX[workoutType][intensity].met;
+    return MET_MATRIX[workoutType][intensity];
 }
 
 /**

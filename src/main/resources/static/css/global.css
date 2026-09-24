@@ -1,6 +1,17 @@
 /* ==========================================
    1. GLOBAL RESET & NAVIGATION CONTAINERS
    ========================================== */
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
 :root {
     --card-bg: #ffffff;
     --primary-blue: #1083ea;
@@ -262,7 +273,6 @@ a {
 
 #signOutLink {
     text-decoration: none;
-    color: var(--primary-blue);
 }
 /* ==========================================
    3. HERO CONTENT SECTION
@@ -328,8 +338,6 @@ a {
     .nav-menu {
         display: none; /* Kept default hidden */
         flex-direction: column;
-        gap: 20px; /* Gives nice vertical spacing between each nav option */
-        background-color: #ffffff; /* Cleaner solid white box look */
     
         position: absolute;
         top: 100%; /* Automatically pushes down perfectly right below the border line */

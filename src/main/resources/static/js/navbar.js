@@ -5,6 +5,32 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeDashboard();
 });
 
+// Grab all anchor tags on the page
+document.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        
+        // 1. Ignore if there is no href
+        // 2. Ignore if it's a dummy link (href="#") that just opens a modal/dropdown
+        // 3. Ignore if it opens in a new tab (target="_blank")
+        if (!href || href === '#' || href.startsWith('#') || this.target === '_blank') {
+            return;
+        }
+
+        // If it passes the checks, it's a real page navigation. Show the loader!
+        const loader = document.getElementById('loader');
+        const mainSection = document.querySelector('main');
+        if (loader) {
+            loader.classList.remove('hidden'); // Tailwind class removal
+            loader.style.display = 'flex';     // Fallback for your custom CSS
+            if (mainSection) {
+                mainSection.classList.remove('visible'); // Tailwind class removal
+                mainSection.style.display = 'none';      // Fallback for your custom CSS
+            }
+        }
+    });
+});
+
 const desktopView = window.matchMedia("(min-width: 1024px)");
 //Run skeleton loader only in desktop mode
 function handleBreakpointChange(e){
