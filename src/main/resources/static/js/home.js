@@ -14,6 +14,9 @@ const EXERCISE_API_URL = "http://localhost:8080/api/exercises";
 const FOOD_API_URL = "http://localhost:8080/api/food-entries";
 const FOOD_SEARCH_API_URL = "http://localhost:8080/api/food-search";
 const EXERCISE_SEARCH_API_URL = "http://localhost:8080/api/exercise-search";
+const ANALYTICS_API_URL = "http://localhost:8080/api/analytics";
+
+let calorieTrendChart = null;
 let currentWorkoutEntries = []; // Staged workout items for active session
 let searchTimeout = null; // For debouncing food search input
 
@@ -29,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupExerciseAutocomplete();
     loadTodayCaloriesRing();
     loadTodayHistory();
+    loadCalorieTrendChart();
 });
 
 function setupNavigation() {
@@ -133,23 +137,23 @@ function setupFormToggling() {
     exerciseTypeSelect.addEventListener("change", () => {
         const selectedType = exerciseTypeSelect.value;
 
-        Object.values(fieldGroups).forEach(group => { if (group) group.hidden = true; });
-        if (fieldGroups.duration) fieldGroups.duration.hidden = false;
-        if (fieldGroups.date) fieldGroups.date.hidden = false;
+        Object.values(fieldGroups).forEach(group => { if (group) group.classList.add("hidden"); });
+        if (fieldGroups.duration) fieldGroups.duration.classList.remove("hidden");
+        if (fieldGroups.date) fieldGroups.date.classList.remove("hidden");
 
         // Map the new categories to the UI form displays
         if (selectedType === "HIIT_CARDIO") {
-        if (fieldGroups.distance) fieldGroups.distance.hidden = false;
-        if (fieldGroups.intensity) fieldGroups.intensity.hidden = false;
-        if (fieldGroups.name) fieldGroups.name.hidden = false;
+        if (fieldGroups.distance) fieldGroups.distance.classList.remove("hidden");
+        if (fieldGroups.intensity) fieldGroups.intensity.classList.remove("hidden");
+        if (fieldGroups.name) fieldGroups.name.classList.remove("hidden");
         } else if (selectedType === "CORE_STRENGTH") {
-            ['name', 'reps', 'sets', 'weight', 'intensity'].forEach(k => { if (fieldGroups[k]) fieldGroups[k].hidden = false; });
+            ['name', 'reps', 'sets', 'weight', 'intensity'].forEach(k => { if (fieldGroups[k]) fieldGroups[k].classList.remove("hidden"); });
         } else if (["MIND_BODY", "DANCE"].includes(selectedType)) {
-            ['name', 'intensity'].forEach(k => { if (fieldGroups[k]) fieldGroups[k].hidden = false; });
+            ['name', 'intensity'].forEach(k => { if (fieldGroups[k]) fieldGroups[k].classList.remove("hidden"); });
         } else if (["CARDIO"].includes(selectedType)) {
-            ['name', 'intensity', 'distance'].forEach(k => { if (fieldGroups[k]) fieldGroups[k].hidden = false; });
+            ['name', 'intensity', 'distance'].forEach(k => { if (fieldGroups[k]) fieldGroups[k].classList.remove("hidden"); });
         } else if (selectedType === "OTHER") {
-            ['name', 'intensity'].forEach(k => { if (fieldGroups[k]) fieldGroups[k].hidden = false; });
+            ['name', 'intensity'].forEach(k => { if (fieldGroups[k]) fieldGroups[k].classList.remove("hidden"); });
         }
     });
 
@@ -441,7 +445,6 @@ async function submitWorkoutSession() {
             };
         }));
 
-        console.log("Total duration:", totalDuration, "Total calories burned:", totalCalories);
         const sessionPayload = {
             userId: userId,
             title: sessionTitle,
@@ -561,6 +564,33 @@ async function loadTodayCaloriesRing() {
             netDisplay.setAttribute("data-target", "0");
             displayRing();
         }
+    }
+}
+
+async function loadCalorieTrendChart() {
+    const userSession = sessionStorage.getItem("user");
+    if (!userSession) return;
+    const userId = JSON.parse(userSession).id;
+
+    try {
+        const response = await fetchWithAuth(`${ANALYTICS_API_URL}/7-day-trend?userId=${userId}`);
+        if (!response.ok) throw new Error("Failed to load trend data");
+        
+        const data = await response.json();
+        
+        // Utilize functional map() to extract clean arrays for the chart axes
+        const labels = data.map(day => {
+            // Convert 'YYYY-MM-DD' to a shorter 'Mon 14' format
+            const dateObj = new Date(day.date + "T00:00:00");
+            return dateObj.toLocaleDateString("en-US", { weekday: 'short', day: 'numeric' });
+        });
+        
+        const eatenData = data.map(day => day.caloriesEaten);
+        const burnedData = data.map(day => day.caloriesBurned);
+
+        renderChart(labels, eatenData, burnedData);
+    } catch (error) {
+        console.error("Chart Analytics Error:", error);
     }
 }
 
@@ -850,8 +880,6 @@ function renderExerciseSearch(results) {
             <strong>${exercise.name}</strong>
             <small>${exercise.type}</small>
         `;
-
-        console.log("Exercise search result:", exercise.name, exercise.type);
         
         // When a user clicks a list item, auto-fill the entire exercise form
         li.addEventListener("click", () => {
@@ -873,6 +901,56 @@ function renderExerciseSearch(results) {
     document.addEventListener("click", (e) => {
         if (!document.getElementById("name").contains(e.target) && !autocompleteResults.contains(e.target)) {
             autocompleteResults.classList.add("hidden");
+        }
+    });
+}
+
+function renderChart(labels, eatenData, burnedData) {
+    const ctx = document.getElementById('calorieTrendChart');
+    if (!ctx) return;
+
+    // Destroy the previous chart instance if it exists to prevent glitching on re-loads
+    if (calorieTrendChart) {
+        calorieTrendChart.destroy();
+    }
+
+    calorieTrendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Calories Consumed',
+                    data: eatenData,
+                    borderColor: '#2ecc71', // Healthy Green
+                    backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3 // Adds a smooth curve to the line
+                },
+                {
+                    label: 'Calories Burned',
+                    data: burnedData,
+                    borderColor: '#e74c3c', // Active Red
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    borderDash: [5, 5], // Dashed line for burned calories
+                    fill: false,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: 2500
+                }
+            }
         }
     });
 }

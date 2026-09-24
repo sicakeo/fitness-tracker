@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fitness Tracker Application</title>
     <link rel="stylesheet" href="css/global.css">
-    <!-- <link rel="stylesheet" href="css/home.css"> -->
-    <script src="https://kit.fontawesome.com/36a7b8a438.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/home.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -55,7 +55,7 @@
         </div>
 
         <!-- Actual Navigation -->
-        <nav class="hidden md:flex justify-center space-x-8 font-medium" id="navMenu">
+        <nav class="hidden md:flex flex-wrap justify-center items-center space-x-8 font-medium" id="navMenu">
             <a href="/" class="hover:text-primaryBlue transition-colors">Home</a>
             <a href="/about" class="hover:text-primaryBlue transition-colors">About Us</a>
 
@@ -159,8 +159,13 @@
     <!-- Dashboard Grid: Split Layout -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-        <!-- Left Column: Food Logger -->
+        <!-- Left Column: Food Logger & Calorie Trend -->
         <div class="lg:col-span-5">
+            <div class="bg-white shadow-lg rounded-2xl p-6 border border-gray-100 mb-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2">Calorie Trend (Last 7 Days)</h3>
+                <canvas id="calorieTrendChart" class="w-full h-64"></canvas>
+            </div>
+
             <div class="bg-white shadow-lg rounded-2xl p-6 border border-gray-100">
                 <h3 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2">Log a Meal</h3>
 
@@ -207,6 +212,7 @@
                     </button>
                 </form>
             </div>
+    
         </div>
 
         <!-- Right Column: History Previews -->
