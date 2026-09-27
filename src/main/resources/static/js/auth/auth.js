@@ -1,3 +1,7 @@
+//===========================
+// Authentication Utilities
+//===========================
+
 export function isLoggedIn(){
     return Boolean(sessionStorage.getItem("jwt_token"));
 }
@@ -13,6 +17,10 @@ export function checkAuth() {
     return true;
 }
 
+/**
+ * Checks if the current user is an admin.
+ * @returns {boolean} True if the user is an admin, false otherwise.
+ */
 function isAdminLoggedIn(){
     const user = JSON.parse(sessionStorage.getItem("user") || "{}");
     return isLoggedIn() && user.role === "ADMIN";
@@ -21,6 +29,7 @@ function isAdminLoggedIn(){
 export function logout(){
     sessionStorage.removeItem("user");
     sessionStorage.removeItem("jwt_token");
+    sessionStorage.removeItem("currentWorkoutEntries");
     alert("Log out successfully")
     window.location.href = "/";
 }

@@ -93,7 +93,6 @@ export function calculateTDEE(bmr, activityLevel){
     return bmr;
 }
 
-
 export function getReadableGoalText(goalValue) {
     const goalMap = {
         "MILD_LOSS": "Mild Weight Loss (~0.25 kg/week)",
@@ -106,6 +105,11 @@ export function getReadableGoalText(goalValue) {
     return goalMap[goalValue] || "";
 }
 
+/**
+ * Returns the readable text for a given activity level.
+ * @param {string} activityLevelValue - The activity level value.
+ * @returns {string} The readable activity level text.
+ */
 export function getReadableActivityLevelText(activityLevelValue) {
     const activityLevelMap = {
         "1.2": "Sedentary (little or no exercise)",

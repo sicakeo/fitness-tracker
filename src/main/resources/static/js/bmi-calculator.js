@@ -1,5 +1,5 @@
-import { isLoggedIn, fetchWithAuth } from "./auth.js";
-import { calculateBMI} from "./fitnessMath.js";
+import { isLoggedIn, fetchWithAuth } from "./auth/auth.js";
+import { calculateBMI} from "./utils/fitnessMath.js";
 
 const USER_API_URL = "http://localhost:8080/api/users";
 let unitSelect = "standard"; // State variable tracking active metric choice

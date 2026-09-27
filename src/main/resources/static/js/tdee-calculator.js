@@ -1,5 +1,5 @@
-import { isLoggedIn, logout, fetchWithAuth } from "./auth.js";
-import { calculateBMR, calculateTDEE } from "./fitnessMath.js";
+import { isLoggedIn, logout, fetchWithAuth } from "./auth/auth.js";
+import { calculateBMR, calculateTDEE } from "./utils/fitnessMath.js";
 
 const USER_API_URL = "http://localhost:8080/api/users";
 let unitSelect = "standard"; // State variable tracking active metric choice

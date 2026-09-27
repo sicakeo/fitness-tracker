@@ -1,5 +1,5 @@
-import { checkAuth, logout, fetchWithAuth } from "./auth.js";
-import { calculateBMR, calculateTDEE, getReadableActivityLevelText, getReadableGoalText } from "./fitnessMath.js";
+import { checkAuth, logout, fetchWithAuth } from "./auth/auth.js";
+import { calculateBMR, calculateTDEE, getReadableActivityLevelText, getReadableGoalText } from "./utils/fitnessMath.js";
 
 const USER_API_URL = "http://localhost:8080/api/users";
 document.addEventListener("DOMContentLoaded", () => {

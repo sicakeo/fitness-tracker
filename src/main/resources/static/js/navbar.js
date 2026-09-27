@@ -1,4 +1,4 @@
-import { isLoggedIn, logout } from "./auth.js";
+import { isLoggedIn, logout } from "./auth/auth.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     setupNavigation();
