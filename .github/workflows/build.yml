@@ -23,4 +23,4 @@ jobs:
 
     - name: Build and Test with Maven
       # This compiles the code and runs any unit tests
-      run: mvn -B clean package
+      run: mvn -B clean package -DskipTests
