@@ -31,12 +31,6 @@ export async function saveFoodEntry(foodPayload) {
     return response.json();
 }
 
-export async function searchUSDAFoodDatabase(query) {
-    const response = await fetchWithAuth(`${FOOD_SEARCH_API_URL}?query=${encodeURIComponent(query)}`);
-    if (!response.ok) throw new Error("Food search failed");
-    return response.json();
-}
-
 /**
  * WORKOUT & EXERCISE API
  */
@@ -77,7 +71,7 @@ export async function searchExerciseDatabase(query, category) {
 
 export async function searchFoodDatabase(query) {   
     const url = `${FOOD_SEARCH_API_URL}?query=${encodeURIComponent(query)}`;
-    const response = await fetchWithAuth(`${FOOD_SEARCH_API_URL}?query=${encodeURIComponent(query)}`);
+    const response = await fetchWithAuth(url);
     if (!response.ok) throw new Error("Food search failed");
     return response.json();
 }

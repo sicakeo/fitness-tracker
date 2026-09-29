@@ -4,7 +4,7 @@
 
 export function formatFoodMetrics(food) {
     const mealType = food.mealType || "Meal";
-    const name = food.name || "Unknown Item";
+    const name = food.name.charAt(0).toUpperCase() + food.name.slice(1).toLowerCase() || "Unknown Item";
     const calories = food.calories || 0;
     
     const p = food.protein ? Math.round(food.protein) : 0;

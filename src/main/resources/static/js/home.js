@@ -226,6 +226,12 @@ function setupExerciseAutocomplete() {
         searchTimeout = setTimeout(() => fetchExerciseData(query, category), 400);
     });
 
+    document.addEventListener("click", (e) => {
+        if (!exerciseNameInput.contains(e.target) && !autocompleteResults.contains(e.target)) { 
+            autocompleteResults.classList.add("hidden");
+        }
+    });
+        
 }
 
 window.removeStagedExercise = function(index) {
@@ -387,8 +393,8 @@ async function fetchExerciseData(query, category) {
         autocompleteResults.innerHTML = "<li style='color:#777; text-align:center;'>Searching exercise database...</li>";
         autocompleteResults.classList.remove("hidden");
 
-        // Pass both the query and the selected enum category
         const results = await searchExerciseDatabase(query, category);
+        console.log("Exercise API Results:", results); // Debugging log
         renderExerciseSearch(autocompleteResults, results);
     } catch (error) {
         console.error("Exercise API Search Error:", error);

@@ -70,6 +70,7 @@ export function renderFoodSearch(autocompleteResults, results) {
     
     results.forEach(food => {
         const li = document.createElement("li");
+        food.description = food.description.charAt(0).toUpperCase() + food.description.slice(1).toLowerCase();
         li.innerHTML = `
             <strong>${food.description}</strong>
             <small>${Math.round(food.calories)} kcal | P: ${food.protein.toFixed(1)}g | C: ${food.carbs.toFixed(1)}g | F: ${food.fat.toFixed(1)}g</small>
